@@ -6,8 +6,9 @@
   --border: 1px solid #474a4d;
   --border-radius: 8px;
   --speed: 100ms;
+  --navbar-bg: var(--bg);
+  --navbar-title-color: white;
 }
-
 
 body {
   margin: 0;
@@ -23,13 +24,29 @@ ul {
 }
 
 a {
-  color: var(--text-color);
   text-decoration: none;
+}
+
+.dropdown {
+  position: absolute;
+  top: 58px;
+  width: 300px;
+  transform: translateX(-45%);
+  background-color: var(--bg);
+  border: var(--border);
+  border-radius: var(--border-radius);
+  padding: 1rem;
+  overflow: hidden;
+}
+
+.navbar-title {
+  margin-right: auto;
+  color: var(--navbar-title-color);
 }
 
 .navbar {
   height: var(--nav-size);
-  background-color: var(--bg);
+  background-color: var(--navbar-bg);
   padding: 0 1rem;
   border-bottom: var(--border);
 }
@@ -79,17 +96,7 @@ a {
   width: 20px;
 }
 
-.dropdown {
-  position: absolute;
-  top: 58px;
-  width: 300px;
-  transform: translateX(-45%);
-  background-color: var(--bg);
-  border: var(--border);
-  border-radius: var(--border-radius);
-  padding: 1rem;
-  overflow: hidden;
-}
+
 
 .menu-item {
   height: 50px;
@@ -98,6 +105,7 @@ a {
   border-radius: var(--border-radius);
   transition: background var(--speed);
   padding: 0.5rem;
+  color: var(--text-color);
 }
 
 .menu-item:hover {

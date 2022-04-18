@@ -1,24 +1,21 @@
 import React, { useState } from "react"
 
 import DropdownMenu from "./components/DropdownMenu";
-
-import './App.css';
+import NotesMenu from "./components/NotesMenu";
 
 import { ReactComponent as BellIcon } from './icons/bell.svg';
 import { ReactComponent as MessengerIcon } from './icons/messenger.svg';
 import { ReactComponent as CaretIcon } from './icons/caret.svg';
 import { ReactComponent as PlusIcon } from './icons/plus.svg';
-// import { ReactComponent as CogIcon } from './icons/cog.svg';
-// import { ReactComponent as ChevronIcon } from './icons/chevron.svg';
-// import { ReactComponent as ArrowIcon } from './icons/arrow.svg';
-// import { ReactComponent as BoltIcon } from './icons/bolt.svg';
 
 
 function App() {
 
   return (
     <div>
+      
       <NavBar>
+        <h1 className="navbar-title">Notes</h1>
         <NavItem icon={<PlusIcon />} />
         <NavItem icon={<BellIcon />} />
         <NavItem icon={<MessengerIcon />} />
@@ -26,8 +23,10 @@ function App() {
         <NavItem icon={<CaretIcon />}>
           <DropdownMenu />
         </NavItem>
-        
       </NavBar>
+
+      <NotesMenu />
+
     </div>
   );
 }
@@ -35,11 +34,12 @@ function App() {
 
 function NavBar(props) {
   return (
-    <nav className="navbar">
-      <ul className="navbar-nav">{props.children}</ul>
-    </nav>
+      <nav className="navbar">
+        <ul className="navbar-nav">{props.children}</ul>
+      </nav>
   )
 }
+
 
 function NavItem(props) {
 

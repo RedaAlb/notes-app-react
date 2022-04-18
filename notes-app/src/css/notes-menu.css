@@ -1,0 +1,108 @@
+:root {
+    --section-item-bg: #ffffff;
+    --section-item-color: #000000;
+    --section-item-hover-color: #6bff9c;
+    --section-item-right-icon-color: black;
+    --note-item-hover-color: #6bc9ff;
+    --note-item-right-icon-color: black;
+    --speed: 300ms;
+}
+
+.notes-menu {
+    background-color: var(--section-item-bg);
+}
+
+/* Section */
+.section-item {
+    height: 50px;
+    display: flex;
+    align-items: center;
+    transition: background var(--speed);
+    padding: 0.5rem;
+    color: var(--section-item-color);
+    border-bottom: 1px solid black;
+}
+
+.section-item:hover {
+    background-color: var(--section-item-hover-color);
+}
+
+
+.section-button {
+    --button-size: calc(var(--nav-size) * 0.5);
+    width: var(--button-size);
+    height: var(--button-size);
+    background-color: var(--section-item-hover-color);
+    border-radius: 50%;
+    padding: 5px;
+    margin: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: filter 300ms;
+}
+
+.section-button:hover {
+    filter: brightness(1.2);
+}
+
+.section-button svg {
+    fill: var(--text-color);
+    width: 20px;
+    height: 20px;
+}
+
+
+.section-icon-right {
+    fill: var(--section-item-right-icon-color);
+    margin-left: auto;
+    width: 14px;
+}
+
+
+/* Note */
+.note-item {
+    height: 50px;
+    display: flex;
+    align-items: center;
+    transition: background var(--speed);
+    padding: 0.5rem;
+    color: var(--note-item-color);
+    border-bottom: 1px solid black;
+}
+
+.note-item:hover {
+    background-color: var(--note-item-hover-color);
+}
+
+
+.note-button {
+    --button-size: calc(var(--nav-size) * 0.5);
+    width: var(--button-size);
+    height: var(--button-size);
+    background-color: var(--note-item-hover-color);
+    border-radius: 50%;
+    padding: 5px;
+    margin: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: filter 300ms;
+}
+
+.note-button:hover {
+    filter: brightness(1.2);
+}
+
+.note-button svg {
+    fill: var(--text-color);
+    width: 20px;
+    height: 20px;
+}
+
+
+.note-icon-right {
+    fill: var(--note-item-right-icon-color);
+    margin-left: auto;
+    padding: 15px 5px;
+}
