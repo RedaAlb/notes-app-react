@@ -3,26 +3,22 @@ import React, { useState } from "react"
 import DropdownMenu from "./components/DropdownMenu";
 import NotesMenu from "./components/NotesMenu";
 
-import { ReactComponent as BellIcon } from './icons/bell.svg';
-import { ReactComponent as MessengerIcon } from './icons/messenger.svg';
-import { ReactComponent as CaretIcon } from './icons/caret.svg';
-import { ReactComponent as PlusIcon } from './icons/plus.svg';
-
+import { ReactComponent as SearchIcon } from './icons/search.svg';
+import { ReactComponent as ThreeDots } from './icons/three-dots.svg';
 
 function App() {
 
   return (
     <div>
-      
+
       <NavBar>
         <h1 className="navbar-title">Notes</h1>
-        <NavItem icon={<PlusIcon />} />
-        <NavItem icon={<BellIcon />} />
-        <NavItem icon={<MessengerIcon />} />
+        <NavItem icon={<SearchIcon />} />
 
-        <NavItem icon={<CaretIcon />}>
+        <NavItem icon={<ThreeDots />}>
           <DropdownMenu />
         </NavItem>
+
       </NavBar>
 
       <NotesMenu />
@@ -34,9 +30,9 @@ function App() {
 
 function NavBar(props) {
   return (
-      <nav className="navbar">
-        <ul className="navbar-nav">{props.children}</ul>
-      </nav>
+    <nav className="navbar">
+      <ul className="navbar-nav">{props.children}</ul>
+    </nav>
   )
 }
 

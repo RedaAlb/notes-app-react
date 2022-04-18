@@ -6,13 +6,13 @@
   --border: 1px solid #474a4d;
   --border-radius: 8px;
   --speed: 100ms;
-  --navbar-bg: var(--bg);
+  --navbar-bg: #4816ff;
   --navbar-title-color: white;
 }
 
 body {
   margin: 0;
-  font-family: roboto;
+  font-family: sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -37,6 +37,7 @@ a {
   border-radius: var(--border-radius);
   padding: 1rem;
   overflow: hidden;
+  z-index: 500;
 }
 
 .navbar-title {
@@ -61,7 +62,7 @@ a {
 .nav-item {
   width: calc(var(--nav-size) * 0.8);
   display: flex;
-  align-items: center;  
+  align-items: center;
   justify-content: center;
 }
 
@@ -69,14 +70,14 @@ a {
   --button-size: calc(var(--nav-size) * 0.5);
   width: var(--button-size);
   height: var(--button-size);
-  background-color: #484a4d;
+  /* background-color: #484a4d; */
   border-radius: 50%;
   padding: 5px;
   margin: 2px;
-  display: flex; 
+  display: flex;
   align-items: center;
   justify-content: center;
-  transition: filter 300ms;
+  /* transition: filter 300ms; */
 }
 
 .icon-button:hover {
@@ -90,7 +91,7 @@ a {
 }
 
 
-.icon-right{
+.icon-right {
   fill: var(--text-color);
   margin-left: auto;
   width: 20px;
@@ -103,7 +104,7 @@ a {
   display: flex;
   align-items: center;
   border-radius: var(--border-radius);
-  transition: background var(--speed);
+  /* transition: background var(--speed); */
   padding: 0.5rem;
   color: var(--text-color);
 }
@@ -118,16 +119,19 @@ a {
   position: absolute;
   transform: translateX(-110%);
 }
+
 .menu-primary-enter-active {
   transform: translateX(0%);
-  transition: all var(--speed) ease;
+  /* transition: all var(--speed) ease; */
 }
+
 .menu-primary-exit {
   position: absolute;
 }
+
 .menu-primary-exit-active {
   transform: translateX(-110%);
-  transition: all var(--speed) ease;
+  /* transition: all var(--speed) ease; */
 }
 
 
@@ -135,14 +139,16 @@ a {
 .menu-secondary-enter {
   transform: translateX(110%);
 }
+
 .menu-secondary-enter-active {
   transform: translateX(0%);
-  transition: all var(--speed) ease;
+  /* transition: all var(--speed) ease; */
 }
+
 /* .menu-secondary-exit {
 
 } */
 .menu-secondary-exit-active {
   transform: translateX(110%);
-  transition: all var(--speed) ease;
+  /* transition: all var(--speed) ease; */
 }
