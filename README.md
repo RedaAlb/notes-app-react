@@ -1,2 +1,3 @@
-# notes-app-react
+# Notes app
+
 My personal notes app using React.
