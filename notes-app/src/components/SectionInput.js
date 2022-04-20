@@ -2,7 +2,7 @@ import React, { useState } from "react"
 import AutowidthInput from "react-autowidth-input";
 
 
-function GrowingInput(props) {
+function SectionInput(props) {
   const [textboxValue, setTextboxValue] = useState(props.sectionName);
 
   const changeHandler = evt => {
@@ -17,7 +17,7 @@ function GrowingInput(props) {
         onChange={changeHandler}
         extraWidth={2}
         placeholderIsMinWidth={true}
-        minWidth={200}
+        minWidth={100}
         placeholder="Title"
         className="section-textbox"
         wrapperClassName="section-textbox-wrapper"
@@ -26,4 +26,4 @@ function GrowingInput(props) {
   );
 }
 
-export default GrowingInput;
+export default SectionInput;

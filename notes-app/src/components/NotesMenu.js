@@ -1,8 +1,9 @@
 import React, { useState } from "react"
+import TextareaAutosize from 'react-textarea-autosize';
+
 import { CSSTransition } from "react-transition-group"
 
-import GrowingInput from "./GrowingInput";
-
+import SectionInput from "./SectionInput";
 
 import { ReactComponent as ChevronIcon } from '../icons/chevron.svg';
 import { ReactComponent as ArrowIcon } from '../icons/arrow.svg';
@@ -13,11 +14,10 @@ function NotesMenu() {
 
   const [activeMenu, setActiveMenu] = useState("main");
 
-
   function SectionItem(props) {
     return (
       <div>
-        <GrowingInput sectionName={props.sectionName} />
+        <SectionInput sectionName={props.sectionName} />
 
         <a href="/#" className="section-item" onClick={() => props.goToMenu && setActiveMenu(props.goToMenu)}>
           {props.leftIcon ? <div className="section-button">{props.leftIcon}</div> : null}
@@ -32,21 +32,57 @@ function NotesMenu() {
   }
 
 
-
-  // USE THIS: https://www.npmjs.com/package/react-textarea-autosize
   function NoteItem(props) {
+
+    const [noteTitleTB, setNoteTitleTB] = useState(props.noteTitle);
+    const [noteTextTB, setNoteTextText] = useState(props.noteText);
+    const [notePrio, setNotePrio] = useState(props.notePrio);
+
+    const noteTitleChangeHandler = evt => {
+      setNoteTitleTB(evt.target.value);
+    };
+
+    const noteTextChangeHandler = evt => {
+      setNoteTextText(evt.target.value);
+    };
+
+    // This might be needed later.
+    // setNotePrio(props.notePrio);
+
     return (
-      <a href="/#" className="note-item" onClick={() => props.goToMenu && setActiveMenu(props.goToMenu)}>
-        {props.leftIcon ? (
+      <div className="note-item" onClick={() => props.goToMenu && setActiveMenu(props.goToMenu)}>
+        {!props.goToMenu ? (
+          <div className="note-content-wrapper">
+            <div className="note-header">
+              {props.leftIcon ? (
+                <div className="note-top">
+                  <span className="note-button">{props.leftIcon}</span>
+                </div>
+              ) : null}
+              <TextareaAutosize
+                cacheMeasurements
+                value={noteTitleTB}
+                onChange={noteTitleChangeHandler}
+                placeholder="Title"
+                className={`note-title-textarea ${notePrio}`}
+              />
+              <div className={`note-icon-right ${props.notePrio}`}>{<ThreeDots />}</div>
+            </div>
+
+            <TextareaAutosize
+              cacheMeasurements
+              value={noteTextTB}
+              onChange={noteTextChangeHandler}
+              placeholder="Note"
+              className="note-text-textarea"
+            />
+          </div>
+        ) : (
           <div className="note-top">
             <span className="note-button">{props.leftIcon}</span>
           </div>
-        ) : null}
-
-        <span>{props.noteTitle}</span>
-
-        <span className="note-icon-right">{<ThreeDots />}</span>
-      </a>
+        )}
+      </div>
     )
   }
 
@@ -64,11 +100,11 @@ function NotesMenu() {
       <CSSTransition in={activeMenu === "habits"} unmountOnExit timeout={0} classNames="menu-secondary">
         <div className="menu">
           <NoteItem leftIcon={<ArrowIcon />} goToMenu="main" />
-          <NoteItem noteTitle="Habit 1" />
-          <NoteItem noteTitle="Habit 2" />
-          <NoteItem noteTitle="Habit 3" />
-          <NoteItem noteTitle="Habit 4" />
-          <NoteItem noteTitle="Habit 5" />
+          <NoteItem noteTitle="Habit 1" noteText="This is habit 1." notePrio="prio-0" />
+          <NoteItem noteTitle="Habit 2" noteText="This is habit 2." notePrio="prio-0" />
+          <NoteItem noteTitle="Habit 3" noteText="This is habit 3." notePrio="prio-1" />
+          <NoteItem noteTitle="Habit 4" noteText="This is habit 4." notePrio="prio-1" />
+          <NoteItem noteTitle="Habit 5" noteText="This is habit 5." notePrio="prio-0" />
         </div>
       </CSSTransition>
 
@@ -76,10 +112,10 @@ function NotesMenu() {
       <CSSTransition in={activeMenu === "goals"} unmountOnExit timeout={0} classNames="menu-secondary">
         <div className="menu">
           <NoteItem leftIcon={<ArrowIcon />} goToMenu="main" />
-          <NoteItem noteTitle="Goal 1" />
-          <NoteItem noteTitle="Goal 2" />
-          <NoteItem noteTitle="Goal 3" />
-          <NoteItem noteTitle="Goal 4" />
+          <NoteItem noteTitle="Goal 1" noteText="This is goal 1." notePrio="prio-0" />
+          <NoteItem noteTitle="Goal 2" noteText="This is goal 2." notePrio="prio-1" />
+          <NoteItem noteTitle="Goal 3" noteText="This is goal 3." notePrio="prio-0" />
+          <NoteItem noteTitle="Goal 4" noteText="This is goal 4." notePrio="prio-1" />
         </div>
       </CSSTransition>
 
