@@ -1,0 +1,9 @@
+<svg width="48px" height="48px" viewBox="0 0 48 48" version="1" class="priority-menu-icon"
+  xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 48 48">
+  <path d="M 21.2 44.8 l -18 -18 c -1.6 -1.6 -1.6 -4.1 0 -5.7 l 18 -18 c 1.6 -1.6 4.1 -1.6 5.7 0 l 18 18 c 1.6 1.6 1.6 4.1 0 5.7 l -18 18 C 25.3 46.4 22.7 46.4 21.2 44.8 z" />
+  <g fill="#ffffff">
+    <circle cx="24" cy="24" r="2" />
+    <circle cx="32" cy="24" r="2" />
+    <circle cx="16" cy="24" r="2" />
+  </g>
+</svg>

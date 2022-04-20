@@ -14,6 +14,8 @@
   --speed: 300ms;
   --main-font: sans-serif;
 
+  --priority1-icon-fill: rgb(58, 216, 58);
+  --priority2-icon-fill: rgb(255, 204, 35);
 }
 
 .notes-menu {
@@ -190,4 +192,75 @@ input:focus {
 
 .note-header {
   display: flex;
+}
+
+
+.note-settings-menu {
+  position: absolute;
+  /* top: 58px; */
+  width: 250px;
+  transform: translateY(+34%);
+  background-color: white;
+  /* border: var(--border); */
+  border-radius: 4px;
+  padding: 8px 8px;
+  overflow: hidden;
+  z-index: 500;
+  box-shadow: 0 0px 11px 0px #6e6e6e;
+  right: 50px;
+}
+
+.note-settings-menu-item {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  border-radius: var(--border-radius);
+  /* transition: background var(--speed); */
+  color: black;
+  padding: 5px 0px;
+}
+
+.note-settings-left-icon {
+  --button-size: calc(var(--nav-size) * 0.5);
+  width: var(--button-size);
+  height: var(--button-size);
+  /* background-color: #484a4d; */
+  border-radius: 50%;
+  padding: 5px;
+  margin: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* transition: filter 300ms; */
+}
+
+.note-settings-left-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.note-settings-icon-right {
+  fill: black;
+  margin-left: auto;
+  width: 20px;
+}
+
+.priority-menu-icon {
+  fill: #50cd4f;
+}
+
+.priority1-icon {
+  fill: var(--priority1-icon-fill);
+}
+
+.priority2-icon {
+  fill: var(--priority2-icon-fill);
+}
+
+.move-icon {
+  fill: #3973ff;
+}
+
+.delete_icon {
+  fill: #ff3f3f;
 }

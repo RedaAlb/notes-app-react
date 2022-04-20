@@ -1,5 +1,7 @@
 import React, { useState } from "react"
+
 import TextareaAutosize from 'react-textarea-autosize';
+import NoteSettingsMenu from "./NoteSettingsMenu";
 
 import { CSSTransition } from "react-transition-group"
 
@@ -36,6 +38,7 @@ function NotesMenu() {
 
     const [noteTitleTB, setNoteTitleTB] = useState(props.noteTitle);
     const [notePrio, setNotePrio] = useState(props.notePrio);
+    const [noteSettingsOpen, setNoteSettingsOpen] = useState(false);
 
     const noteTitleChangeHandler = evt => {
       setNoteTitleTB(evt.target.value);
@@ -43,6 +46,12 @@ function NotesMenu() {
 
     // This might be needed later.
     // setNotePrio(props.notePrio);
+
+
+    const onNoteSettingsClick = () => {
+      setNoteSettingsOpen(!noteSettingsOpen);
+    }
+
 
     return (
       <div className="note-item" onClick={() => props.goToMenu && setActiveMenu(props.goToMenu)}>
@@ -61,7 +70,13 @@ function NotesMenu() {
                 placeholder="Title"
                 className={`note-title-textarea ${notePrio}`}
               />
-              <div className={`note-icon-right ${props.notePrio}`}>{<ThreeDots />}</div>
+              <div className={`note-icon-right ${props.notePrio}`}>
+                {<ThreeDots onClick={onNoteSettingsClick} />}
+
+                {noteSettingsOpen ? (
+                  <NoteSettingsMenu />  // Will need to pass in note id to move or delete in the note settings menu.
+                ) : null}
+              </div>
             </div>
           </div>
         ) : (
