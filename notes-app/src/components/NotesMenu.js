@@ -35,15 +35,10 @@ function NotesMenu() {
   function NoteItem(props) {
 
     const [noteTitleTB, setNoteTitleTB] = useState(props.noteTitle);
-    const [noteTextTB, setNoteTextText] = useState(props.noteText);
     const [notePrio, setNotePrio] = useState(props.notePrio);
 
     const noteTitleChangeHandler = evt => {
       setNoteTitleTB(evt.target.value);
-    };
-
-    const noteTextChangeHandler = evt => {
-      setNoteTextText(evt.target.value);
     };
 
     // This might be needed later.
@@ -68,14 +63,6 @@ function NotesMenu() {
               />
               <div className={`note-icon-right ${props.notePrio}`}>{<ThreeDots />}</div>
             </div>
-
-            <TextareaAutosize
-              cacheMeasurements
-              value={noteTextTB}
-              onChange={noteTextChangeHandler}
-              placeholder="Note"
-              className="note-text-textarea"
-            />
           </div>
         ) : (
           <div className="note-top">
