@@ -1,100 +1,14 @@
 :root {
-  --section-height: 64px;
-  --section-item-bg: #ffffff;
-  --section-item-color: #000000;
-  --section-item-hover-color: #6bff9c;
-  --section-item-right-icon-color: black;
-
   --note-item-hover-color: #6bc9ff;
   --note-item-right-icon-color: black;
   --note-prio1-bg-color: #a3ffb0;
   --note-prio2-bg-color: #f9ffa1;
-
-  --border-bottom-color: rgb(184, 184, 184);
-  --speed: 300ms;
-  --main-font: sans-serif;
-
   --priority1-icon-fill: rgb(58, 216, 58);
   --priority2-icon-fill: rgb(255, 204, 35);
+
+  --speed: 300ms;
 }
 
-.notes-menu {
-  background-color: var(--section-item-bg);
-}
-
-/* Section */
-.section-item {
-  height: var(--section-height);
-  display: flex;
-  align-items: center;
-  /* transition: background var(--speed); */
-  padding: 0rem;
-  color: var(--section-item-color);
-  border-bottom: 1px solid var(--border-bottom-color);
-  /* background-color: rgb(255, 175, 175); */
-}
-
-/* .section-item:hover {
-  background-color: var(--section-item-hover-color);
-} */
-
-
-.section-button {
-  --button-size: calc(var(--nav-size) * 0.5);
-  width: var(--button-size);
-  height: var(--button-size);
-  background-color: var(--section-item-hover-color);
-  border-radius: 50%;
-  padding: 5px;
-  margin: 2px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  /* transition: filter 300ms; */
-}
-
-/* .section-button:hover {
-  filter: brightness(1.2);
-} */
-
-.section-button svg {
-  fill: var(--text-color);
-  width: 20px;
-  height: 20px;
-}
-
-.section-right-items {
-  margin-left: auto;
-  display: flex;
-}
-
-.section-count {
-  margin: auto;
-  color: gray;
-}
-
-.section-icon-right {
-  fill: var(--section-item-right-icon-color);
-  margin-right: 8px;
-  margin-top: 4px;
-}
-
-.section-textbox {
-  border: none;
-  border-bottom: 1px solid var(--border-bottom-color);
-  font-size: 22px;
-  padding-left: 12px;
-  font-weight: 600;
-  line-height: calc(var(--section-height) - 2px);
-  /* background-color: rgb(169, 255, 241); */
-}
-
-.section-textbox-wrapper {
-  float: left;
-}
-
-
-/* Note */
 .note-item {
   display: flex;
   align-items: stretch;
@@ -107,7 +21,6 @@
 /* .note-item:hover {
   background-color: var(--note-item-hover-color);
 } */
-
 
 .note-top {
   display: flex;
@@ -138,16 +51,6 @@
   height: 20px;
 }
 
-textarea {
-  font-family: var(--main-font);
-}
-
-textarea:focus,
-input:focus {
-  outline: none;
-}
-
-
 .note-title-textarea {
   background-color: #ff8f8f;
   border: none;
@@ -175,7 +78,6 @@ input:focus {
   padding-right: 12px;
 }
 
-
 .prio-0 {
   background-color: var(--note-prio1-bg-color);
 }
@@ -193,7 +95,6 @@ input:focus {
 .note-header {
   display: flex;
 }
-
 
 .note-settings-menu {
   position: absolute;
