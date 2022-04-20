@@ -15,10 +15,6 @@ function NoteItem(props) {
     setNoteTitleTB(evt.target.value);
   };
 
-  // This might be needed later.
-  // setNotePrio(props.notePrio);
-
-
   const onNoteSettingsClick = () => {
     setNoteSettingsOpen(!noteSettingsOpen);
   }

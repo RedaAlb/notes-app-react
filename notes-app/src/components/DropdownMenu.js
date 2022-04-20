@@ -1,46 +1,35 @@
-import React, { useState } from "react"
-import { CSSTransition } from "react-transition-group"
-
-import { ReactComponent as ChevronIcon } from '../icons/chevron.svg';
-import { ReactComponent as ArrowIcon } from '../icons/arrow.svg';
+import React from "react"
 
 function DropdownMenu() {
 
-  const [activeMenu, setActiveMenu] = useState("main");
+  const DropdownItem = (props) => {
+    const itemOnClick = (buttonPressed) => {
 
-  function DropdownItem(props) {
+      if (buttonPressed === "save") {
+        console.log("Saved");
+      } else if (buttonPressed === "import") {
+        console.log("Imported");
+      }
+    }
+
     return (
-      <a href="/#" className="menu-item" onClick={() => props.goToMenu && setActiveMenu(props.goToMenu)}>
+      <div className="menu-item" onClick={() => itemOnClick(props.buttonName)}>
         {props.leftIcon ? <span className="icon-button">{props.leftIcon}</span> : null}
 
         {props.children}
 
         {props.rightIcon ? <span className="icon-right">{props.rightIcon}</span> : null}
-      </a>
+      </div>
     )
   }
 
+
   return (
     <div className="dropdown">
-      <CSSTransition in={activeMenu === "main"} unmountOnExit timeout={0} classNames="menu-primary">
-        <div className="menu">
-          <DropdownItem>Load</DropdownItem>
-          <DropdownItem rightIcon={<ChevronIcon />} goToMenu="settings">Settings</DropdownItem>
-        </div>
-      </CSSTransition>
-
-
-      <CSSTransition in={activeMenu === "settings"} unmountOnExit timeout={0} classNames="menu-secondary">
-        <div className="menu">
-          <DropdownItem leftIcon={<ArrowIcon />} goToMenu="main" />
-          <DropdownItem>Save</DropdownItem>
-          <DropdownItem>Save</DropdownItem>
-          <DropdownItem>Save</DropdownItem>
-          <DropdownItem>Save</DropdownItem>
-          <DropdownItem>Save</DropdownItem>
-        </div>
-      </CSSTransition>
-
+      <div className="menu">
+        <DropdownItem buttonName="save">Save</DropdownItem>
+        <DropdownItem buttonName="import">Import</DropdownItem>
+      </div>
     </div>
   )
 }

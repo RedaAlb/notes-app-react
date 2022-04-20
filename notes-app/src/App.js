@@ -1,19 +1,23 @@
-import React, { useState } from "react"
-
+import React from "react"
+import NavBar from "./components/NavBar";
+import Search from "./components/Search";
+import NavItem from "./components/NavItem";
 import DropdownMenu from "./components/DropdownMenu";
 import NotesMenu from "./components/NotesMenu";
 
-import { ReactComponent as SearchIcon } from './icons/search.svg';
 import { ReactComponent as ThreeDots } from './icons/three-dots.svg';
 
 function App() {
+
+  // Remember to only load the notes for that section neeeded, and not all notes for all sections...
 
   return (
     <div>
 
       <NavBar>
         <h1 className="navbar-title">Notes</h1>
-        <NavItem icon={<SearchIcon />} />
+
+        <Search />
 
         <NavItem icon={<ThreeDots />}>
           <DropdownMenu />
@@ -26,32 +30,5 @@ function App() {
     </div>
   );
 }
-
-
-function NavBar(props) {
-  return (
-    <nav className="navbar">
-      <ul className="navbar-nav">{props.children}</ul>
-    </nav>
-  )
-}
-
-
-function NavItem(props) {
-
-  const [open, setOpen] = useState(false);
-
-  return (
-    <li className="nav-item">
-      <a href="/#" className="icon-button" onClick={() => setOpen(!open)}>
-        {props.icon}
-      </a>
-
-      {open && props.children}
-
-    </li>
-  )
-}
-
 
 export default App;
