@@ -13,6 +13,12 @@ function NotesMainView() {
   const [activeMenu, setActiveMenu] = useState("main");
   const nodeRef = React.useRef(null);
 
+
+  const onAddButtonClick = () => {
+    console.log("Added");
+  }
+
+
   return (
     <div className="notes-main-view">
       <CSSTransition in={activeMenu === "main"} unmountOnExit timeout={0} classNames="menu-primary" nodeRef={nodeRef}>
@@ -45,7 +51,7 @@ function NotesMainView() {
         </div>
       </CSSTransition>
 
-      <button className="add-button"><AddIcon /></button>
+      <button className="add-button" onClick={onAddButtonClick}><AddIcon /></button>
     </div>
   )
 }
