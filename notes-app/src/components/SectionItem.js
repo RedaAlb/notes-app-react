@@ -25,7 +25,7 @@ function SectionItem(props) {
       />
 
       <a href="/#" className="section-item" onClick={() => props.goToMenu && props.setActiveMenuRef(props.goToMenu)}>
-        {props.leftIcon ? <div className="section-button">{props.leftIcon}</div> : null}
+        {props.leftIcon ? <div className="section-icon-left">{props.leftIcon}</div> : null}
 
         <div className="section-right-items">
           <div className="section-count">{props.sectionCount}</div>

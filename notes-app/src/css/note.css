@@ -1,26 +1,16 @@
 :root {
-  --note-item-hover-color: #6bc9ff;
   --note-item-right-icon-color: black;
   --note-prio1-bg-color: #a3ffb0;
   --note-prio2-bg-color: #f9ffa1;
   --priority1-icon-fill: rgb(58, 216, 58);
   --priority2-icon-fill: rgb(255, 204, 35);
-
-  --speed: 300ms;
 }
 
 .note-item {
   display: flex;
   align-items: stretch;
-  /* transition: background var(--speed); */
-  /* padding: 0.5rem; */
   color: var(--note-item-color);
-  /* border-bottom: 1px solid white; */
 }
-
-/* .note-item:hover {
-  background-color: var(--note-item-hover-color);
-} */
 
 .note-top {
   display: flex;
@@ -31,19 +21,13 @@
   --button-size: calc(var(--nav-size) * 0.5);
   width: var(--button-size);
   height: var(--button-size);
-  /* background-color: var(--note-item-hover-color); */
   border-radius: 50%;
   padding: 5px;
   margin: 2px;
   display: flex;
   align-items: center;
   justify-content: center;
-  /* transition: filter 300ms; */
 }
-
-/* .note-button:hover {
-  filter: brightness(1.2);
-} */
 
 .note-button svg {
   fill: var(--text-color);
@@ -75,7 +59,23 @@
   margin-left: auto;
   display: flex;
   align-items: center;
-  padding-right: 12px;
+  cursor: pointer;
+}
+
+.three-dots-btn {
+  height: 100%;
+  padding: 0px 12px;
+  user-select: none;
+}
+
+.three-dots-btn:hover {
+  background-color: var(--button-hover-bg);
+  transition: var(--buttons-transition-speed);
+}
+
+.three-dots-btn:active {
+  background-color: var(--button-active-bg);
+  transition: var(--buttons-transition-speed);
 }
 
 .prio-0 {
@@ -98,13 +98,10 @@
 
 .note-settings-menu {
   position: absolute;
-  /* top: 58px; */
   width: 250px;
   transform: translateY(+34%);
   background-color: white;
-  /* border: var(--border); */
   border-radius: 4px;
-  padding: 8px 8px;
   overflow: hidden;
   z-index: 500;
   box-shadow: 0 0px 11px 0px #6e6e6e;
@@ -115,24 +112,32 @@
   height: 40px;
   display: flex;
   align-items: center;
-  border-radius: var(--border-radius);
-  /* transition: background var(--speed); */
   color: black;
-  padding: 5px 0px;
+  padding: 5px 4px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.note-settings-menu-item:hover {
+  background-color: var(--button-hover-bg);
+  transition: var(--buttons-transition-speed);
+}
+
+.note-settings-menu-item:active {
+  background-color: var(--button-active-bg);
+  transition: var(--buttons-transition-speed);
 }
 
 .note-settings-left-icon {
   --button-size: calc(var(--nav-size) * 0.5);
   width: var(--button-size);
   height: var(--button-size);
-  /* background-color: #484a4d; */
   border-radius: 50%;
   padding: 5px;
   margin: 2px;
   display: flex;
   align-items: center;
   justify-content: center;
-  /* transition: filter 300ms; */
 }
 
 .note-settings-left-icon svg {

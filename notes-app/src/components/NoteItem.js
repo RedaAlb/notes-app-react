@@ -38,7 +38,7 @@ function NoteItem(props) {
               className={`note-title-textarea ${notePrio}`}
             />
             <div className={`note-icon-right ${props.notePrio}`}>
-              {<ThreeDots onClick={onNoteSettingsClick} />}
+              {<ThreeDots className="three-dots-btn" onClick={onNoteSettingsClick} />}
 
               {noteSettingsOpen ? (
                 <NoteSettingsMenu />  // Will need to pass in note id to move or delete in the note settings menu.

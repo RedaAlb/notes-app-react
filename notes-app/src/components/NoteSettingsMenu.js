@@ -42,7 +42,7 @@ function NoteSettingsMenu(props) {
 
   return (
     <div className="note-settings-menu">
-      <CSSTransition in={activeMenu === "main"} unmountOnExit timeout={0} classNames="menu-primary">
+      <CSSTransition in={activeMenu === "main"} unmountOnExit timeout={100} classNames="menu-primary">
         <div className="menu">
           <NoteSettingsItem leftIcon={<PriorityIcon />} rightIcon={<ChevronIcon />} goToMenu="prioSelection">Priority</NoteSettingsItem>
           <NoteSettingsItem leftIcon={<MoveIcon />} buttonName="move">Move</NoteSettingsItem>
@@ -51,7 +51,7 @@ function NoteSettingsMenu(props) {
       </CSSTransition>
 
 
-      <CSSTransition in={activeMenu === "prioSelection"} unmountOnExit timeout={0} classNames="menu-secondary">
+      <CSSTransition in={activeMenu === "prioSelection"} unmountOnExit timeout={100} classNames="menu-secondary">
         <div className="menu">
           <NoteSettingsItem leftIcon={<ArrowIcon />} goToMenu="main" />
           <NoteSettingsItem leftIcon={<Priority1Icon />} buttonName="priority1">Priority 1</NoteSettingsItem>

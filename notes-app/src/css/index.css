@@ -1,5 +1,7 @@
 :root {
   --main-font: sans-serif;
+  --button-hover-bg: rgba(235, 235, 235, 0.5);
+  --button-active-bg: rgba(207, 207, 207, 0.5);
   --buttons-transition-speed: 200ms;
 }
 
