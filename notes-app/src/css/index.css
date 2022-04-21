@@ -1,5 +1,6 @@
 :root {
   --main-font: sans-serif;
+  --buttons-transition-speed: 200ms;
 }
 
 body {
@@ -7,6 +8,7 @@ body {
   font-family: var(--main-font);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
 }
 
 a {
@@ -26,4 +28,29 @@ textarea {
 textarea:focus,
 input:focus {
   outline: none;
+}
+
+.add-button {
+  position: absolute;
+  border: none;
+  bottom: 26px;
+  right: 26px;
+  background: rgb(99, 215, 197);
+  border-radius: 50%;
+  fill: white;
+  display: flex;
+  padding: 20px;
+  cursor: pointer;
+  box-shadow: 0px 5px 10px 0px #bcbcbc;
+  transition: var(--buttons-transition-speed)
+}
+
+.add-button:active {
+  background-color: #46ff74;
+  transition: var(--buttons-transition-speed);
+}
+
+.add-button svg {
+  width: 26px;
+  height: 26px;
 }
