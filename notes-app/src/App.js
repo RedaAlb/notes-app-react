@@ -1,4 +1,6 @@
-import React from "react"
+import React, { useEffect, useState } from "react"
+import { child, get } from "firebase/database";
+
 import NavBar from "./components/NavBar";
 import Search from "./components/Search";
 import NavItem from "./components/NavItem";
@@ -7,9 +9,31 @@ import NotesMainView from "./components/NotesMainView";
 
 import { ReactComponent as ThreeDots } from './icons/three-dots.svg';
 
+import dbRef from "./Firebase";
+
+
 function App() {
 
-  // Remember to only load the notes for that section neeeded, and not all notes for all sections...
+  const [sections, setSections] = useState({});
+
+  const loadSections = () => {
+    get(child(dbRef, "/sections/")).then((snapshot) => {
+      if (snapshot.exists()) {
+        setSections(snapshot.val());
+        console.log("Loaded sections");
+
+      } else {
+        console.log("No data available");
+      }
+    }).catch((error) => {
+      console.error(error);
+    });
+  }
+
+  useEffect(() => {
+    loadSections();
+  }, [])
+
 
   return (
     <div>
@@ -25,7 +49,7 @@ function App() {
 
       </NavBar>
 
-      <NotesMainView />
+      <NotesMainView sections={sections} />
 
     </div>
   );

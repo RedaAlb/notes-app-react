@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 
 import TextareaAutosize from 'react-textarea-autosize';
 import NoteSettingsMenu from "./NoteSettingsMenu";
@@ -17,7 +17,12 @@ function NoteItem(props) {
 
   const onNoteSettingsClick = () => {
     setNoteSettingsOpen(!noteSettingsOpen);
-  }
+  };
+
+  useEffect(() => {
+    setNoteTitleTB(props.noteTitle);
+    setNotePrio(props.notePrio);
+  }, [props.noteTitle, props.notePrio])
 
 
   return (
@@ -37,7 +42,7 @@ function NoteItem(props) {
               placeholder="Title"
               className={`note-title-textarea ${notePrio}`}
             />
-            <div className={`note-icon-right ${props.notePrio}`}>
+            <div className={`note-icon-right ${notePrio}`}>
               {<ThreeDots className="three-dots-btn" onClick={onNoteSettingsClick} />}
 
               {noteSettingsOpen ? (

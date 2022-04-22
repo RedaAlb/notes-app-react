@@ -11,6 +11,11 @@ function SectionItem(props) {
     setTextboxValue(evt.target.value);
   };
 
+  const onSectionItemClick = (sectionKey) => {
+    props.loadSectionNotes(sectionKey);
+    props.goToMenu && props.setActiveMenuRef(props.goToMenu)
+  }
+
   return (
     <div>
       <AutowidthInput
@@ -24,14 +29,14 @@ function SectionItem(props) {
         wrapperClassName="section-textbox-wrapper"
       />
 
-      <a href="/#" className="section-item" onClick={() => props.goToMenu && props.setActiveMenuRef(props.goToMenu)}>
+      <div className="section-item" onClick={() => onSectionItemClick(props.sectionKey)}>
         {props.leftIcon ? <div className="section-icon-left">{props.leftIcon}</div> : null}
 
         <div className="section-right-items">
           <div className="section-count">{props.sectionCount}</div>
           <div className="section-icon-right"><ChevronIcon /></div>
         </div>
-      </a>
+      </div>
     </div>
   )
 }
