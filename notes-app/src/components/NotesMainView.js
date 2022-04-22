@@ -71,6 +71,7 @@ function NotesMainView(props) {
       const newSections = { ...sections };
       newSections[sectionKey] = newSection;
       setSections(newSections);
+
       console.log("Section added");
 
     } else if (activeMenu === "sectionNotes") {
@@ -95,6 +96,8 @@ function NotesMainView(props) {
                 sectionKey={sections[key].sectionKey}
                 sectionName={sections[key].sectionName}
                 sectionCount={sections[key].sectionCount}
+                sections={sections}
+                setSections={setSections}
                 loadSectionNotes={loadSectionNotes}
                 goToMenu="sectionNotes"
                 setActiveMenuRef={setActiveMenu}

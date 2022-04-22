@@ -19,6 +19,7 @@
   color: var(--section-item-color);
   border-bottom: 1px solid var(--border-bottom-color);
   cursor: pointer;
+  user-select: none;
 }
 
 .section-icon-left {
