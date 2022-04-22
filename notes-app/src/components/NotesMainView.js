@@ -136,6 +136,8 @@ function NotesMainView(props) {
                 noteText={sectionNotes[key].noteText}
                 notePrio={`prio-${sectionNotes[key].notePrio}`}
                 sectionKeyInView={sectionKeyInView}
+                sectionNotes={sectionNotes}
+                setSectionNotes={setSectionNotes}
                 setActiveMenuRef={setActiveMenu} />
             )
           })}

@@ -52,7 +52,12 @@ function NoteItem(props) {
               {<ThreeDots className="three-dots-btn" onClick={onNoteSettingsClick} />}
 
               {noteSettingsOpen ? (
-                <NoteSettingsMenu />  // Will need to pass in note id to move or delete in the note settings menu.
+                <NoteSettingsMenu
+                  sectionKeyInView={props.sectionKeyInView}
+                  noteKey={props.noteKey}
+                  sectionNotes={props.sectionNotes}
+                  setSectionNotes={props.setSectionNotes}
+                />
               ) : null}
             </div>
           </div>
