@@ -33,7 +33,7 @@ input:focus {
 }
 
 .add-button {
-  position: absolute;
+  position: fixed;
   border: none;
   bottom: 26px;
   right: 26px;

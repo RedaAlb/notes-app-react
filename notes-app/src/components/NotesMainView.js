@@ -1,5 +1,5 @@
-import React, { useState } from "react"
-import { child, get } from "firebase/database";
+import React, { useEffect, useState } from "react"
+import { child, get, ref, push, set } from "firebase/database";
 
 import { CSSTransition } from "react-transition-group"
 
@@ -9,28 +9,25 @@ import NoteItem from "./NoteItem";
 import { ReactComponent as ArrowIcon } from '../icons/arrow.svg';
 import { ReactComponent as AddIcon } from '../icons/add-icon.svg';
 
-import dbRef from "../Firebase";
+import db from "../Firebase";
 
 
 function NotesMainView(props) {
 
   const [activeMenu, setActiveMenu] = useState("main");
+  const [sections, setSections] = useState({});
   const [sectionNotes, setSectionNotes] = useState({});
 
   const nodeRef = React.useRef(null);
 
 
-  const onAddButtonClick = () => {
-    console.log("Added");
-  }
+  const loadSections = () => {
+    const dbRef = ref(db);
 
-
-  const loadSectionNotes = (sectionKey) => {
-    get(child(dbRef, `/${sectionKey}/`)).then((snapshot) => {
+    get(child(dbRef, "/sections/")).then((snapshot) => {
       if (snapshot.exists()) {
-        setSectionNotes(snapshot.val());
-        console.log("Section Notes Loaded");
-
+        setSections(snapshot.val());
+        console.log("Loaded sections");
       } else {
         console.log("No data available");
       }
@@ -40,18 +37,66 @@ function NotesMainView(props) {
   }
 
 
+  const loadSectionNotes = (sectionKey) => {
+    const dbRef = ref(db);
+    get(child(dbRef, `/${sectionKey}/`)).then((snapshot) => {
+      if (snapshot.exists()) {
+        setSectionNotes(snapshot.val());
+        console.log("Section Notes Loaded");
+
+      } else {
+        console.log("No data available");
+        setSectionNotes({});
+      }
+    }).catch((error) => {
+      console.error(error);
+    });
+  }
+
+
+  const onAddButtonClick = () => {
+    if (activeMenu === "main") {
+      const sectionKey = push(ref(db)).key;
+
+      const newSection = {
+        sectionKey: sectionKey,
+        sectionName: "",
+        sectionCount: 0,
+      }
+
+      // Add to the database.
+      set(ref(db, `/sections/${sectionKey}`), newSection);
+
+      // Add locally without needing to re-loading all the sections to re-render.
+      const newSections = { ...sections };
+      newSections[sectionKey] = newSection;
+      setSections(newSections);
+      console.log("Section added");
+
+    } else if (activeMenu === "sectionNotes") {
+      console.log("Note added");
+    }
+  }
+
+  useEffect(() => {
+    if (activeMenu === "main") {
+      loadSections()
+    }
+  }, [activeMenu])
+
+
   return (
     <div className="notes-main-view">
       <CSSTransition in={activeMenu === "main"} unmountOnExit timeout={0} classNames="menu-primary" nodeRef={nodeRef}>
         <div className="menu">
-          {Object.keys(props.sections).map((key, index) => {
+          {Object.keys(sections).map((key, index) => {
             return (
               <SectionItem key={index}
-                sectionKey={props.sections[key].sectionKey}
-                sectionName={props.sections[key].sectionName}
-                sectionCount={props.sections[key].sectionCount}
+                sectionKey={sections[key].sectionKey}
+                sectionName={sections[key].sectionName}
+                sectionCount={sections[key].sectionCount}
                 loadSectionNotes={loadSectionNotes}
-                goToMenu="sectionNotes" // Key
+                goToMenu="sectionNotes"
                 setActiveMenuRef={setActiveMenu}
               />
             )
