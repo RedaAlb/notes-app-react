@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react"
+import { ref, update } from "firebase/database";
 
 import TextareaAutosize from 'react-textarea-autosize';
 import NoteSettingsMenu from "./NoteSettingsMenu";
 
 import { ReactComponent as ThreeDots } from '../icons/three-dots.svg';
 
+import db from "../Firebase";
 
 function NoteItem(props) {
   const [noteTitleTB, setNoteTitleTB] = useState(props.noteTitle);
@@ -13,6 +15,10 @@ function NoteItem(props) {
 
   const noteTitleChangeHandler = evt => {
     setNoteTitleTB(evt.target.value);
+
+    const updates = {};
+    updates[props.sectionKeyInView + "/" + props.noteKey + "/noteTitle"] = evt.target.value;
+    update(ref(db), updates);
   };
 
   const onNoteSettingsClick = () => {

@@ -131,9 +131,11 @@ function NotesMainView(props) {
           {Object.keys(sectionNotes).map((key, index) => {
             return (
               <NoteItem key={index}
+                noteKey={sectionNotes[key].noteKey}
                 noteTitle={sectionNotes[key].noteTitle}
                 noteText={sectionNotes[key].noteText}
                 notePrio={`prio-${sectionNotes[key].notePrio}`}
+                sectionKeyInView={sectionKeyInView}
                 setActiveMenuRef={setActiveMenu} />
             )
           })}
