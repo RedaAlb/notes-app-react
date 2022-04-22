@@ -17,6 +17,7 @@ function NotesMainView(props) {
   const [activeMenu, setActiveMenu] = useState("main");
   const [sections, setSections] = useState({});
   const [sectionNotes, setSectionNotes] = useState({});
+  const [sectionKeyInView, setSectionKeyInView] = useState("");
 
   const nodeRef = React.useRef(null);
 
@@ -56,25 +57,40 @@ function NotesMainView(props) {
 
   const onAddButtonClick = () => {
     if (activeMenu === "main") {
-      const sectionKey = push(ref(db)).key;
+      const newSectionKey = push(ref(db)).key;
 
       const newSection = {
-        sectionKey: sectionKey,
+        sectionKey: newSectionKey,
         sectionName: "",
         sectionCount: 0,
       }
 
       // Add to the database.
-      set(ref(db, `/sections/${sectionKey}`), newSection);
+      set(ref(db, `/sections/${newSectionKey}`), newSection);
 
       // Add locally without needing to re-loading all the sections to re-render.
       const newSections = { ...sections };
-      newSections[sectionKey] = newSection;
+      newSections[newSectionKey] = newSection;
       setSections(newSections);
 
       console.log("Section added");
 
     } else if (activeMenu === "sectionNotes") {
+      const newNoteKey = push(ref(db)).key;
+
+      const newNote = {
+        noteKey: newNoteKey,
+        notePrio: 0,
+        noteText: "",
+        noteTitle: "",
+      }
+
+      set(ref(db, `/${sectionKeyInView}/${newNoteKey}/`), newNote);
+
+      const newSectionNotes = { ...sectionNotes };
+      newSectionNotes[newNoteKey] = newNote;
+      setSectionNotes(newSectionNotes);
+
       console.log("Note added");
     }
   }
@@ -99,6 +115,7 @@ function NotesMainView(props) {
                 sections={sections}
                 setSections={setSections}
                 loadSectionNotes={loadSectionNotes}
+                setSectionKeyInView={setSectionKeyInView}
                 goToMenu="sectionNotes"
                 setActiveMenuRef={setActiveMenu}
               />

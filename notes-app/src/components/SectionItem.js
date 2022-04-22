@@ -44,13 +44,15 @@ function SectionItem(props) {
 
   const onSectionItemClick = () => {
     props.loadSectionNotes(props.sectionKey);
+    props.setSectionKeyInView(props.sectionKey);
+
     props.goToMenu && props.setActiveMenuRef(props.goToMenu)
   }
 
 
   const defaultOptions = {
     shouldPreventDefault: true,
-    delay: 500,
+    delay: 700,
   };
 
   const longPressEvent = LongPress(onSectionItemLongPress, onSectionItemClick, defaultOptions);
