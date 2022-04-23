@@ -55,6 +55,7 @@ function NoteItem(props) {
                 <NoteSettingsMenu
                   sectionKeyInView={props.sectionKeyInView}
                   noteKey={props.noteKey}
+                  sections={props.sections}
                   sectionNotes={props.sectionNotes}
                   setSectionNotes={props.setSectionNotes}
                 />

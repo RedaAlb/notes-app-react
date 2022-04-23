@@ -11,17 +11,20 @@ import { ReactComponent as Priority1Icon } from "../icons/priority1-icon.svg"
 import { ReactComponent as Priority2Icon } from "../icons/priority2-icon.svg"
 
 import db from "../Firebase";
+import NoteMoveDialog from "./NoteMoveDialog";
 
 function NoteSettingsMenu(props) {
   const [activeMenu, setActiveMenu] = useState("main");
 
   const NoteSettingsItem = (props) => {
 
+    const [open, setOpen] = useState(false);
+
     const onSettingsItemClick = (buttonPressed) => {
       if (props.goToMenu) setActiveMenu(props.goToMenu);
 
       if (buttonPressed === "move") {
-        console.log("Moved");
+        setOpen(true);
       }
 
       else if (buttonPressed === "delete") {
@@ -59,12 +62,24 @@ function NoteSettingsMenu(props) {
     }
 
     return (
-      <div className="note-settings-menu-item" onClick={() => onSettingsItemClick(props.buttonName)}>
-        {props.leftIcon ? <span className="note-settings-left-icon">{props.leftIcon}</span> : null}
+      <div>
+        <div className="note-settings-menu-item" onClick={() => onSettingsItemClick(props.buttonName)}>
+          {props.leftIcon ? <span className="note-settings-left-icon">{props.leftIcon}</span> : null}
 
-        {props.children}
+          {props.children}
 
-        {props.rightIcon ? <span className="note-settings-icon-right">{props.rightIcon}</span> : null}
+          {props.rightIcon ? <span className="note-settings-icon-right">{props.rightIcon}</span> : null}
+        </div>
+
+        <NoteMoveDialog
+          open={open}
+          setOpen={setOpen}
+          sectionKeyInView={props.props.sectionKeyInView}
+          noteKey={props.props.noteKey}
+          sections={props.props.sections}
+          sectionNotes={props.props.sectionNotes}
+          setSectionNotes={props.props.setSectionNotes} />
+
       </div>
     )
   }
