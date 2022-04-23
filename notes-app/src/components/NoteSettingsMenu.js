@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import { CSSTransition } from "react-transition-group"
-import { ref, remove } from "firebase/database";
+import { ref, remove, update } from "firebase/database";
 
 import { ReactComponent as ChevronIcon } from '../icons/chevron.svg';
 import { ReactComponent as ArrowIcon } from '../icons/arrow.svg';
@@ -22,26 +22,39 @@ function NoteSettingsMenu(props) {
 
       if (buttonPressed === "move") {
         console.log("Moved");
-      } else if (buttonPressed === "delete") {
+      }
 
+      else if (buttonPressed === "delete") {
         if (window.confirm("Delete note?")) {
           const noteToDelRef = ref(db, `/${props.props.sectionKeyInView}/${props.props.noteKey}`);
           remove(noteToDelRef);
 
-          const newNotes = { ...props.props.sectionNotes };
-          delete newNotes[props.props.noteKey];
-          props.props.setSectionNotes(newNotes);
+          const newSectionNotes = { ...props.props.sectionNotes };
+          delete newSectionNotes[props.props.noteKey];
+          props.props.setSectionNotes(newSectionNotes);
 
-          console.log("Deleted section");
-        } else {
-          console.log("Deletetion section cancelled");
+          console.log("Deleted note");
         }
-        console.log("Deleted");
+      }
 
-      } else if (buttonPressed === "priority1") {
-        console.log("Priority1");
-      } else if (buttonPressed === "priority2") {
-        console.log("Priority2");
+      else if (buttonPressed === "priority1") {
+        const updates = {};
+        updates["/" + props.props.sectionKeyInView + "/" + props.props.noteKey + "/notePrio"] = 0;
+        update(ref(db), updates);
+
+        const newSectionNotes = { ...props.props.sectionNotes };
+        newSectionNotes[props.props.noteKey].notePrio = 0;
+        props.props.setSectionNotes(newSectionNotes);
+      }
+
+      else if (buttonPressed === "priority2") {
+        const updates = {};
+        updates["/" + props.props.sectionKeyInView + "/" + props.props.noteKey + "/notePrio"] = 1;
+        update(ref(db), updates);
+
+        const newSectionNotes = { ...props.props.sectionNotes };
+        newSectionNotes[props.props.noteKey].notePrio = 1;
+        props.props.setSectionNotes(newSectionNotes);
       }
     }
 
