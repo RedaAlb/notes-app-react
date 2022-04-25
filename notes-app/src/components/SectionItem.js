@@ -9,30 +9,29 @@ import LongPress from "../LongPress";
 
 
 function SectionItem(props) {
+  const [section, setSection] = useState(props.section);
 
-  const [textboxValue, setTextboxValue] = useState(props.sectionName);
-  const [sectionCount, setSectionCount] = useState(props.sectionCount);
-
-
-  const changeHandler = evt => {
-    setTextboxValue(evt.target.value);
+  const onSectionNameChange = evt => {
+    const newSection = { ...section };
+    newSection.sectionName = evt.target.value;
+    setSection(newSection);
 
     const updates = {};
-    updates["/sections/" + props.sectionKey + "/sectionName"] = evt.target.value;
+    updates["/sections/" + section.sectionKey + "/sectionName"] = evt.target.value;
     update(ref(db), updates);
   }
 
 
   const onSectionItemLongPress = () => {
-    if (window.confirm(`Delete section "${textboxValue}" ?`)) {
-      const sectionToDelRef = ref(db, `/sections/${props.sectionKey}`);
+    if (window.confirm(`Delete section "${section.sectionName}" ?`)) {
+      const sectionToDelRef = ref(db, `/sections/${section.sectionKey}`);
       remove(sectionToDelRef);
 
-      const notesToDelRef = ref(db, `/${props.sectionKey}/`);
+      const notesToDelRef = ref(db, `/${section.sectionKey}/`);
       remove(notesToDelRef);
 
       const newSections = { ...props.sections };
-      delete newSections[props.sectionKey];
+      delete newSections[section.sectionKey];
       props.setSections(newSections);
 
       console.log("Deleted section");
@@ -43,32 +42,30 @@ function SectionItem(props) {
 
 
   const onSectionItemClick = () => {
-    props.loadSectionNotes(props.sectionKey);
-    props.setSectionKeyInView(props.sectionKey);
+    props.loadSectionNotes(section.sectionKey);
+    props.setSectionKeyInView(section.sectionKey);
 
     props.goToMenu && props.setActiveMenuRef(props.goToMenu)
   }
 
-
-  const defaultOptions = {
+  const sectionItemClickOptions = {
     shouldPreventDefault: true,
     delay: 700,
   };
 
-  const longPressEvent = LongPress(onSectionItemLongPress, onSectionItemClick, defaultOptions);
+  const longPressEvent = LongPress(onSectionItemLongPress, onSectionItemClick, sectionItemClickOptions);
 
 
   useEffect(() => {
-    setTextboxValue(props.sectionName);
-    setSectionCount(props.sectionCount);
-  }, [props.sectionName, props.sectionCount])
+    setSection(props.section);
+  }, [props.section])
 
 
   return (
     <div>
       <AutowidthInput
-        value={textboxValue}
-        onChange={changeHandler}
+        value={section.sectionName}
+        onChange={onSectionNameChange}
         extraWidth={2}
         placeholderIsMinWidth={true}
         minWidth={100}
@@ -81,7 +78,7 @@ function SectionItem(props) {
         {props.leftIcon ? <div className="section-icon-left">{props.leftIcon}</div> : null}
 
         <div className="section-right-items">
-          <div className="section-count">{sectionCount}</div>
+          <div className="section-count">{section.sectionCount}</div>
           <div className="section-icon-right"><ChevronIcon /></div>
         </div>
       </div>

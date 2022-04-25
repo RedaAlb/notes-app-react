@@ -17,7 +17,7 @@ function NotesMainView(props) {
   const [activeMenu, setActiveMenu] = useState("main");
   const [sections, setSections] = useState({});
   const [sectionNotes, setSectionNotes] = useState({});
-  const [sectionKeyInView, setSectionKeyInView] = useState("");
+  const [sectionKeyInView, setSectionKeyInView] = useState("");  // Tracks which was section pressed.
 
   const nodeRef = React.useRef(null);
 
@@ -109,9 +109,7 @@ function NotesMainView(props) {
           {Object.keys(sections).map((key, index) => {
             return (
               <SectionItem key={index}
-                sectionKey={sections[key].sectionKey}
-                sectionName={sections[key].sectionName}
-                sectionCount={sections[key].sectionCount}
+                section={sections[key]}
                 sections={sections}
                 setSections={setSections}
                 loadSectionNotes={loadSectionNotes}
@@ -131,10 +129,7 @@ function NotesMainView(props) {
           {Object.keys(sectionNotes).map((key, index) => {
             return (
               <NoteItem key={index}
-                noteKey={sectionNotes[key].noteKey}
-                noteTitle={sectionNotes[key].noteTitle}
-                noteText={sectionNotes[key].noteText}
-                notePrio={`prio-${sectionNotes[key].notePrio}`}
+                note={sectionNotes[key]}
                 sections={sections}
                 sectionKeyInView={sectionKeyInView}
                 sectionNotes={sectionNotes}

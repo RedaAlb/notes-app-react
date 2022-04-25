@@ -2,33 +2,35 @@ import React, { useEffect, useState } from "react"
 import { ref, update } from "firebase/database";
 
 import TextareaAutosize from 'react-textarea-autosize';
-import NoteSettingsMenu from "./NoteSettingsMenu";
-
-import { ReactComponent as ThreeDots } from '../icons/three-dots.svg';
+import NoteOptionsMenu from "./NoteOptionsMenu";
+import IconButton from '@mui/material/IconButton';
+import Stack from '@mui/material/Stack';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 import db from "../Firebase";
 
 function NoteItem(props) {
-  const [noteTitleTB, setNoteTitleTB] = useState(props.noteTitle);
-  const [notePrio, setNotePrio] = useState(props.notePrio);
-  const [noteSettingsOpen, setNoteSettingsOpen] = useState(false);
+  const [note, setNote] = useState(props.note);
+  const [noteOptionsAnchor, setNoteOptionsAnchor] = useState(null);
+
+
+  const onNoteOptionsClick = (event) => {
+    setNoteOptionsAnchor(event.currentTarget);
+  }
 
   const noteTitleChangeHandler = evt => {
-    setNoteTitleTB(evt.target.value);
+    const newNote = { ...note };
+    newNote.noteTitle = evt.target.value;
+    setNote(newNote);
 
     const updates = {};
-    updates[props.sectionKeyInView + "/" + props.noteKey + "/noteTitle"] = evt.target.value;
+    updates[props.sectionKeyInView + "/" + note.noteKey + "/noteTitle"] = evt.target.value;
     update(ref(db), updates);
-  };
-
-  const onNoteSettingsClick = () => {
-    setNoteSettingsOpen(!noteSettingsOpen);
-  };
+  }
 
   useEffect(() => {
-    setNoteTitleTB(props.noteTitle);
-    setNotePrio(props.notePrio);
-  }, [props.noteTitle, props.notePrio])
+    setNote(props.note);
+  }, [props.note])
 
 
   return (
@@ -43,15 +45,22 @@ function NoteItem(props) {
             ) : null}
             <TextareaAutosize
               cacheMeasurements
-              value={noteTitleTB}
+              value={note.noteTitle}
               onChange={noteTitleChangeHandler}
               placeholder="Title"
-              className={`note-title-textarea ${notePrio}`}
+              className={`note-title-textarea prio-${note.notePrio}`}
             />
-            <div className={`note-icon-right ${notePrio}`}>
-              {<ThreeDots className="three-dots-btn" onClick={onNoteSettingsClick} />}
+            <div className={`note-icon-right prio-${note.notePrio}`}>
+              <Stack direction="row" spacing={1}>
+                <IconButton onClick={onNoteOptionsClick}> <MoreVertIcon /> </IconButton>
+              </Stack>
 
-              {noteSettingsOpen ? (
+              <NoteOptionsMenu
+                noteOptionsAnchor={noteOptionsAnchor}
+                setNoteOptionsAnchor={setNoteOptionsAnchor}
+              />
+
+              {/* {noteSettingsOpen ? (
                 <NoteSettingsMenu
                   sectionKeyInView={props.sectionKeyInView}
                   noteKey={props.noteKey}
@@ -59,7 +68,7 @@ function NoteItem(props) {
                   sectionNotes={props.sectionNotes}
                   setSectionNotes={props.setSectionNotes}
                 />
-              ) : null}
+              ) : null} */}
             </div>
           </div>
         </div>
