@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { child, get, ref, push, set } from "firebase/database";
+import { child, get, ref, push, set, update } from "firebase/database";
 
 import { CSSTransition } from "react-transition-group"
 
@@ -92,6 +92,15 @@ function NotesMainView(props) {
       const newSectionNotes = { ...sectionNotes };
       newSectionNotes[newNoteKey] = newNote;
       setSectionNotes(newSectionNotes);
+
+      // Adding one to the section count.
+      const updates = {};
+      updates["/sections/" + sectionKeyInView + "/sectionCount"] = sections[sectionKeyInView].sectionCount + 1;
+      update(ref(db), updates);
+
+      const newSections = { ...sections };
+      newSections[sectionKeyInView].sectionCount = sections[sectionKeyInView].sectionCount + 1
+      setSections(newSections);
 
       console.log("Note added");
     }
