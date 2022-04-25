@@ -7,9 +7,11 @@ import SectionItem from "./SectionItem";
 import NoteItem from "./NoteItem";
 
 import { ReactComponent as ArrowIcon } from '../icons/arrow.svg';
-import { ReactComponent as AddIcon } from '../icons/add-icon.svg';
 
 import db from "../Firebase";
+
+import Fab from '@mui/material/Fab';
+import AddIcon from '@mui/icons-material/Add';
 
 
 function NotesMainView(props) {
@@ -140,7 +142,9 @@ function NotesMainView(props) {
         </div>
       </CSSTransition>
 
-      <button className="add-button" onClick={onAddButtonClick}><AddIcon /></button>
+      <Fab onClick={onAddButtonClick} size="large" color="primary" aria-label="add" sx={{ position: "absolute", bottom: 26, right: 26 }}>
+        <AddIcon />
+      </Fab>
 
     </div>
   )
