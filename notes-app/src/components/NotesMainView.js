@@ -163,6 +163,17 @@ function NotesMainView(props) {
   }
 
 
+  const setNotePriority = (noteKey, newPriority) => {
+    const updates = {};
+    updates["/" + sectionKeyInView + "/" + noteKey + "/notePrio"] = newPriority;
+    update(ref(db), updates);
+
+    const newSectionNotes = { ...sectionNotes };
+    newSectionNotes[noteKey].notePrio = newPriority;
+    setSectionNotes(newSectionNotes);
+  }
+
+
   useEffect(() => {
     if (activeMenu === "main") {
       loadSections()
@@ -200,6 +211,7 @@ function NotesMainView(props) {
                 sectionKeyInView={sectionKeyInView}
                 deleteNote={deleteNote}
                 moveNote={moveNote}
+                setNotePriority={setNotePriority}
                 sections={sections}
                 setActiveMenuRef={setActiveMenu} />
             )

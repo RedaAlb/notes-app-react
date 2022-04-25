@@ -11,6 +11,7 @@ import CircleIcon from '@mui/icons-material/Circle';
 import DeleteNoteDialog from './DeleteNoteDialog';
 import NoteMoveDialog from './NoteMoveDialog';
 
+
 function NoteOptionsMenu(props) {
 
   const [prioMenuAnchor, setPrioMenuAnchor] = useState(null);
@@ -32,7 +33,6 @@ function NoteOptionsMenu(props) {
 
   const onMoveClick = () => {
     setOpenMoveDialog(true);
-    console.log("Move pressed");
   }
 
   const onDeleteClick = () => {
@@ -40,11 +40,11 @@ function NoteOptionsMenu(props) {
   }
 
   const onPriority1Click = () => {
-    console.log("Priority 1 pressed");
+    props.setNotePriority(props.note.noteKey, 0);
   }
 
   const onPriority2Click = () => {
-    console.log("Priority 2 pressed");
+    props.setNotePriority(props.note.noteKey, 1);
   }
 
 
@@ -110,8 +110,6 @@ function NoteOptionsMenu(props) {
         note={props.note}
         moveNote={props.moveNote}
       />
-
-
     </>
   )
 }
