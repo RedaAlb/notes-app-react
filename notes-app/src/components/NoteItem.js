@@ -56,19 +56,11 @@ function NoteItem(props) {
               </Stack>
 
               <NoteOptionsMenu
+                note={note}
+                deleteNote={props.deleteNote}
                 noteOptionsAnchor={noteOptionsAnchor}
                 setNoteOptionsAnchor={setNoteOptionsAnchor}
               />
-
-              {/* {noteSettingsOpen ? (
-                <NoteSettingsMenu
-                  sectionKeyInView={props.sectionKeyInView}
-                  noteKey={props.noteKey}
-                  sections={props.sections}
-                  sectionNotes={props.sectionNotes}
-                  setSectionNotes={props.setSectionNotes}
-                />
-              ) : null} */}
             </div>
           </div>
         </div>

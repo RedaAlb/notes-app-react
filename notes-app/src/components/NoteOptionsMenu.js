@@ -8,12 +8,13 @@ import DriveFileMoveIcon from '@mui/icons-material/DriveFileMove';
 import FormatLineSpacingIcon from '@mui/icons-material/FormatLineSpacing';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CircleIcon from '@mui/icons-material/Circle';
+import DeleteNoteDialog from './DeleteNoteDialog';
 
 function NoteOptionsMenu(props) {
 
-  const noteMenuOpen = Boolean(props.noteOptionsAnchor);
-
   const [prioMenuAnchor, setPrioMenuAnchor] = useState(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const noteMenuOpen = Boolean(props.noteOptionsAnchor);
   const prioMenuOpen = Boolean(prioMenuAnchor);
 
   const onPrioOptionsClick = (event) => {
@@ -27,13 +28,12 @@ function NoteOptionsMenu(props) {
     props.setNoteOptionsAnchor(null);
   }
 
-
   const onMoveClick = () => {
     console.log("Move pressed");
   }
 
   const onDeleteClick = () => {
-    console.log("Delete pressed");
+    setDeleteDialogOpen(true);
   }
 
   const onPriority1Click = () => {
@@ -52,9 +52,7 @@ function NoteOptionsMenu(props) {
         anchorEl={props.noteOptionsAnchor}
         open={noteMenuOpen}
         onClose={onMenuClose}
-        MenuListProps={{
-          'aria-labelledby': 'basic-button',
-        }}
+        MenuListProps={{ 'aria-labelledby': 'basic-button', }}
         PaperProps={{ style: { width: 180, }, }}
       >
         <MenuItem onClick={onPrioOptionsClick}>
@@ -80,14 +78,8 @@ function NoteOptionsMenu(props) {
         anchorEl={prioMenuAnchor}
         open={prioMenuOpen}
         onClose={onPrioMenuClose}
-        anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'left',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'left',
-        }}
+        anchorOrigin={{ vertical: 'top', horizontal: 'left', }}
+        transformOrigin={{ vertical: 'top', horizontal: 'left', }}
         PaperProps={{ style: { width: 180, }, }}
       >
         <MenuItem onClick={onPriority1Click}>
@@ -100,6 +92,14 @@ function NoteOptionsMenu(props) {
           <ListItemText>Priority 2</ListItemText>
         </MenuItem>
       </Menu>
+
+      <DeleteNoteDialog
+        note={props.note}
+        deleteNote={props.deleteNote}
+        setDeleteDialogOpen={setDeleteDialogOpen}
+        deleteDialogOpen={deleteDialogOpen}
+      />
+
     </>
   )
 }

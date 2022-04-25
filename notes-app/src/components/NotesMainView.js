@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { child, get, ref, push, set, update } from "firebase/database";
+import { child, get, ref, push, set, update, remove } from "firebase/database";
 
 import { CSSTransition } from "react-transition-group"
 
@@ -94,17 +94,38 @@ function NotesMainView(props) {
       setSectionNotes(newSectionNotes);
 
       // Adding one to the section count.
-      const updates = {};
-      updates["/sections/" + sectionKeyInView + "/sectionCount"] = sections[sectionKeyInView].sectionCount + 1;
-      update(ref(db), updates);
-
-      const newSections = { ...sections };
-      newSections[sectionKeyInView].sectionCount = sections[sectionKeyInView].sectionCount + 1
-      setSections(newSections);
+      changeSectionCount(sectionKeyInView, 1);
 
       console.log("Note added");
     }
   }
+
+
+  const changeSectionCount = (sectionKey, value) => {
+    const updates = {};
+    updates["/sections/" + sectionKey + "/sectionCount"] = sections[sectionKey].sectionCount + value;
+    update(ref(db), updates);
+
+    const newSections = { ...sections };
+    newSections[sectionKey].sectionCount = sections[sectionKey].sectionCount + value;
+    setSections(newSections);
+  }
+
+
+  const deleteNote = (noteKey) => {
+    // Delete from DB.
+    const noteToDelRef = ref(db, `/${sectionKeyInView}/${noteKey}`);
+    remove(noteToDelRef);
+
+    // Delete locally.
+    const newSectionNotes = { ...sectionNotes };
+    delete newSectionNotes[noteKey];
+    setSectionNotes(newSectionNotes);
+
+    // Update section count.
+    changeSectionCount(sectionKeyInView, -1);
+  }
+
 
   useEffect(() => {
     if (activeMenu === "main") {
@@ -141,10 +162,8 @@ function NotesMainView(props) {
             return (
               <NoteItem key={index}
                 note={sectionNotes[key]}
-                sections={sections}
                 sectionKeyInView={sectionKeyInView}
-                sectionNotes={sectionNotes}
-                setSectionNotes={setSectionNotes}
+                deleteNote={deleteNote}
                 setActiveMenuRef={setActiveMenu} />
             )
           })}
