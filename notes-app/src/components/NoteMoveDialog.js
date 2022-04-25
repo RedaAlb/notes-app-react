@@ -12,17 +12,13 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 
-import { ref, set, remove } from "firebase/database";
-
-import db from '../Firebase';
 
 function NoteMoveDialog(props) {
-
 
   const [sectionSelected, setSectionSelected] = useState("");
 
   const handleClose = () => {
-    props.setOpen(false);
+    props.setOpenMoveDialog(false);
   }
 
   const handleMaxWidthChange = (event) => {
@@ -30,24 +26,14 @@ function NoteMoveDialog(props) {
   }
 
   const onSectionMoveClick = () => {
-    if (sectionSelected !== "" && sectionSelected !== props.sectionKeyInView) {
-      const noteToMove = props.sectionNotes[props.noteKey];
-      // Add to new section then delete from current section.
-      set(ref(db, `/${sectionSelected}/${props.noteKey}`), noteToMove);
-
-      const noteToDelRef = ref(db, `/${props.sectionKeyInView}/${props.noteKey}`);
-      remove(noteToDelRef);
-
-      const newSectionNotes = { ...props.sectionNotes };
-      delete newSectionNotes[props.noteKey];
-      props.setSectionNotes(newSectionNotes);
-    }
+    props.moveNote(props.note.noteKey, sectionSelected);
+    props.setOpenMoveDialog(false);
   }
 
 
   return (
     <>
-      <Dialog open={props.open} onClose={handleClose} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+      <Dialog open={props.openMoveDialog} onClose={handleClose} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
         <DialogTitle id="alert-dialog-title">Select section to move note to:</DialogTitle>
 
         <DialogContent>
@@ -55,8 +41,12 @@ function NoteMoveDialog(props) {
           <Box noValidate component="form" sx={{ display: 'flex', flexDirection: 'column', m: 'auto', width: 'fit-content', }}>
             <FormControl sx={{ mt: 2, minWidth: 180 }}>
               <InputLabel htmlFor="section">Sections</InputLabel>
-              <Select value={sectionSelected} onChange={handleMaxWidthChange} label="sections" inputProps={{ name: 'section', id: 'section', }}>
-
+              <Select
+                value={sectionSelected}
+                onChange={handleMaxWidthChange}
+                label="sections"
+                inputProps={{ name: 'section', id: 'section', }}
+              >
                 {Object.keys(props.sections).map((key, index) => {
                   return (
                     <MenuItem key={index}

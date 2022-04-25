@@ -9,11 +9,13 @@ import FormatLineSpacingIcon from '@mui/icons-material/FormatLineSpacing';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CircleIcon from '@mui/icons-material/Circle';
 import DeleteNoteDialog from './DeleteNoteDialog';
+import NoteMoveDialog from './NoteMoveDialog';
 
 function NoteOptionsMenu(props) {
 
   const [prioMenuAnchor, setPrioMenuAnchor] = useState(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [openMoveDialog, setOpenMoveDialog] = useState(false);
   const noteMenuOpen = Boolean(props.noteOptionsAnchor);
   const prioMenuOpen = Boolean(prioMenuAnchor);
 
@@ -29,6 +31,7 @@ function NoteOptionsMenu(props) {
   }
 
   const onMoveClick = () => {
+    setOpenMoveDialog(true);
     console.log("Move pressed");
   }
 
@@ -99,6 +102,15 @@ function NoteOptionsMenu(props) {
         setDeleteDialogOpen={setDeleteDialogOpen}
         deleteDialogOpen={deleteDialogOpen}
       />
+
+      <NoteMoveDialog
+        setOpenMoveDialog={setOpenMoveDialog}
+        openMoveDialog={openMoveDialog}
+        sections={props.sections}
+        note={props.note}
+        moveNote={props.moveNote}
+      />
+
 
     </>
   )

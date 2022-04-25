@@ -142,6 +142,27 @@ function NotesMainView(props) {
   }
 
 
+  const moveNote = (noteKey, newSectionKey) => {
+    if (newSectionKey !== "" && newSectionKey !== sectionKeyInView) {
+      // DB: Add note to new section
+      const noteToMove = sectionNotes[noteKey];
+      set(ref(db, `/${newSectionKey}/${noteKey}`), noteToMove);
+
+      // DB: Delete note from current/old section.
+      const noteToDelRef = ref(db, `/${sectionKeyInView}/${noteKey}`);
+      remove(noteToDelRef);
+
+      // Local: Delete note from sectionNotes.
+      const newSectionNotes = { ...sectionNotes };
+      delete newSectionNotes[noteKey];
+      setSectionNotes(newSectionNotes);
+
+      changeSectionCount(sectionKeyInView, -1);
+      changeSectionCount(newSectionKey, 1);
+    }
+  }
+
+
   useEffect(() => {
     if (activeMenu === "main") {
       loadSections()
@@ -178,6 +199,8 @@ function NotesMainView(props) {
                 note={sectionNotes[key]}
                 sectionKeyInView={sectionKeyInView}
                 deleteNote={deleteNote}
+                moveNote={moveNote}
+                sections={sections}
                 setActiveMenuRef={setActiveMenu} />
             )
           })}

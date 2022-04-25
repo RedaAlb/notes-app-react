@@ -58,6 +58,8 @@ function NoteItem(props) {
               <NoteOptionsMenu
                 note={note}
                 deleteNote={props.deleteNote}
+                moveNote={props.moveNote}
+                sections={props.sections}
                 noteOptionsAnchor={noteOptionsAnchor}
                 setNoteOptionsAnchor={setNoteOptionsAnchor}
               />
