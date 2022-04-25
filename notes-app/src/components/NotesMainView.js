@@ -82,9 +82,9 @@ function NotesMainView(props) {
 
       const newNote = {
         noteKey: newNoteKey,
-        notePrio: 0,
-        noteText: "",
         noteTitle: "",
+        noteText: "",
+        notePrio: 0,
       }
 
       set(ref(db, `/${sectionKeyInView}/${newNoteKey}/`), newNote);
@@ -109,6 +109,21 @@ function NotesMainView(props) {
     const newSections = { ...sections };
     newSections[sectionKey].sectionCount = sections[sectionKey].sectionCount + value;
     setSections(newSections);
+  }
+
+
+  const deleteSection = (sectionKey) => {
+    const sectionToDelRef = ref(db, `/sections/${sectionKey}`);
+    remove(sectionToDelRef);
+
+    const notesToDelRef = ref(db, `/${sectionKey}/`);
+    remove(notesToDelRef);
+
+    const newSections = { ...sections };
+    delete newSections[sectionKey];
+    setSections(newSections);
+
+    console.log("Deleted section");
   }
 
 
@@ -142,8 +157,7 @@ function NotesMainView(props) {
             return (
               <SectionItem key={index}
                 section={sections[key]}
-                sections={sections}
-                setSections={setSections}
+                deleteSection={deleteSection}
                 loadSectionNotes={loadSectionNotes}
                 setSectionKeyInView={setSectionKeyInView}
                 goToMenu="sectionNotes"

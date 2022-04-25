@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
 import AutowidthInput from "react-autowidth-input";
-import { ref, update, remove } from "firebase/database";
+import { ref, update } from "firebase/database";
 
 import { ReactComponent as ChevronIcon } from '../icons/chevron.svg';
 
@@ -24,21 +24,9 @@ function SectionItem(props) {
 
   const onSectionItemLongPress = () => {
     if (window.confirm(`Delete section "${section.sectionName}" ?`)) {
-      const sectionToDelRef = ref(db, `/sections/${section.sectionKey}`);
-      remove(sectionToDelRef);
-
-      const notesToDelRef = ref(db, `/${section.sectionKey}/`);
-      remove(notesToDelRef);
-
-      const newSections = { ...props.sections };
-      delete newSections[section.sectionKey];
-      props.setSections(newSections);
-
-      console.log("Deleted section");
-    } else {
-      console.log("Deletetion section cancelled");
+      props.deleteSection(section.sectionKey)
     }
-  };
+  }
 
 
   const onSectionItemClick = () => {
@@ -48,10 +36,12 @@ function SectionItem(props) {
     props.goToMenu && props.setActiveMenuRef(props.goToMenu)
   }
 
+
   const sectionItemClickOptions = {
     shouldPreventDefault: true,
     delay: 700,
-  };
+  }
+
 
   const longPressEvent = LongPress(onSectionItemLongPress, onSectionItemClick, sectionItemClickOptions);
 
