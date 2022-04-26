@@ -2,8 +2,6 @@
   --note-item-right-icon-color: black;
   --note-prio1-bg-color: #a3ffb0;
   --note-prio2-bg-color: #f9ffa1;
-  --priority1-icon-fill: rgb(58, 216, 58);
-  --priority2-icon-fill: rgb(255, 204, 35);
 }
 
 .note-item {
@@ -62,22 +60,6 @@
   cursor: pointer;
 }
 
-.three-dots-btn {
-  height: 100%;
-  padding: 0px 12px;
-  user-select: none;
-}
-
-.three-dots-btn:hover {
-  background-color: var(--button-hover-bg);
-  transition: var(--buttons-transition-speed);
-}
-
-.three-dots-btn:active {
-  background-color: var(--button-active-bg);
-  transition: var(--buttons-transition-speed);
-}
-
 .prio-0 {
   background-color: var(--note-prio1-bg-color);
 }
@@ -94,79 +76,4 @@
 
 .note-header {
   display: flex;
-}
-
-.note-settings-menu {
-  position: absolute;
-  width: 250px;
-  transform: translateY(+34%);
-  background-color: white;
-  border-radius: 4px;
-  overflow: hidden;
-  z-index: 500;
-  box-shadow: 0 0px 11px 0px #6e6e6e;
-  right: 50px;
-}
-
-.note-settings-menu-item {
-  height: 40px;
-  display: flex;
-  align-items: center;
-  color: black;
-  padding: 5px 4px;
-  cursor: pointer;
-  user-select: none;
-}
-
-.note-settings-menu-item:hover {
-  background-color: var(--button-hover-bg);
-  transition: var(--buttons-transition-speed);
-}
-
-.note-settings-menu-item:active {
-  background-color: var(--button-active-bg);
-  transition: var(--buttons-transition-speed);
-}
-
-.note-settings-left-icon {
-  --button-size: calc(var(--nav-size) * 0.5);
-  width: var(--button-size);
-  height: var(--button-size);
-  border-radius: 50%;
-  padding: 5px;
-  margin: 2px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.note-settings-left-icon svg {
-  width: 20px;
-  height: 20px;
-}
-
-.note-settings-icon-right {
-  fill: black;
-  margin-left: auto;
-  width: 20px;
-}
-
-.priority-menu-icon {
-  fill: #50cd4f;
-}
-
-.priority1-icon {
-  fill: var(--priority1-icon-fill);
-}
-
-.priority2-icon {
-  fill: var(--priority2-icon-fill);
-}
-
-.move-icon {
-  fill: #3973ff;
-}
-
-.delete_icon {
-  fill: #ff3f3f;
 }

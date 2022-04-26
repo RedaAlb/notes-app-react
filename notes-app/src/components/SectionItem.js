@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom";
 import AutowidthInput from "react-autowidth-input";
 import { ref, update } from "firebase/database";
 
@@ -11,6 +12,8 @@ import { Stack } from "@mui/material";
 
 
 function SectionItem(props) {
+  const navigate = useNavigate();
+
   const [section, setSection] = useState(props.section);
 
   const onSectionNameChange = evt => {
@@ -35,7 +38,9 @@ function SectionItem(props) {
     props.loadSectionNotes(section.sectionKey);
     props.setSectionInView(section);
 
-    props.goToMenu && props.setActiveMenu(props.goToMenu)
+    navigate("/notes")
+
+    props.setActiveMenu("notes");
   }
 
 

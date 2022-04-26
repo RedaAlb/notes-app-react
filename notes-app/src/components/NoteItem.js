@@ -34,44 +34,38 @@ function NoteItem(props) {
 
 
   return (
-    <div className="note-item" onClick={() => props.goToMenu && props.setActiveMenu(props.goToMenu)}>
-      {!props.goToMenu ? (
-        <div className="note-content-wrapper">
-          <div className="note-header">
-            {props.leftIcon ? (
-              <div className="note-top">
-                <span className="note-button">{props.leftIcon}</span>
-              </div>
-            ) : null}
-            <TextareaAutosize
-              cacheMeasurements
-              value={note.noteTitle}
-              onChange={noteTitleChangeHandler}
-              placeholder="Title"
-              className={`note-title-textarea prio-${note.notePrio}`}
-            />
-            <div className={`note-icon-right prio-${note.notePrio}`}>
-              <Stack direction="row" spacing={1}>
-                <IconButton onClick={onNoteOptionsClick}> <MoreVertIcon /> </IconButton>
-              </Stack>
-
-              <NoteOptionsMenu
-                note={note}
-                deleteNote={props.deleteNote}
-                moveNote={props.moveNote}
-                setNotePriority={props.setNotePriority}
-                sections={props.sections}
-                noteOptionsAnchor={noteOptionsAnchor}
-                setNoteOptionsAnchor={setNoteOptionsAnchor}
-              />
+    <div className="note-item">
+      <div className="note-content-wrapper">
+        <div className="note-header">
+          {props.leftIcon ? (
+            <div className="note-top">
+              <span className="note-button">{props.leftIcon}</span>
             </div>
+          ) : null}
+          <TextareaAutosize
+            cacheMeasurements
+            value={note.noteTitle}
+            onChange={noteTitleChangeHandler}
+            placeholder="Title"
+            className={`note-title-textarea prio-${note.notePrio}`}
+          />
+          <div className={`note-icon-right prio-${note.notePrio}`}>
+            <Stack direction="row" spacing={1}>
+              <IconButton onClick={onNoteOptionsClick}> <MoreVertIcon /> </IconButton>
+            </Stack>
+
+            <NoteOptionsMenu
+              note={note}
+              deleteNote={props.deleteNote}
+              moveNote={props.moveNote}
+              setNotePriority={props.setNotePriority}
+              sections={props.sections}
+              noteOptionsAnchor={noteOptionsAnchor}
+              setNoteOptionsAnchor={setNoteOptionsAnchor}
+            />
           </div>
         </div>
-      ) : (
-        <div className="note-top">
-          <span className="note-button">{props.leftIcon}</span>
-        </div>
-      )}
+      </div>
     </div>
   )
 }
