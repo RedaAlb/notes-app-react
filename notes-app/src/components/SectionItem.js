@@ -2,10 +2,12 @@ import React, { useEffect, useState } from "react"
 import AutowidthInput from "react-autowidth-input";
 import { ref, update } from "firebase/database";
 
-import { ReactComponent as ChevronIcon } from '../icons/chevron.svg';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 import db from "../Firebase";
 import LongPress from "../LongPress";
+
+import { Stack } from "@mui/material";
 
 
 function SectionItem(props) {
@@ -68,8 +70,13 @@ function SectionItem(props) {
         {props.leftIcon ? <div className="section-icon-left">{props.leftIcon}</div> : null}
 
         <div className="section-right-items">
-          <div className="section-count">{section.sectionCount}</div>
-          <div className="section-icon-right"><ChevronIcon /></div>
+
+          <Stack direction="row" spacing={0} marginRight={2}>
+            <div className="section-count">{section.sectionCount}</div>
+            <ChevronRightIcon fontSize="medium" />
+          </Stack>
+
+          {/* <div className="section-icon-right"><ChevronIcon /></div> */}
         </div>
       </div>
     </div>

@@ -51,12 +51,6 @@
   color: gray;
 }
 
-.section-icon-right {
-  fill: var(--section-item-right-icon-color);
-  margin-right: 8px;
-  margin-top: 4px;
-}
-
 .section-textbox {
   border: none;
   border-bottom: 1px solid var(--border-bottom-color);
@@ -64,6 +58,7 @@
   padding-left: 12px;
   font-weight: 600;
   line-height: calc(var(--section-height) - 2px);
+  background: transparent;
 }
 
 .section-textbox-wrapper {

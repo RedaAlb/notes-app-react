@@ -182,9 +182,9 @@ function NotesMainView(props) {
 
 
   return (
-    <div className="notes-main-view">
+    <div>
       <CSSTransition in={activeMenu === "main"} unmountOnExit timeout={0} classNames="menu-primary" nodeRef={nodeRef}>
-        <div className="menu">
+        <div>
           {Object.keys(sections).map((key, index) => {
             return (
               <SectionItem key={index}
@@ -201,7 +201,7 @@ function NotesMainView(props) {
       </CSSTransition>
 
       <CSSTransition in={activeMenu === "sectionNotes"} unmountOnExit timeout={0} classNames="menu-secondary" nodeRef={nodeRef}>
-        <div className="menu">
+        <div>
           <NoteItem leftIcon={<ArrowIcon />} goToMenu="main" setActiveMenuRef={setActiveMenu} />
 
           {Object.keys(sectionNotes).map((key, index) => {
