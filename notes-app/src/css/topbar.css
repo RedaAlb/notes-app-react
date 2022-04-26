@@ -1,0 +1,36 @@
+:root {
+  --search-icon-url: url(../icons/search.svg);
+}
+
+.search-box {
+  width: 22px;
+  height: 22px;
+  border-style: none;
+  border-radius: 20px;
+  padding: 10px;
+  background-color: transparent;
+  outline: none;
+  transition-duration: 500ms;
+  cursor: pointer;
+  background-image: var(--search-icon-url);
+  background-position-x: 9px;
+  background-position-y: center;
+  background-size: 22px;
+  background-repeat: no-repeat;
+  font-size: 22px;
+  color: transparent;
+  overflow: hidden;
+}
+
+.search-box:focus {
+  width: 300px;
+  cursor: text;
+  padding-left: 14px;
+  color: #272727;
+}
+
+.search-box:hover,
+.search-box:focus {
+  background-color: #ffffff;
+  background-image: var(--search-icon-url);
+}

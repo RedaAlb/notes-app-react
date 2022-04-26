@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 
-function Search(props) {
+function SearchBox(props) {
   const [searchValue, setSearchValue] = useState("");
 
   const searchValueOnChange = (e) => {
@@ -9,7 +9,7 @@ function Search(props) {
 
   return (
     <input className="search-box" type="text" value={searchValue} onChange={searchValueOnChange} />
-  );
+  )
 }
 
-export default Search;
+export default SearchBox;
