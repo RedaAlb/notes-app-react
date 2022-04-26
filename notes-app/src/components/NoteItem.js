@@ -24,7 +24,7 @@ function NoteItem(props) {
     setNote(newNote);
 
     const updates = {};
-    updates[props.sectionKeyInView + "/" + note.noteKey + "/noteTitle"] = evt.target.value;
+    updates[props.sectionInView.sectionKey + "/" + note.noteKey + "/noteTitle"] = evt.target.value;
     update(ref(db), updates);
   }
 
@@ -34,7 +34,7 @@ function NoteItem(props) {
 
 
   return (
-    <div className="note-item" onClick={() => props.goToMenu && props.setActiveMenuRef(props.goToMenu)}>
+    <div className="note-item" onClick={() => props.goToMenu && props.setActiveMenu(props.goToMenu)}>
       {!props.goToMenu ? (
         <div className="note-content-wrapper">
           <div className="note-header">

@@ -14,7 +14,7 @@ import { Stack } from '@mui/material';
 import SearchBox from './SearchBox';
 
 
-function TopBar(props) {
+function SectionsTopBar(props) {
   const [moreOptionsAnchor, setMoreOptionsAnchor] = useState(null);
   const isMoreOptionsOpen = Boolean(moreOptionsAnchor);
 
@@ -62,7 +62,7 @@ function TopBar(props) {
       <AppBar position="static" style={{ background: "#6200EE" }}>
         <Toolbar>
           <Typography variant="h6" noWrap component="div">
-            Notes
+            Sections
           </Typography>
 
           <Box sx={{ flexGrow: 1 }} />
@@ -80,4 +80,4 @@ function TopBar(props) {
   )
 }
 
-export default TopBar;
+export default SectionsTopBar;

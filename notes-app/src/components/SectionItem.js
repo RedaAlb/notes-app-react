@@ -33,9 +33,9 @@ function SectionItem(props) {
 
   const onSectionItemClick = () => {
     props.loadSectionNotes(section.sectionKey);
-    props.setSectionKeyInView(section.sectionKey);
+    props.setSectionInView(section);
 
-    props.goToMenu && props.setActiveMenuRef(props.goToMenu)
+    props.goToMenu && props.setActiveMenu(props.goToMenu)
   }
 
 

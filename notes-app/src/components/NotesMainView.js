@@ -3,15 +3,12 @@ import { child, get, ref, push, set, update, remove } from "firebase/database";
 
 import { CSSTransition } from "react-transition-group"
 
-import SectionItem from "./SectionItem";
-import NoteItem from "./NoteItem";
-
-import { ReactComponent as ArrowIcon } from '../icons/arrow.svg';
-
 import db from "../Firebase";
 
 import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
+import SectionsView from "./SectionsView";
+import NotesView from "./NotesView";
 
 
 function NotesMainView(props) {
@@ -19,7 +16,7 @@ function NotesMainView(props) {
   const [activeMenu, setActiveMenu] = useState("main");
   const [sections, setSections] = useState({});
   const [sectionNotes, setSectionNotes] = useState({});
-  const [sectionKeyInView, setSectionKeyInView] = useState("");  // Tracks which was section pressed.
+  const [sectionInView, setSectionInView] = useState({});  // Tracks which was section pressed.
 
   const nodeRef = React.useRef(null);
 
@@ -87,14 +84,14 @@ function NotesMainView(props) {
         notePrio: 0,
       }
 
-      set(ref(db, `/${sectionKeyInView}/${newNoteKey}/`), newNote);
+      set(ref(db, `/${sectionInView.sectionKey}/${newNoteKey}/`), newNote);
 
       const newSectionNotes = { ...sectionNotes };
       newSectionNotes[newNoteKey] = newNote;
       setSectionNotes(newSectionNotes);
 
       // Adding one to the section count.
-      changeSectionCount(sectionKeyInView, 1);
+      changeSectionCount(sectionInView.sectionKey, 1);
 
       console.log("Note added");
     }
@@ -129,7 +126,7 @@ function NotesMainView(props) {
 
   const deleteNote = (noteKey) => {
     // Delete from DB.
-    const noteToDelRef = ref(db, `/${sectionKeyInView}/${noteKey}`);
+    const noteToDelRef = ref(db, `/${sectionInView.sectionKey}/${noteKey}`);
     remove(noteToDelRef);
 
     // Delete locally.
@@ -138,18 +135,18 @@ function NotesMainView(props) {
     setSectionNotes(newSectionNotes);
 
     // Update section count.
-    changeSectionCount(sectionKeyInView, -1);
+    changeSectionCount(sectionInView.sectionKey, -1);
   }
 
 
   const moveNote = (noteKey, newSectionKey) => {
-    if (newSectionKey !== "" && newSectionKey !== sectionKeyInView) {
+    if (newSectionKey !== "" && newSectionKey !== sectionInView.sectionKey) {
       // DB: Add note to new section
       const noteToMove = sectionNotes[noteKey];
       set(ref(db, `/${newSectionKey}/${noteKey}`), noteToMove);
 
       // DB: Delete note from current/old section.
-      const noteToDelRef = ref(db, `/${sectionKeyInView}/${noteKey}`);
+      const noteToDelRef = ref(db, `/${sectionInView.sectionKey}/${noteKey}`);
       remove(noteToDelRef);
 
       // Local: Delete note from sectionNotes.
@@ -157,7 +154,7 @@ function NotesMainView(props) {
       delete newSectionNotes[noteKey];
       setSectionNotes(newSectionNotes);
 
-      changeSectionCount(sectionKeyInView, -1);
+      changeSectionCount(sectionInView.sectionKey, -1);
       changeSectionCount(newSectionKey, 1);
     }
   }
@@ -165,7 +162,7 @@ function NotesMainView(props) {
 
   const setNotePriority = (noteKey, newPriority) => {
     const updates = {};
-    updates["/" + sectionKeyInView + "/" + noteKey + "/notePrio"] = newPriority;
+    updates["/" + sectionInView.sectionKey + "/" + noteKey + "/notePrio"] = newPriority;
     update(ref(db), updates);
 
     const newSectionNotes = { ...sectionNotes };
@@ -182,48 +179,34 @@ function NotesMainView(props) {
 
 
   return (
-    <div>
+    <>
       <CSSTransition in={activeMenu === "main"} unmountOnExit timeout={0} classNames="menu-primary" nodeRef={nodeRef}>
-        <div>
-          {Object.keys(sections).map((key, index) => {
-            return (
-              <SectionItem key={index}
-                section={sections[key]}
-                deleteSection={deleteSection}
-                loadSectionNotes={loadSectionNotes}
-                setSectionKeyInView={setSectionKeyInView}
-                goToMenu="sectionNotes"
-                setActiveMenuRef={setActiveMenu}
-              />
-            )
-          })}
-        </div>
+        <SectionsView
+          sections={sections}
+          deleteSection={deleteSection}
+          loadSectionNotes={loadSectionNotes}
+          setSectionInView={setSectionInView}
+          setActiveMenu={setActiveMenu}
+        />
       </CSSTransition>
 
       <CSSTransition in={activeMenu === "sectionNotes"} unmountOnExit timeout={0} classNames="menu-secondary" nodeRef={nodeRef}>
-        <div>
-          <NoteItem leftIcon={<ArrowIcon />} goToMenu="main" setActiveMenuRef={setActiveMenu} />
-
-          {Object.keys(sectionNotes).map((key, index) => {
-            return (
-              <NoteItem key={index}
-                note={sectionNotes[key]}
-                sectionKeyInView={sectionKeyInView}
-                deleteNote={deleteNote}
-                moveNote={moveNote}
-                setNotePriority={setNotePriority}
-                sections={sections}
-                setActiveMenuRef={setActiveMenu} />
-            )
-          })}
-        </div>
+        <NotesView
+          sectionInView={sectionInView}
+          sectionNotes={sectionNotes}
+          deleteNote={deleteNote}
+          moveNote={moveNote}
+          setNotePriority={setNotePriority}
+          sections={sections}
+          setActiveMenu={setActiveMenu}
+        />
       </CSSTransition>
 
       <Fab onClick={onAddButtonClick} size="large" color="primary" aria-label="add" sx={{ position: "absolute", bottom: 26, right: 26 }}>
         <AddIcon />
       </Fab>
 
-    </div>
+    </>
   )
 }
 

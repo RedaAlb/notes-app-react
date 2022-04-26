@@ -2,17 +2,15 @@ import React from "react"
 
 import NotesMainView from "./components/NotesMainView";
 
-import TopBar from "./components/TopBar";
+import SectionsTopBar from "./components/SectionsTopBar";
 
 
 function App() {
   return (
     <div>
-      <TopBar />
-
       <NotesMainView />
     </div>
-  );
+  )
 }
 
 export default App;
