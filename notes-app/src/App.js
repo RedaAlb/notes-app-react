@@ -8,6 +8,7 @@ import db from "./Firebase";
 
 import SectionsView from "./components/SectionsView";
 import NotesView from "./components/NotesView";
+import { AnimatePresence } from "framer-motion";
 
 
 function App() {
@@ -15,7 +16,6 @@ function App() {
   const [sections, setSections] = useState({});
   const [sectionNotes, setSectionNotes] = useState({});
   const [sectionInView, setSectionInView] = useState({});  // Tracks which was section pressed.
-
 
   const loadSections = () => {
     const dbRef = ref(db);
@@ -130,9 +130,10 @@ function App() {
   }, [activeMenu])
 
 
+
   return (
-    <>
-      <Router>
+    <Router>
+      <AnimatePresence>
         <Routes>
           <Route path="/" element={<SectionsView
             sections={sections}
@@ -158,8 +159,8 @@ function App() {
           <Route path="*" element={<h1>No page found</h1>} />
 
         </Routes>
-      </Router>
-    </>
+      </AnimatePresence>
+    </Router>
   )
 }
 
