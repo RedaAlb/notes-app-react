@@ -26,7 +26,7 @@ function NoteMoveDialog(props) {
   }
 
   const onSectionMoveClick = () => {
-    props.moveNote(props.note.noteKey, sectionSelected);
+    props.dataHandler.moveNote(props.note, props.sectionInView.sectionKey, sectionSelected);
     props.setOpenMoveDialog(false);
   }
 

@@ -2,12 +2,9 @@ import React, { useEffect } from 'react';
 import SectionItem from './SectionItem';
 import SectionsTopBar from './SectionsTopBar';
 
-import { ref, push, set } from "firebase/database";
-
 import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 
-import db from '../Firebase';
 import Animate from './Animate';
 
 
@@ -28,23 +25,7 @@ function SectionsView(props) {
 
 
   const onAddButtonClick = () => {
-    const newSectionKey = push(ref(db)).key;
-
-    const newSection = {
-      sectionKey: newSectionKey,
-      sectionName: "",
-      sectionCount: 0,
-    }
-
-    // Add to the database.
-    set(ref(db, `/sections/${newSectionKey}`), newSection);
-
-    // Add locally without needing to re-loading all the sections to re-render.
-    const newSections = { ...props.sections };
-    newSections[newSectionKey] = newSection;
-    props.setSections(newSections);
-
-    console.log("Section added");
+    props.dataHandler.addSection();
   }
 
   return (
@@ -56,8 +37,7 @@ function SectionsView(props) {
           return (
             <SectionItem key={index}
               section={props.sections[key]}
-              deleteSection={props.deleteSection}
-              loadSectionNotes={props.loadSectionNotes}
+              dataHandler={props.dataHandler}
               setSectionInView={props.setSectionInView}
               setActiveMenu={props.setActiveMenu}
             />

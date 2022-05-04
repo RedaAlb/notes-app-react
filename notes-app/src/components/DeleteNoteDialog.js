@@ -13,7 +13,7 @@ function DeleteNoteDialog(props) {
   }
 
   const deleteNote = () => {
-    props.deleteNote(props.note.noteKey);
+    props.dataHandler.deleteNote(props.note.noteKey, props.sectionInView.sectionKey);
     props.setDeleteDialogOpen(false);
   }
 

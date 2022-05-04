@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react"
-import { ref, update } from "firebase/database";
 
 import TextareaAutosize from 'react-textarea-autosize';
 import NoteOptionsMenu from "./NoteOptionsMenu";
@@ -7,7 +6,6 @@ import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
-import db from "../Firebase";
 
 function NoteItem(props) {
   const [note, setNote] = useState(props.note);
@@ -19,13 +17,14 @@ function NoteItem(props) {
   }
 
   const noteTitleChangeHandler = evt => {
-    const newNote = { ...note };
-    newNote.noteTitle = evt.target.value;
-    setNote(newNote);
+    const tVal = evt.target.value;
 
-    const updates = {};
-    updates[props.sectionInView.sectionKey + "/" + note.noteKey + "/noteTitle"] = evt.target.value;
-    update(ref(db), updates);
+    setNote(prevNote => ({
+      ...prevNote,
+      noteTitle: tVal
+    }));
+
+    props.dataHandler.changeNoteTitle(note.noteKey, props.sectionInView.sectionKey, tVal);
   }
 
   useEffect(() => {
@@ -56,10 +55,10 @@ function NoteItem(props) {
 
             <NoteOptionsMenu
               note={note}
-              deleteNote={props.deleteNote}
-              moveNote={props.moveNote}
-              setNotePriority={props.setNotePriority}
+              setNote={setNote}
+              dataHandler={props.dataHandler}
               sections={props.sections}
+              sectionInView={props.sectionInView}
               noteOptionsAnchor={noteOptionsAnchor}
               setNoteOptionsAnchor={setNoteOptionsAnchor}
             />

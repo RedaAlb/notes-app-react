@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom";
 import AutowidthInput from "react-autowidth-input";
-import { ref, update } from "firebase/database";
 
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
-import db from "../Firebase";
 import LongPress from "../LongPress";
 
 import { Stack } from "@mui/material";
@@ -17,25 +15,26 @@ function SectionItem(props) {
   const [section, setSection] = useState(props.section);
 
   const onSectionNameChange = evt => {
-    const newSection = { ...section };
-    newSection.sectionName = evt.target.value;
-    setSection(newSection);
+    const tVal = evt.target.value;
 
-    const updates = {};
-    updates["/sections/" + section.sectionKey + "/sectionName"] = evt.target.value;
-    update(ref(db), updates);
+    setSection(prevSection => ({
+      ...prevSection,
+      sectionName: tVal
+    }));
+
+    props.dataHandler.changeSectionName(section.sectionKey, tVal);
   }
 
 
   const onSectionItemLongPress = () => {
     if (window.confirm(`Delete section "${section.sectionName}" ?`)) {
-      props.deleteSection(section.sectionKey)
+      props.dataHandler.deleteSection(section.sectionKey);
     }
   }
 
 
   const onSectionItemClick = () => {
-    props.loadSectionNotes(section.sectionKey);
+    props.dataHandler.loadSectionNotes(section.sectionKey);
     props.setSectionInView(section);
 
     navigate("/notes")

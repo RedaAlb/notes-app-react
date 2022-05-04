@@ -40,11 +40,21 @@ function NoteOptionsMenu(props) {
   }
 
   const onPriority1Click = () => {
-    props.setNotePriority(props.note.noteKey, 0);
+    props.dataHandler.setNotePriority(props.note.noteKey, props.sectionInView.sectionKey, 0);
+
+    props.setNote(prevNote => ({
+      ...prevNote,
+      notePrio: 0
+    }));
   }
 
   const onPriority2Click = () => {
-    props.setNotePriority(props.note.noteKey, 1);
+    props.dataHandler.setNotePriority(props.note.noteKey, props.sectionInView.sectionKey, 1);
+
+    props.setNote(prevNote => ({
+      ...prevNote,
+      notePrio: 1
+    }));
   }
 
 
@@ -98,7 +108,8 @@ function NoteOptionsMenu(props) {
 
       <DeleteNoteDialog
         note={props.note}
-        deleteNote={props.deleteNote}
+        dataHandler={props.dataHandler}
+        sectionInView={props.sectionInView}
         setDeleteDialogOpen={setDeleteDialogOpen}
         deleteDialogOpen={deleteDialogOpen}
       />
@@ -108,7 +119,8 @@ function NoteOptionsMenu(props) {
         openMoveDialog={openMoveDialog}
         sections={props.sections}
         note={props.note}
-        moveNote={props.moveNote}
+        dataHandler={props.dataHandler}
+        sectionInView={props.sectionInView}
       />
     </>
   )
