@@ -2,11 +2,10 @@ import React, { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom";
 import AutowidthInput from "react-autowidth-input";
 
+import { Stack } from "@mui/material";
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 import LongPress from "../LongPress";
-
-import { Stack } from "@mui/material";
 
 
 function SectionItem(props) {

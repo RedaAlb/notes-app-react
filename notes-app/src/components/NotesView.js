@@ -1,4 +1,7 @@
 import React from 'react';
+import { useNavigate } from "react-router-dom";
+import { App } from '@capacitor/app';
+
 import NotesTopBar from './NotesTopBar';
 import NoteItem from './NoteItem';
 
@@ -14,11 +17,21 @@ const animation = {
   exit: { opacity: 1, x: 0 },
 }
 
+
 function NotesView(props) {
+  const navigate = useNavigate();
 
   const onAddButtonClick = () => {
     props.dataHandler.addNote(props.sectionInView);
   }
+
+  App.addListener('backButton', ({ d }) => {
+    console.log("Back button pressed");
+
+    props.setActiveMenu("main");
+    navigate("/");
+  })
+
 
   return (
     <div>
@@ -31,8 +44,7 @@ function NotesView(props) {
               note={props.sectionNotes[key]}
               sectionInView={props.sectionInView}
               dataHandler={props.dataHandler}
-              sections={props.sections}
-              setActiveMenu={props.setActiveMenu} />
+              sections={props.sections} />
           )
         })}
       </Animate>
