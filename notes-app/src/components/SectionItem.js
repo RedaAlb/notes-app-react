@@ -6,12 +6,15 @@ import { Stack } from "@mui/material";
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 import { useLongPress } from "use-long-press";
+import SectionOptionsMenu from "./SectionOptionsMenu";
 
 
 function SectionItem(props) {
   const navigate = useNavigate();
 
   const [section, setSection] = useState(props.section);
+  const [sectionOptionsAnchor, setSectionOptionsAnchor] = useState(null);
+
 
   const onSectionNameChange = evt => {
     const tVal = evt.target.value;
@@ -35,10 +38,8 @@ function SectionItem(props) {
   }
 
 
-  const onSectionItemLongPress = () => {
-    if (window.confirm(`Delete section "${section.sectionName}" ?`)) {
-      props.dataHandler.deleteSection(section.sectionKey);
-    }
+  const onSectionItemLongPress = (event) => {
+    setSectionOptionsAnchor(event.target);
   }
 
 
@@ -76,10 +77,15 @@ function SectionItem(props) {
             <div className="section-count">{section.sectionCount}</div>
             <ChevronRightIcon fontSize="medium" />
           </Stack>
-
-          {/* <div className="section-icon-right"><ChevronIcon /></div> */}
         </div>
       </div>
+
+      <SectionOptionsMenu
+        section={section}
+        dataHandler={props.dataHandler}
+        sectionOptionsAnchor={sectionOptionsAnchor}
+        setSectionOptionsAnchor={setSectionOptionsAnchor}
+      />
     </div>
   )
 }
