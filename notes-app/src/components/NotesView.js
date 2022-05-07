@@ -34,7 +34,7 @@ function NotesView(props) {
 
 
   return (
-    <div>
+    <div className="notes-view">
       <NotesTopBar sectionInView={props.sectionInView} />
 
       <Animate animation={animation}>

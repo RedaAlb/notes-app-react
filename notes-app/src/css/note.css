@@ -4,6 +4,10 @@
   --note-prio2-bg-color: #f9ffa1;
 }
 
+.notes-view {
+  overflow: hidden;
+}
+
 .note-item {
   display: flex;
   align-items: stretch;
