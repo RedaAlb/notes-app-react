@@ -61,12 +61,12 @@ function NoteOptionsMenu(props) {
   return (
     <>
       <Menu
-        id="basic-menu"
+        id="note-options-menu"
         anchorEl={props.noteOptionsAnchor}
         open={noteMenuOpen}
         onClose={onMenuClose}
         MenuListProps={{ 'aria-labelledby': 'basic-button', }}
-        PaperProps={{ style: { width: 180, }, }}
+        PaperProps={{ style: { minWidth: 180, }, }}
       >
         <MenuItem onClick={onPrioOptionsClick}>
           <ListItemIcon><FormatLineSpacingIcon fontSize="small" /></ListItemIcon>

@@ -26,13 +26,15 @@ function SectionOptionsMenu(props) {
   return (
     <>
       <Menu
-        id="basic-menu"
+        id="section-options-menu"
         anchorEl={props.sectionOptionsAnchor}
         open={sectionMenuOpen}
         onClose={onMenuClose}
         MenuListProps={{ 'aria-labelledby': 'basic-button', }}
-        PaperProps={{ style: { width: 180, }, }}
+        PaperProps={{ style: { minWidth: 180, }, }}
       >
+
+        <MenuItem disabled={1}>{props.section.sectionName}</MenuItem>
         <MenuItem onClick={onDeleteClick}>
           <ListItemIcon><DeleteIcon fontSize="small" /></ListItemIcon>
           <ListItemText>Delete</ListItemText>

@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom";
 import AutowidthInput from "react-autowidth-input";
 
-import { Stack } from "@mui/material";
+import { IconButton, Stack } from "@mui/material";
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 
-import { useLongPress } from "use-long-press";
 import SectionOptionsMenu from "./SectionOptionsMenu";
 
 
@@ -38,16 +38,9 @@ function SectionItem(props) {
   }
 
 
-  const onSectionItemLongPress = (event) => {
-    setSectionOptionsAnchor(event.target);
+  const onSectionOptionsPress = (event) => {
+    setSectionOptionsAnchor(event.currentTarget);
   }
-
-
-  const sectionItemLongPress = useLongPress(onSectionItemLongPress, {
-    threshold: 600,
-    captureEvent: true,
-    cancelOnMovement: 2,
-  });
 
 
   useEffect(() => {
@@ -56,7 +49,7 @@ function SectionItem(props) {
 
 
   return (
-    <div>
+    <div className="section-item">
       <AutowidthInput
         value={section.sectionName}
         onChange={onSectionNameChange}
@@ -68,17 +61,18 @@ function SectionItem(props) {
         wrapperClassName="section-textbox-wrapper"
       />
 
-      <div className="section-item" {...sectionItemLongPress()} onClick={onSectionItemClick}>
-        {props.leftIcon ? <div className="section-icon-left">{props.leftIcon}</div> : null}
-
-        <div className="section-right-items">
-
-          <Stack direction="row" spacing={0} marginRight={2}>
+      <div className="section-middle" onClick={onSectionItemClick}>
+        <div className="section-info-items">
+          <Stack direction="row">
             <div className="section-count">{section.sectionCount}</div>
             <ChevronRightIcon fontSize="medium" />
           </Stack>
         </div>
       </div>
+
+      <Stack direction="row" spacing={1}>
+        <IconButton onClick={onSectionOptionsPress}> <MoreVertIcon style={{ color: "black" }} /> </IconButton>
+      </Stack>
 
       <SectionOptionsMenu
         section={section}
