@@ -5,7 +5,7 @@ import AutowidthInput from "react-autowidth-input";
 import { Stack } from "@mui/material";
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
-import LongPress from "../LongPress";
+import { useLongPress } from "use-long-press";
 
 
 function SectionItem(props) {
@@ -25,13 +25,6 @@ function SectionItem(props) {
   }
 
 
-  const onSectionItemLongPress = () => {
-    if (window.confirm(`Delete section "${section.sectionName}" ?`)) {
-      props.dataHandler.deleteSection(section.sectionKey);
-    }
-  }
-
-
   const onSectionItemClick = () => {
     props.dataHandler.loadSectionNotes(section.sectionKey);
     props.setSectionInView(section);
@@ -42,13 +35,18 @@ function SectionItem(props) {
   }
 
 
-  const sectionItemClickOptions = {
-    shouldPreventDefault: true,
-    delay: 700,
+  const onSectionItemLongPress = () => {
+    if (window.confirm(`Delete section "${section.sectionName}" ?`)) {
+      props.dataHandler.deleteSection(section.sectionKey);
+    }
   }
 
 
-  const longPressEvent = LongPress(onSectionItemLongPress, onSectionItemClick, sectionItemClickOptions);
+  const sectionItemLongPress = useLongPress(onSectionItemLongPress, {
+    threshold: 600,
+    captureEvent: true,
+    cancelOnMovement: 2,
+  });
 
 
   useEffect(() => {
@@ -69,7 +67,7 @@ function SectionItem(props) {
         wrapperClassName="section-textbox-wrapper"
       />
 
-      <div className="section-item" {...longPressEvent}>
+      <div className="section-item" {...sectionItemLongPress()} onClick={onSectionItemClick}>
         {props.leftIcon ? <div className="section-icon-left">{props.leftIcon}</div> : null}
 
         <div className="section-right-items">
