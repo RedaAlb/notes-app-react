@@ -139,6 +139,13 @@ class DataHandler {
   }
 
 
+  changeNoteText(noteKey, sectionKey, newNoteText) {
+    const updates = {};
+    updates[sectionKey + "/" + noteKey + "/noteText"] = newNoteText;
+    update(ref(this.db), updates);
+  }
+
+
   deleteSection(sectionKey) {
     const sectionToDelRef = ref(this.db, `/sections/${sectionKey}`);
     remove(sectionToDelRef);

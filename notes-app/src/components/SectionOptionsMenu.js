@@ -34,7 +34,7 @@ function SectionOptionsMenu(props) {
         PaperProps={{ style: { minWidth: 180, }, }}
       >
 
-        <MenuItem disabled={1}>{props.section.sectionName}</MenuItem>
+        <MenuItem disabled={true}>{props.section.sectionName}</MenuItem>
         <MenuItem onClick={onDeleteClick}>
           <ListItemIcon><DeleteIcon fontSize="small" /></ListItemIcon>
           <ListItemText>Delete</ListItemText>

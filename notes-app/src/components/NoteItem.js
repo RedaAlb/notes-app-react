@@ -5,19 +5,22 @@ import NoteOptionsMenu from "./NoteOptionsMenu";
 import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
 function NoteItem(props) {
   const [note, setNote] = useState(props.note);
   const [noteOptionsAnchor, setNoteOptionsAnchor] = useState(null);
+  const [showNoteText, setShowNoteText] = useState(false);
 
 
   const onNoteOptionsClick = (event) => {
     setNoteOptionsAnchor(event.currentTarget);
   }
 
-  const noteTitleChangeHandler = evt => {
-    const tVal = evt.target.value;
+
+  const noteTitleChangeHandler = (event) => {
+    const tVal = event.target.value;
 
     setNote(prevNote => ({
       ...prevNote,
@@ -26,6 +29,19 @@ function NoteItem(props) {
 
     props.dataHandler.changeNoteTitle(note.noteKey, props.sectionInView.sectionKey, tVal);
   }
+
+
+  const noteTextChangeHandler = (event) => {
+    const tVal = event.target.value;
+
+    setNote(prevNote => ({
+      ...prevNote,
+      noteText: tVal
+    }));
+
+    props.dataHandler.changeNoteText(note.noteKey, props.sectionInView.sectionKey, tVal);
+  }
+
 
   useEffect(() => {
     setNote(props.note);
@@ -49,7 +65,10 @@ function NoteItem(props) {
             className={`note-title-textarea prio-${note.notePrio}`}
           />
           <div className={`note-icon-right prio-${note.notePrio}`}>
-            <Stack direction="row" spacing={1}>
+            <Stack direction="row">
+              <IconButton onClick={() => setShowNoteText(!showNoteText)}>
+                {showNoteText ? <KeyboardArrowUpIcon pr={0} /> : <KeyboardArrowDownIcon />}
+              </IconButton>
               <IconButton onClick={onNoteOptionsClick}> <MoreVertIcon /> </IconButton>
             </Stack>
 
@@ -64,6 +83,16 @@ function NoteItem(props) {
             />
           </div>
         </div>
+
+        {showNoteText ?
+          <TextareaAutosize
+            cacheMeasurements
+            value={note.noteText}
+            onChange={noteTextChangeHandler}
+            placeholder="Note"
+            className="note-text-textarea"
+          />
+          : null}
       </div>
     </div>
   )
