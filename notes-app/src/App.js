@@ -5,25 +5,21 @@ import SectionsView from "./components/SectionsView";
 import NotesView from "./components/NotesView";
 import { AnimatePresence } from "framer-motion";
 
-import DataHandler from "./DataHandler";
 
-const dataHandler = new DataHandler();
-
-function App() {
+function App(props) {
   const [activeMenu, setActiveMenu] = useState("main");
   const [sections, setSections] = useState({});
   const [sectionNotes, setSectionNotes] = useState({});
   const [sectionInView, setSectionInView] = useState({});  // Tracks which was section pressed.
 
-
-  dataHandler.setStates(sections, setSections, sectionNotes, setSectionNotes);
+  props.dataHandler.setStates(sections, setSections, sectionNotes, setSectionNotes);
 
 
   useEffect(() => {
     if (activeMenu === "main") {
-      dataHandler.loadSections()
+      props.dataHandler.loadSections()
     }
-  }, [activeMenu])
+  }, [activeMenu, props.dataHandler])
 
 
   return (
@@ -34,7 +30,7 @@ function App() {
             <SectionsView
               sections={sections}
               setSectionInView={setSectionInView}
-              dataHandler={dataHandler}
+              dataHandler={props.dataHandler}
               setActiveMenu={setActiveMenu} />
           } />
 
@@ -43,7 +39,7 @@ function App() {
               sectionNotes={sectionNotes}
               sections={sections}
               sectionInView={sectionInView}
-              dataHandler={dataHandler}
+              dataHandler={props.dataHandler}
               setActiveMenu={setActiveMenu} />
           } />
 

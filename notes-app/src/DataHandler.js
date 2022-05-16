@@ -1,11 +1,53 @@
 import { initializeApp } from 'firebase/app';
-import { getDatabase } from "firebase/database";
+import { getDatabase, child, get, ref, set, push, update, remove } from "firebase/database";
 
-import { child, get, ref, set, push, update, remove } from "firebase/database";
+import { Capacitor } from '@capacitor/core';
+import { CapacitorSQLite, SQLiteConnection } from '@capacitor-community/sqlite';
+import { defineCustomElements as jeepSqlite, applyPolyfills } from "jeep-sqlite/loader";
+
 
 class DataHandler {
   constructor() {
     this.initFirebase();
+    this.initJeepSqlite();
+  }
+
+
+  initJeepSqlite() {
+    applyPolyfills().then(() => {
+      jeepSqlite(window);
+    });
+  }
+
+
+  async initSqlDb() {
+    this.platform = Capacitor.getPlatform();
+    this.sqlite = new SQLiteConnection(CapacitorSQLite)
+
+    try {
+      if (this.platform === "web") {
+        const jeepEl = document.createElement("jeep-sqlite");
+        document.body.appendChild(jeepEl);
+        await customElements.whenDefined('jeep-sqlite');
+        await this.sqlite.initWebStore();
+      }
+
+      const ret = await this.sqlite.checkConnectionsConsistency();
+      const isConn = (await this.sqlite.isConnection("notes_db")).result;
+
+      if (ret.result && isConn) {
+        this.sqlDb = await this.sqlite.retrieveConnection("notes_db");
+      } else {
+        this.sqlDb = await this.sqlite.createConnection("notes_db", false, "no-encryption", 1);
+      }
+
+      await this.sqlDb.open();
+
+    } catch (err) {
+      console.log(`Error: ${err}`);
+      throw new Error(`Error: ${err}`)
+    }
+    console.log("SQL DB init")
   }
 
 
@@ -21,7 +63,7 @@ class DataHandler {
     }
 
     this.app = initializeApp(firebaseConfig);
-    this.db = getDatabase(this.app);
+    this.firebaseDb = getDatabase(this.app);
 
     console.log("Firebase init");
   }
@@ -37,7 +79,7 @@ class DataHandler {
 
 
   loadSections() {
-    const dbRef = ref(this.db);
+    const dbRef = ref(this.firebaseDb);
 
     get(child(dbRef, "/sections/")).then((snapshot) => {
       if (snapshot.exists()) {
@@ -53,7 +95,7 @@ class DataHandler {
 
 
   loadSectionNotes(sectionKey) {
-    const dbRef = ref(this.db);
+    const dbRef = ref(this.firebaseDb);
 
     get(child(dbRef, `/${sectionKey}/`)).then((snapshot) => {
       if (snapshot.exists()) {
@@ -73,7 +115,7 @@ class DataHandler {
   incrementSectionCount(sectionKey, value) {
     const updates = {};
     updates["/sections/" + sectionKey + "/sectionCount"] = this.sections[sectionKey].sectionCount + value;
-    update(ref(this.db), updates);
+    update(ref(this.firebaseDb), updates);
 
     const newSections = { ...this.sections };
     newSections[sectionKey].sectionCount = this.sections[sectionKey].sectionCount + value;
@@ -82,7 +124,7 @@ class DataHandler {
 
 
   addSection() {
-    const newSectionKey = push(ref(this.db)).key;
+    const newSectionKey = push(ref(this.firebaseDb)).key;
 
     const newSection = {
       sectionKey: newSectionKey,
@@ -91,7 +133,7 @@ class DataHandler {
     }
 
     // Add to the database.
-    set(ref(this.db, `/sections/${newSectionKey}`), newSection);
+    set(ref(this.firebaseDb, `/sections/${newSectionKey}`), newSection);
 
     // Add locally without needing to re-loading all the sections to re-render.
     const newSections = { ...this.sections };
@@ -103,7 +145,7 @@ class DataHandler {
 
 
   addNote(sectionInView) {
-    const newNoteKey = push(ref(this.db)).key;
+    const newNoteKey = push(ref(this.firebaseDb)).key;
 
     const newNote = {
       noteKey: newNoteKey,
@@ -112,7 +154,7 @@ class DataHandler {
       notePrio: 0,
     }
 
-    set(ref(this.db, `/${sectionInView.sectionKey}/${newNoteKey}/`), newNote);
+    set(ref(this.firebaseDb, `/${sectionInView.sectionKey}/${newNoteKey}/`), newNote);
 
     const newSectionNotes = { ...this.sectionNotes };
     newSectionNotes[newNoteKey] = newNote;
@@ -128,29 +170,29 @@ class DataHandler {
   changeSectionName(sectionKey, newSectionName) {
     const updates = {};
     updates["/sections/" + sectionKey + "/sectionName"] = newSectionName;
-    update(ref(this.db), updates);
+    update(ref(this.firebaseDb), updates);
   }
 
 
   changeNoteTitle(noteKey, sectionKey, newNoteTitle) {
     const updates = {};
     updates[sectionKey + "/" + noteKey + "/noteTitle"] = newNoteTitle;
-    update(ref(this.db), updates);
+    update(ref(this.firebaseDb), updates);
   }
 
 
   changeNoteText(noteKey, sectionKey, newNoteText) {
     const updates = {};
     updates[sectionKey + "/" + noteKey + "/noteText"] = newNoteText;
-    update(ref(this.db), updates);
+    update(ref(this.firebaseDb), updates);
   }
 
 
   deleteSection(sectionKey) {
-    const sectionToDelRef = ref(this.db, `/sections/${sectionKey}`);
+    const sectionToDelRef = ref(this.firebaseDb, `/sections/${sectionKey}`);
     remove(sectionToDelRef);
 
-    const notesToDelRef = ref(this.db, `/${sectionKey}/`);
+    const notesToDelRef = ref(this.firebaseDb, `/${sectionKey}/`);
     remove(notesToDelRef);
 
     const newSections = { ...this.sections };
@@ -163,7 +205,7 @@ class DataHandler {
 
   deleteNote(noteKey, sectionKey) {
     // Delete from DB.
-    const noteToDelRef = ref(this.db, `/${sectionKey}/${noteKey}`);
+    const noteToDelRef = ref(this.firebaseDb, `/${sectionKey}/${noteKey}`);
     remove(noteToDelRef);
 
     // Delete locally.
@@ -179,10 +221,10 @@ class DataHandler {
   moveNote(note, currentSectionKey, newSectionKey) {
     if (newSectionKey !== "" && newSectionKey !== currentSectionKey) {
       // DB: Add note to new section
-      set(ref(this.db, `/${newSectionKey}/${note.noteKey}`), note);
+      set(ref(this.firebaseDb, `/${newSectionKey}/${note.noteKey}`), note);
 
       // DB: Delete note from current/old section.
-      const noteToDelRef = ref(this.db, `/${currentSectionKey}/${note.noteKey}`);
+      const noteToDelRef = ref(this.firebaseDb, `/${currentSectionKey}/${note.noteKey}`);
       remove(noteToDelRef);
 
       // Local: Delete note from sectionNotes.
@@ -199,7 +241,7 @@ class DataHandler {
   setNotePriority(noteKey, sectionKey, newPriority) {
     const updates = {};
     updates["/" + sectionKey + "/" + noteKey + "/notePrio"] = newPriority;
-    update(ref(this.db), updates);
+    update(ref(this.firebaseDb), updates);
 
     const newSectionNotes = { ...this.sectionNotes };
     newSectionNotes[noteKey].notePrio = newPriority;
