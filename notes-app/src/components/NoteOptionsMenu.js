@@ -46,6 +46,7 @@ function NoteOptionsMenu(props) {
       ...prevNote,
       notePrio: 0
     }));
+    setPrioMenuAnchor(null);
   }
 
   const onPriority2Click = () => {
@@ -55,6 +56,7 @@ function NoteOptionsMenu(props) {
       ...prevNote,
       notePrio: 1
     }));
+    setPrioMenuAnchor(null);
   }
 
 
