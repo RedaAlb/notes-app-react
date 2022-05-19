@@ -1,6 +1,3 @@
-import { initializeApp } from 'firebase/app';
-import { getDatabase, child, get, ref, set, push, update, remove } from "firebase/database";
-
 import { Capacitor } from '@capacitor/core';
 import { CapacitorSQLite, SQLiteConnection } from '@capacitor-community/sqlite';
 import { defineCustomElements as jeepSqlite, applyPolyfills } from "jeep-sqlite/loader";
@@ -8,8 +5,30 @@ import { defineCustomElements as jeepSqlite, applyPolyfills } from "jeep-sqlite/
 
 class DataHandler {
   constructor() {
-    this.initFirebase();
     this.initJeepSqlite();
+
+    this.DB_NAME = "notes_db";
+
+    this.SECTIONS_TB_NAME = "sections";  // TB: table
+    this.SECTION_PK_NAME = "sectionKey";  // PK: Primary key
+
+    this.SECTION_ATTRIBUTES = [
+      { name: "sectionName", sqlType: "TEXT", defaultValue: "" },
+      { name: "sectionCount", sqlType: "INTEGER", defaultValue: 0 }
+    ]
+
+    this.NOTES_TB_NAME = "notes";
+    this.NOTE_PK_NAME = "noteKey";
+
+    this.NOTE_ATTRIBUTES = [
+      { name: "noteTitle", sqlType: "TEXT", defaultValue: "" },
+      { name: "noteText", sqlType: "TEXT", defaultValue: "" },
+      { name: "notePrio", sqlType: "INTEGER", defaultValue: 0 },
+    ]
+
+    this.NOTE_FOREIGN_KEYS = [
+      { fkAttrName: this.SECTION_PK_NAME, fkRefTable: this.SECTIONS_TB_NAME, fkRefAttr: this.SECTION_PK_NAME }
+    ]
   }
 
 
@@ -33,12 +52,12 @@ class DataHandler {
       }
 
       const ret = await this.sqlite.checkConnectionsConsistency();
-      const isConn = (await this.sqlite.isConnection("notes_db")).result;
+      const isConn = (await this.sqlite.isConnection(this.DB_NAME)).result;
 
       if (ret.result && isConn) {
-        this.sqlDb = await this.sqlite.retrieveConnection("notes_db");
+        this.sqlDb = await this.sqlite.retrieveConnection(this.DB_NAME);
       } else {
-        this.sqlDb = await this.sqlite.createConnection("notes_db", false, "no-encryption", 1);
+        this.sqlDb = await this.sqlite.createConnection(this.DB_NAME, false, "no-encryption", 1);
       }
 
       await this.sqlDb.open();
@@ -47,25 +66,72 @@ class DataHandler {
       console.log(`Error: ${err}`);
       throw new Error(`Error: ${err}`)
     }
+
     console.log("SQL DB init")
+
+    await this.runSql("PRAGMA foreign_keys = ON;");
+
+    await this.createTable(this.SECTIONS_TB_NAME, this.SECTION_PK_NAME, this.SECTION_ATTRIBUTES);
+    await this.createTable(this.NOTES_TB_NAME, this.NOTE_PK_NAME, this.NOTE_ATTRIBUTES, this.NOTE_FOREIGN_KEYS);
+
+    if (this.platform === "web") {
+      this.sqlite.saveToStore(this.DB_NAME)
+    }
   }
 
 
-  initFirebase() {
-    const firebaseConfig = {
-      apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
-      authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
-      databaseURL: process.env.REACT_APP_FIREBASE_DATABASE_URL,
-      projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
-      storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
-      messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
-      appId: process.env.REACT_APP_FIREBASE_APP_ID
+  async deleteSqlDb() {
+    await CapacitorSQLite.deleteDatabase({ database: this.DB_NAME });
+    window.location.reload();
+  }
+
+
+  async runSql(sqlString) {
+    const result = await this.sqlDb.run(sqlString);
+
+    if (this.platform === "web") {
+      this.sqlite.saveToStore(this.DB_NAME)
     }
 
-    this.app = initializeApp(firebaseConfig);
-    this.firebaseDb = getDatabase(this.app);
+    return result;
+  }
 
-    console.log("Firebase init");
+
+  async createTable(tableName, tablePk, tableAttributes, foreignKeys = []) {
+    const createTableQuery = `
+      CREATE TABLE IF NOT EXISTS ${tableName} (
+        ${tablePk} INTEGER PRIMARY KEY AUTOINCREMENT,
+        ${this.attributesToSqlString(tableAttributes)}
+        ${this.foreignKeysToSqlString(foreignKeys)}
+      );
+    `
+
+    await this.runSql(createTableQuery);
+
+    console.log("Table", tableName, "created")
+  }
+
+
+  attributesToSqlString(tableAttributes) {
+    const sqlAttributeString = tableAttributes.map(attr => (
+      `${attr.name} ${attr.sqlType}`
+    ));
+
+    return sqlAttributeString.join(",\n")
+  }
+
+
+  foreignKeysToSqlString(foreignKeys) {
+    if (foreignKeys.length !== 0) {
+      const sqlForeignKeysString = foreignKeys.map(fk => (
+        `${fk.fkAttrName} INTEGER,\n` +
+        `FOREIGN KEY(${fk.fkAttrName}) REFERENCES ${fk.fkRefTable}(${fk.fkRefAttr})` +
+        `ON DELETE CASCADE`
+      ));
+
+      return "," + sqlForeignKeysString.join(",\n");
+    }
+    return ""
   }
 
 
@@ -78,86 +144,86 @@ class DataHandler {
   }
 
 
-  loadSections() {
-    const dbRef = ref(this.firebaseDb);
+  async loadSections() {
+    const loadSectionsQuery = `
+      SELECT * FROM ${this.SECTIONS_TB_NAME};
+    `
 
-    get(child(dbRef, "/sections/")).then((snapshot) => {
-      if (snapshot.exists()) {
-        this.setSections(snapshot.val());
-        console.log("Loaded sections");
-      } else {
-        console.log("No data available");
-      }
-    }).catch((error) => {
-      console.error(error);
-    })
+    const result = await this.sqlDb.query(loadSectionsQuery);
+
+    const resultObj = Object.fromEntries(result.values.map(section => [section.sectionKey, section]));
+    this.setSections(resultObj);
+
+    console.log("Loaded sections");
   }
 
 
-  loadSectionNotes(sectionKey) {
-    const dbRef = ref(this.firebaseDb);
+  async loadSectionNotes(sectionKey) {
+    const loadSectionNotesQuery = `
+      SELECT * FROM ${this.NOTES_TB_NAME}
+      WHERE ${this.SECTION_PK_NAME}=${sectionKey}
+    `
 
-    get(child(dbRef, `/${sectionKey}/`)).then((snapshot) => {
-      if (snapshot.exists()) {
-        this.setSectionNotes(snapshot.val());
-        console.log("Section Notes Loaded");
+    const result = await this.sqlDb.query(loadSectionNotesQuery);
+    const resultObj = Object.fromEntries(result.values.map(note => [note.noteKey, note]));
 
-      } else {
-        console.log("No data available");
-        this.setSectionNotes({});
-      }
-    }).catch((error) => {
-      console.error(error);
-    })
+    this.setSectionNotes(resultObj);
+
+    console.log("Loaded section notes");
   }
 
 
-  incrementSectionCount(sectionKey, value) {
-    const updates = {};
-    updates["/sections/" + sectionKey + "/sectionCount"] = this.sections[sectionKey].sectionCount + value;
-    update(ref(this.firebaseDb), updates);
+  async addSection() {
+    // First add section to the database.
+    const attrNamesStrList = this.attrNamesToStrList(this.SECTION_ATTRIBUTES);
+    const attrDefValsStrList = this.attrDefValsToStrList(this.SECTION_ATTRIBUTES);
 
-    const newSections = { ...this.sections };
-    newSections[sectionKey].sectionCount = this.sections[sectionKey].sectionCount + value;
-    this.setSections(newSections);
-  }
+    const addSectionQuery = `
+      INSERT INTO ${this.SECTIONS_TB_NAME} (${attrNamesStrList})
+      VALUES(${attrDefValsStrList});
+    `
+
+    const result = await this.runSql(addSectionQuery);
 
 
-  addSection() {
-    const newSectionKey = push(ref(this.firebaseDb)).key;
+    // Then add locally without needing to re-load all the sections to re-render.
+    const newSectionObj = {}
+    newSectionObj[this.SECTION_PK_NAME] = result.changes.lastId;
 
-    const newSection = {
-      sectionKey: newSectionKey,
-      sectionName: "",
-      sectionCount: 0,
+    for (let attribute of this.SECTION_ATTRIBUTES) {
+      newSectionObj[attribute.name] = attribute.defaultValue
     }
 
-    // Add to the database.
-    set(ref(this.firebaseDb, `/sections/${newSectionKey}`), newSection);
-
-    // Add locally without needing to re-loading all the sections to re-render.
     const newSections = { ...this.sections };
-    newSections[newSectionKey] = newSection;
+    newSections[result.changes.lastId] = newSectionObj;
     this.setSections(newSections);
 
     console.log("Section added");
   }
 
 
-  addNote(sectionInView) {
-    const newNoteKey = push(ref(this.firebaseDb)).key;
+  async addNote(sectionInView) {
+    const attrNamesStrList = this.attrNamesToStrList(this.NOTE_ATTRIBUTES);
+    const attrDefValsStrList = this.attrDefValsToStrList(this.NOTE_ATTRIBUTES);
 
-    const newNote = {
-      noteKey: newNoteKey,
-      noteTitle: "",
-      noteText: "",
-      notePrio: 0,
+    const addNoteQuery = `
+      INSERT INTO ${this.NOTES_TB_NAME} (${attrNamesStrList}, ${this.SECTION_PK_NAME})
+      VALUES(${attrDefValsStrList}, ${sectionInView.sectionKey});
+    `
+
+    const result = await this.runSql(addNoteQuery);
+
+    const newNoteObj = {}
+    newNoteObj[this.NOTE_PK_NAME] = result.changes.lastId;
+
+    for (let attribute of this.NOTE_ATTRIBUTES) {
+      newNoteObj[attribute.name] = attribute.defaultValue
     }
 
-    set(ref(this.firebaseDb, `/${sectionInView.sectionKey}/${newNoteKey}/`), newNote);
+    newNoteObj[this.SECTION_PK_NAME] = sectionInView.sectionKey;
 
     const newSectionNotes = { ...this.sectionNotes };
-    newSectionNotes[newNoteKey] = newNote;
+    newSectionNotes[result.changes.lastId] = newNoteObj;
     this.setSectionNotes(newSectionNotes);
 
     // Adding one to the section count.
@@ -167,34 +233,93 @@ class DataHandler {
   }
 
 
-  changeSectionName(sectionKey, newSectionName) {
-    const updates = {};
-    updates["/sections/" + sectionKey + "/sectionName"] = newSectionName;
-    update(ref(this.firebaseDb), updates);
+  attrNamesToStrList(attributes) {
+    const attrNamesStrList = attributes.map(attr => (
+      `${attr.name}`
+    ))
+
+    return attrNamesStrList.join(",")
   }
 
 
-  changeNoteTitle(noteKey, sectionKey, newNoteTitle) {
-    const updates = {};
-    updates[sectionKey + "/" + noteKey + "/noteTitle"] = newNoteTitle;
-    update(ref(this.firebaseDb), updates);
+  attrDefValsToStrList(attributes) {
+    const attrDefValsStrList = attributes.map(attr => {
+      if (attr.defaultValue === "") {
+        return "\"\""
+      } else {
+        return `${attr.defaultValue}`
+      }
+    })
+
+    return attrDefValsStrList.join(",")
   }
 
 
-  changeNoteText(noteKey, sectionKey, newNoteText) {
-    const updates = {};
-    updates[sectionKey + "/" + noteKey + "/noteText"] = newNoteText;
-    update(ref(this.firebaseDb), updates);
+  async incrementSectionCount(sectionKey, value) {
+    const updateSectionCountQuery = `
+      UPDATE ${this.SECTIONS_TB_NAME}
+      SET sectionCount=${this.sections[sectionKey].sectionCount + value}
+      WHERE ${this.SECTION_PK_NAME}=${sectionKey}
+    `
+
+    await this.runSql(updateSectionCountQuery);
+
+    const newSections = { ...this.sections };
+    newSections[sectionKey].sectionCount = this.sections[sectionKey].sectionCount + value
+    this.setSections(newSections);
   }
 
 
-  deleteSection(sectionKey) {
-    const sectionToDelRef = ref(this.firebaseDb, `/sections/${sectionKey}`);
-    remove(sectionToDelRef);
+  async changeSectionName(sectionKey, newSectionName) {
+    const changeSectionNameQuery = `
+      UPDATE ${this.SECTIONS_TB_NAME}
+      SET sectionName="${newSectionName}"
+      WHERE ${this.SECTION_PK_NAME}=${sectionKey}
+    `
 
-    const notesToDelRef = ref(this.firebaseDb, `/${sectionKey}/`);
-    remove(notesToDelRef);
+    await this.runSql(changeSectionNameQuery);
+  }
 
+
+  async changeNoteTitle(noteKey, newNoteTitle) {
+    const changeNoteNameQuery = `
+      UPDATE ${this.NOTES_TB_NAME}
+      SET noteTitle="${newNoteTitle}"
+      WHERE ${this.NOTE_PK_NAME}=${noteKey}
+    `
+
+    await this.runSql(changeNoteNameQuery);
+  }
+
+
+  async changeNoteText(noteKey, newNoteText) {
+    const changeNoteTextQuery = `
+      UPDATE ${this.NOTES_TB_NAME}
+      SET noteText="${newNoteText}"
+      WHERE ${this.NOTE_PK_NAME}=${noteKey}
+    `
+
+    await this.runSql(changeNoteTextQuery);
+  }
+
+
+  async deleteSection(sectionKey) {
+
+    // Delete from DB.
+    const deleteSectionQuery = `
+      DELETE FROM ${this.SECTIONS_TB_NAME}
+      WHERE ${this.SECTION_PK_NAME}=${sectionKey}
+    `
+    await this.runSql(deleteSectionQuery);
+
+    const deleteSectionNotesQuery = `
+      DELETE FROM ${this.NOTES_TB_NAME}
+      WHERE ${this.SECTION_PK_NAME}=${sectionKey}
+    `
+    await this.runSql(deleteSectionNotesQuery);
+
+
+    // Delete locally for re-render without re-loading.
     const newSections = { ...this.sections };
     delete newSections[sectionKey];
     this.setSections(newSections);
@@ -203,10 +328,12 @@ class DataHandler {
   }
 
 
-  deleteNote(noteKey, sectionKey) {
-    // Delete from DB.
-    const noteToDelRef = ref(this.firebaseDb, `/${sectionKey}/${noteKey}`);
-    remove(noteToDelRef);
+  async deleteNote(noteKey, sectionKey) {
+    const deleteNoteQuery = `
+      DELETE FROM ${this.NOTES_TB_NAME}
+      WHERE ${this.NOTE_PK_NAME}=${noteKey}
+    `
+    await this.runSql(deleteNoteQuery);
 
     // Delete locally.
     const newSectionNotes = { ...this.sectionNotes };
@@ -218,30 +345,36 @@ class DataHandler {
   }
 
 
-  moveNote(note, currentSectionKey, newSectionKey) {
+  async moveNote(note, currentSectionKey, newSectionKey) {
     if (newSectionKey !== "" && newSectionKey !== currentSectionKey) {
-      // DB: Add note to new section
-      set(ref(this.firebaseDb, `/${newSectionKey}/${note.noteKey}`), note);
+      // DB: Change note key.
+      const moveNoteQuery = `
+        UPDATE ${this.NOTES_TB_NAME}
+        SET sectionKey=${newSectionKey}
+        WHERE ${this.NOTE_PK_NAME}=${note.noteKey}
+      `
 
-      // DB: Delete note from current/old section.
-      const noteToDelRef = ref(this.firebaseDb, `/${currentSectionKey}/${note.noteKey}`);
-      remove(noteToDelRef);
+      await this.runSql(moveNoteQuery);
 
-      // Local: Delete note from sectionNotes.
+      // Delete note locally from sectionNotes for re-render.
       const newSectionNotes = { ...this.sectionNotes };
       delete newSectionNotes[note.noteKey];
       this.setSectionNotes(newSectionNotes);
 
-      this.incrementSectionCount(currentSectionKey, -1);
+      await this.incrementSectionCount(currentSectionKey, -1);
       this.incrementSectionCount(newSectionKey, 1);
     }
   }
 
 
-  setNotePriority(noteKey, sectionKey, newPriority) {
-    const updates = {};
-    updates["/" + sectionKey + "/" + noteKey + "/notePrio"] = newPriority;
-    update(ref(this.firebaseDb), updates);
+  async setNotePriority(noteKey, newPriority) {
+    const setNotePrioQuery = `
+       UPDATE ${this.NOTES_TB_NAME}
+       SET notePrio=${newPriority}
+       WHERE ${this.NOTE_PK_NAME}=${noteKey}
+    `
+
+    await this.runSql(setNotePrioQuery);
 
     const newSectionNotes = { ...this.sectionNotes };
     newSectionNotes[noteKey].notePrio = newPriority;

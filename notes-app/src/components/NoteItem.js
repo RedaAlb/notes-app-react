@@ -8,6 +8,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
+
 function NoteItem(props) {
   const [note, setNote] = useState(props.note);
   const [noteOptionsAnchor, setNoteOptionsAnchor] = useState(null);
@@ -27,7 +28,7 @@ function NoteItem(props) {
       noteTitle: tVal
     }));
 
-    props.dataHandler.changeNoteTitle(note.noteKey, props.sectionInView.sectionKey, tVal);
+    props.dataHandler.changeNoteTitle(note.noteKey, tVal);
   }
 
 
@@ -39,7 +40,7 @@ function NoteItem(props) {
       noteText: tVal
     }));
 
-    props.dataHandler.changeNoteText(note.noteKey, props.sectionInView.sectionKey, tVal);
+    props.dataHandler.changeNoteText(note.noteKey, tVal);
   }
 
 

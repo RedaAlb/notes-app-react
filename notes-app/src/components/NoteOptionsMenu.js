@@ -40,7 +40,7 @@ function NoteOptionsMenu(props) {
   }
 
   const onPriority1Click = () => {
-    props.dataHandler.setNotePriority(props.note.noteKey, props.sectionInView.sectionKey, 0);
+    props.dataHandler.setNotePriority(props.note.noteKey, 0);
 
     props.setNote(prevNote => ({
       ...prevNote,
@@ -49,7 +49,7 @@ function NoteOptionsMenu(props) {
   }
 
   const onPriority2Click = () => {
-    props.dataHandler.setNotePriority(props.note.noteKey, props.sectionInView.sectionKey, 1);
+    props.dataHandler.setNotePriority(props.note.noteKey, 1);
 
     props.setNote(prevNote => ({
       ...prevNote,

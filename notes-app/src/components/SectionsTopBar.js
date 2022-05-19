@@ -9,14 +9,17 @@ import Menu from '@mui/material/Menu';
 import SaveIcon from '@mui/icons-material/Save';
 import DownloadIcon from '@mui/icons-material/Download';
 import MoreIcon from '@mui/icons-material/MoreVert';
+import FolderDeleteIcon from '@mui/icons-material/FolderDelete';
 import { Stack } from '@mui/material';
 
 import SearchBox from './SearchBox';
+import DeleteAllDataDialog from './DeleteAllDataDialog';
 
 
 function SectionsTopBar(props) {
   const [moreOptionsAnchor, setMoreOptionsAnchor] = useState(null);
   const isMoreOptionsOpen = Boolean(moreOptionsAnchor);
+  const [deleteAllDataDiaOpen, setDeleteAllDataDiaOpen] = useState(false);  // Dia: Dialog
 
   const handleMobileMenuClose = () => {
     setMoreOptionsAnchor(null);
@@ -32,6 +35,10 @@ function SectionsTopBar(props) {
 
   const onLoadClick = () => {
     console.log("Load");
+  }
+
+  const onDbDeleteClick = () => {
+    setDeleteAllDataDiaOpen(true);
   }
 
 
@@ -53,6 +60,11 @@ function SectionsTopBar(props) {
       <MenuItem onClick={onLoadClick} dense={true}>
         <IconButton size="large" color="inherit"><DownloadIcon /></IconButton>
         <p>Load</p>
+      </MenuItem>
+
+      <MenuItem onClick={onDbDeleteClick} dense={true}>
+        <IconButton size="large" color="inherit"><FolderDeleteIcon /></IconButton>
+        <p>Delete all data</p>
       </MenuItem>
     </Menu>
   )
@@ -76,6 +88,12 @@ function SectionsTopBar(props) {
 
         </Toolbar>
       </AppBar>
+
+      <DeleteAllDataDialog
+        deleteAllDataDiaOpen={deleteAllDataDiaOpen}
+        setDeleteAllDataDiaOpen={setDeleteAllDataDiaOpen}
+        dataHandler={props.dataHandler}
+      />
     </Box>
   )
 }

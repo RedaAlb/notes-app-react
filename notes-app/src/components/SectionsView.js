@@ -30,7 +30,7 @@ function SectionsView(props) {
 
   return (
     <div>
-      <SectionsTopBar />
+      <SectionsTopBar dataHandler={props.dataHandler} />
 
       <Animate animation={animation}>
         {Object.keys(props.sections).map((key, index) => {
