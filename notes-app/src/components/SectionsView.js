@@ -1,11 +1,13 @@
-import React, { useEffect } from 'react';
-import SectionItem from './SectionItem';
-import SectionsTopBar from './SectionsTopBar';
+import React, { useEffect, useState } from "react";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd"
 
-import Fab from '@mui/material/Fab';
-import AddIcon from '@mui/icons-material/Add';
+import SectionItem from "./SectionItem";
+import SectionsTopBar from "./SectionsTopBar";
 
-import Animate from './Animate';
+import Fab from "@mui/material/Fab";
+import AddIcon from "@mui/icons-material/Add";
+
+import Animate from "./Animate";
 
 
 const animation = {
@@ -15,6 +17,18 @@ const animation = {
 }
 
 function SectionsView(props) {
+  const [showDragHandle, setShowDragHandle] = useState(false)
+
+
+  const onAddButtonClick = () => {
+    props.dataHandler.addSection();
+  }
+
+
+  const onDragEnd = (param) => {
+    console.log(param)
+  }
+
 
   // On back button from /notes page.
   useEffect(() => {
@@ -24,25 +38,36 @@ function SectionsView(props) {
   })
 
 
-  const onAddButtonClick = () => {
-    props.dataHandler.addSection();
-  }
-
   return (
     <div>
-      <SectionsTopBar dataHandler={props.dataHandler} />
+      <SectionsTopBar dataHandler={props.dataHandler} showDragHandle={showDragHandle} setShowDragHandle={setShowDragHandle} />
 
       <Animate animation={animation}>
-        {Object.keys(props.sections).map((key, index) => {
-          return (
-            <SectionItem key={index}
-              section={props.sections[key]}
-              dataHandler={props.dataHandler}
-              setSectionInView={props.setSectionInView}
-              setActiveMenu={props.setActiveMenu}
-            />
-          )
-        })}
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Droppable droppableId="droppable-1">
+            {(provided) => (
+              <div ref={provided.innerRef} {...provided.droppableProps}>
+                {Object.keys(props.sections).map((key, index) => (
+                  <Draggable key={index} draggableId={"draggable-" + index} index={index}>
+                    {(provided) => (
+                      <div ref={provided.innerRef} {...provided.draggableProps}>
+                        <SectionItem
+                          section={props.sections[key]}
+                          dataHandler={props.dataHandler}
+                          setSectionInView={props.setSectionInView}
+                          setActiveMenu={props.setActiveMenu}
+                          showDragHandle={showDragHandle}
+                          provided={provided}
+                        />
+                      </div>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
       </Animate>
 
       <Fab onClick={onAddButtonClick} size="large" color="primary" aria-label="add" sx={{ position: "fixed", bottom: 26, right: 26 }}>

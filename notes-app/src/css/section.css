@@ -47,3 +47,7 @@
 .section-textbox-wrapper {
   float: left;
 }
+
+.drag-handle {
+  padding: 0px 0px 0 10px;
+}

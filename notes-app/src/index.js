@@ -17,8 +17,6 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   const root = ReactDOM.createRoot(document.getElementById("root"));
   root.render(
-    <React.StrictMode>
-      <App dataHandler={dataHandler} />
-    </React.StrictMode>
+    <App dataHandler={dataHandler} />
   );
 })

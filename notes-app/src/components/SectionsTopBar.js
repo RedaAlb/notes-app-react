@@ -10,6 +10,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import DownloadIcon from '@mui/icons-material/Download';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import FolderDeleteIcon from '@mui/icons-material/FolderDelete';
+import DragHandleIcon from "@mui/icons-material/DragHandle";
 import { Stack } from '@mui/material';
 
 import SearchBox from './SearchBox';
@@ -21,17 +22,21 @@ function SectionsTopBar(props) {
   const isMoreOptionsOpen = Boolean(moreOptionsAnchor);
   const [deleteAllDataDiaOpen, setDeleteAllDataDiaOpen] = useState(false);  // Dia: Dialog
 
+
   const handleMobileMenuClose = () => {
     setMoreOptionsAnchor(null);
   }
+
 
   const handleMobileMenuOpen = (event) => {
     setMoreOptionsAnchor(event.currentTarget);
   }
 
+
   const onSaveClick = () => {
     console.log("Save");
   }
+
 
   const onLoadClick = () => {
     console.log("Load");
@@ -39,6 +44,13 @@ function SectionsTopBar(props) {
 
   const onDbDeleteClick = () => {
     setDeleteAllDataDiaOpen(true);
+  }
+
+
+  const onToggleDragHandleClick = () => {
+    console.log("Toggle drag handle");
+    props.setShowDragHandle(!props.showDragHandle)
+    setMoreOptionsAnchor(null)
   }
 
 
@@ -52,6 +64,11 @@ function SectionsTopBar(props) {
       onClose={handleMobileMenuClose}
       PaperProps={{ style: { width: 250, }, }}
     >
+      <MenuItem onClick={onToggleDragHandleClick} dense={true}>
+        <IconButton size="large" color="inherit"><DragHandleIcon /></IconButton>
+        <p>Toggle drag handle</p>
+      </MenuItem>
+
       <MenuItem onClick={onSaveClick} dense={true}>
         <IconButton size="large" color="inherit"><SaveIcon /></IconButton>
         <p>Save</p>

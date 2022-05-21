@@ -5,6 +5,7 @@ import AutowidthInput from "react-autowidth-input";
 import { IconButton, Stack } from "@mui/material";
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import DragHandleIcon from "@mui/icons-material/DragHandle";
 
 import SectionOptionsMenu from "./SectionOptionsMenu";
 
@@ -50,6 +51,14 @@ function SectionItem(props) {
 
   return (
     <div className="section-item">
+
+      <div {...props.provided.dragHandleProps}>
+        {props.showDragHandle ? (
+          <DragHandleIcon className="drag-handle" />
+        ) : null}
+      </div>
+
+
       <AutowidthInput
         value={section.sectionName}
         onChange={onSectionNameChange}
