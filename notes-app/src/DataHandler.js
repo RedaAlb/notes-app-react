@@ -163,9 +163,7 @@ class DataHandler {
     `
 
     const result = await this.sqlDb.query(loadSectionNotesQuery);
-    const resultObj = Object.fromEntries(result.values.map(note => [note.noteKey, note]));
-
-    this.setSectionNotes(resultObj);
+    this.setSectionNotes(result.values);
 
     console.log("Loaded section notes");
   }
@@ -237,8 +235,8 @@ class DataHandler {
 
     newNoteObj[this.SECTION_PK_NAME] = sectionInView.sectionKey;
 
-    const newSectionNotes = { ...this.sectionNotes };
-    newSectionNotes[result.changes.lastId] = newNoteObj;
+    const newSectionNotes = [...this.sectionNotes];
+    newSectionNotes.push(newNoteObj);
     this.setSectionNotes(newSectionNotes);
 
     // Adding one to the section count.
@@ -354,9 +352,11 @@ class DataHandler {
     `
     await this.runSql(deleteNoteQuery);
 
-    // Delete locally.
-    const newSectionNotes = { ...this.sectionNotes };
-    delete newSectionNotes[noteKey];
+
+    const noteIndex = this.sectionNotes.findIndex(note => note.noteKey === noteKey);
+
+    const newSectionNotes = [...this.sectionNotes];
+    newSectionNotes.splice(noteIndex, 1);
     this.setSectionNotes(newSectionNotes);
 
     // Update section count.
@@ -375,9 +375,13 @@ class DataHandler {
 
       await this.runSql(moveNoteQuery);
 
+
       // Delete note locally from sectionNotes for re-render.
-      const newSectionNotes = { ...this.sectionNotes };
-      delete newSectionNotes[note.noteKey];
+      const currNoteKey = note.noteKey;
+      const noteIndex = this.sectionNotes.findIndex(note => note.noteKey === currNoteKey);
+
+      const newSectionNotes = [...this.sectionNotes];
+      newSectionNotes.splice(noteIndex, 1);
       this.setSectionNotes(newSectionNotes);
 
       await this.incrementSectionCount(currentSectionKey, -1);
@@ -395,8 +399,10 @@ class DataHandler {
 
     await this.runSql(setNotePrioQuery);
 
-    const newSectionNotes = { ...this.sectionNotes };
-    newSectionNotes[noteKey].notePrio = newPriority;
+    const noteIndex = this.sectionNotes.findIndex(note => note.noteKey === noteKey);
+
+    const newSectionNotes = [...this.sectionNotes];
+    newSectionNotes[noteIndex].notePrio = newPriority;
     this.setSectionNotes(newSectionNotes);
   }
 

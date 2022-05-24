@@ -38,10 +38,10 @@ function NotesView(props) {
       <NotesTopBar sectionInView={props.sectionInView} />
 
       <Animate animation={animation}>
-        {Object.keys(props.sectionNotes).map((key, index) => {
+        {props.sectionNotes.map((note, index) => {
           return (
             <NoteItem key={index}
-              note={props.sectionNotes[key]}
+              note={note}
               sectionInView={props.sectionInView}
               dataHandler={props.dataHandler}
               sections={props.sections} />
