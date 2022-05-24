@@ -8,7 +8,7 @@ import { AnimatePresence } from "framer-motion";
 
 function App(props) {
   const [activeMenu, setActiveMenu] = useState("main");
-  const [sections, setSections] = useState({});
+  const [sections, setSections] = useState([]);
   const [sectionNotes, setSectionNotes] = useState({});
   const [sectionInView, setSectionInView] = useState({});  // Tracks which was section pressed.
 

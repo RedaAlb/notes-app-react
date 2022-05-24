@@ -14,7 +14,8 @@ class DataHandler {
 
     this.SECTION_ATTRIBUTES = [
       { name: "sectionName", sqlType: "TEXT", defaultValue: "" },
-      { name: "sectionCount", sqlType: "INTEGER", defaultValue: 0 }
+      { name: "sectionCount", sqlType: "INTEGER", defaultValue: 0 },
+      { name: "sectionOrder", sqlType: "INTEGER", defaultValue: 0 }
     ]
 
     this.NOTES_TB_NAME = "notes";
@@ -107,8 +108,6 @@ class DataHandler {
     `
 
     await this.runSql(createTableQuery);
-
-    console.log("Table", tableName, "created")
   }
 
 
@@ -146,13 +145,12 @@ class DataHandler {
 
   async loadSections() {
     const loadSectionsQuery = `
-      SELECT * FROM ${this.SECTIONS_TB_NAME};
+      SELECT * FROM ${this.SECTIONS_TB_NAME}
+      ORDER BY sectionOrder
     `
 
     const result = await this.sqlDb.query(loadSectionsQuery);
-
-    const resultObj = Object.fromEntries(result.values.map(section => [section.sectionKey, section]));
-    this.setSections(resultObj);
+    this.setSections(result.values);
 
     console.log("Loaded sections");
   }
@@ -174,7 +172,7 @@ class DataHandler {
 
 
   async addSection() {
-    // First add section to the database.
+    // Add section to the database.
     const attrNamesStrList = this.attrNamesToStrList(this.SECTION_ATTRIBUTES);
     const attrDefValsStrList = this.attrDefValsToStrList(this.SECTION_ATTRIBUTES);
 
@@ -184,21 +182,38 @@ class DataHandler {
     `
 
     const result = await this.runSql(addSectionQuery);
+    const sectionKey = result.changes.lastId;
+
+    // Set section order equal to section key to use for ordering.
+    this.changeSectionOrder(sectionKey, sectionKey);
 
 
-    // Then add locally without needing to re-load all the sections to re-render.
+    // Add locally without needing to re-load all the sections to re-render.
     const newSectionObj = {}
-    newSectionObj[this.SECTION_PK_NAME] = result.changes.lastId;
+    newSectionObj[this.SECTION_PK_NAME] = sectionKey;
 
     for (let attribute of this.SECTION_ATTRIBUTES) {
       newSectionObj[attribute.name] = attribute.defaultValue
     }
 
-    const newSections = { ...this.sections };
-    newSections[result.changes.lastId] = newSectionObj;
+    newSectionObj["sectionOrder"] = sectionKey;
+
+
+    const newSections = [...this.sections];
+    newSections.push(newSectionObj);
     this.setSections(newSections);
 
     console.log("Section added");
+  }
+
+  async changeSectionOrder(sectionKey, newSectionOrder) {
+    const changeSectionOrderQuery = `
+      UPDATE ${this.SECTIONS_TB_NAME}
+      SET sectionOrder="${newSectionOrder}"
+      WHERE ${this.SECTION_PK_NAME}=${sectionKey}
+    `
+
+    await this.runSql(changeSectionOrderQuery);
   }
 
 
@@ -256,16 +271,18 @@ class DataHandler {
 
 
   async incrementSectionCount(sectionKey, value) {
+    const sectionIndex = this.sections.findIndex(section => section.sectionKey === sectionKey);
+
     const updateSectionCountQuery = `
       UPDATE ${this.SECTIONS_TB_NAME}
-      SET sectionCount=${this.sections[sectionKey].sectionCount + value}
+      SET sectionCount=${this.sections[sectionIndex].sectionCount + value}
       WHERE ${this.SECTION_PK_NAME}=${sectionKey}
     `
 
     await this.runSql(updateSectionCountQuery);
 
-    const newSections = { ...this.sections };
-    newSections[sectionKey].sectionCount = this.sections[sectionKey].sectionCount + value
+    const newSections = [...this.sections];
+    newSections[sectionIndex].sectionCount = this.sections[sectionIndex].sectionCount + value
     this.setSections(newSections);
   }
 
@@ -320,8 +337,10 @@ class DataHandler {
 
 
     // Delete locally for re-render without re-loading.
-    const newSections = { ...this.sections };
-    delete newSections[sectionKey];
+    const sectionIndex = this.sections.findIndex(section => section.sectionKey === sectionKey);
+
+    const newSections = [...this.sections];
+    newSections.splice(sectionIndex, 1);
     this.setSections(newSections);
 
     console.log("Deleted section");
@@ -379,6 +398,34 @@ class DataHandler {
     const newSectionNotes = { ...this.sectionNotes };
     newSectionNotes[noteKey].notePrio = newPriority;
     this.setSectionNotes(newSectionNotes);
+  }
+
+
+  async swapSectionsOrder(dragHistory, finalSourceIndex, finalDestIndex) {
+    const newSections = [...this.sections];
+
+    for (const drag of dragHistory) {
+      const sourceIndex = drag.source.index;
+      const destIndex = drag.dest.index;
+
+      const sourceSection = this.sections[sourceIndex];
+      const destSection = this.sections[destIndex];
+
+      // Swapping db values.
+      await this.changeSectionOrder(sourceSection.sectionKey, destSection.sectionOrder);
+      await this.changeSectionOrder(destSection.sectionKey, sourceSection.sectionOrder);
+
+      // Swapping local values.
+      const tempSection = newSections[sourceIndex];
+      newSections[sourceIndex].sectionOrder = destSection.sectionOrder;
+      newSections[destIndex].sectionOrder = tempSection.sectionOrder;
+    }
+
+    newSections.splice(finalDestIndex, 0, newSections.splice(finalSourceIndex, 1)[0]);
+
+    this.setSections(newSections);
+
+    this.loadSections();
   }
 }
 

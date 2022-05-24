@@ -47,11 +47,11 @@ function NoteMoveDialog(props) {
                 label="sections"
                 inputProps={{ name: 'section', id: 'section', }}
               >
-                {Object.keys(props.sections).map((key, index) => {
+                {props.sections.map((section, index) => {
                   return (
-                    <MenuItem key={index}
-                      value={props.sections[key].sectionKey}
-                    >{props.sections[key].sectionName}</MenuItem>
+                    <MenuItem key={index} value={section.sectionKey}>
+                      {section.sectionName}
+                    </MenuItem>
                   )
                 })}
               </Select>

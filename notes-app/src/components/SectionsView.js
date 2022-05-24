@@ -16,8 +16,11 @@ const animation = {
   exit: { opacity: 1, x: 0 },
 }
 
+
 function SectionsView(props) {
   const [showDragHandle, setShowDragHandle] = useState(false)
+
+  const dragHistory = [];  // Used to persist the order of the sections when dragged.
 
 
   const onAddButtonClick = () => {
@@ -25,8 +28,45 @@ function SectionsView(props) {
   }
 
 
-  const onDragEnd = (param) => {
-    console.log(param)
+  const onDragEnd = (result) => {
+    const source = result.source;
+    const dest = result.destination;
+
+    if (!dest) {
+      return;
+    }
+
+    if (dest.droppableId === source.droppableId && dest.index === source.index) {
+      return;
+    }
+
+    // Swap all the moved sections order for persistence.
+    props.dataHandler.swapSectionsOrder(dragHistory, source.index, dest.index);
+  }
+
+
+  const onDragUpdate = (result) => {
+    const source = result.source;
+    const dest = result.destination;
+
+    if (!dest) {
+      return;
+    }
+
+    if (dest.droppableId === source.droppableId && dest.index === source.index) {
+      dragHistory.splice(0, dragHistory.length)  // Reset drag history as section was dragged to the same starting position.
+      return;
+    }
+
+    const dragHistoryObj = { source: source, dest: dest };
+
+    // This removes unnecessary drags from the drag history.
+    const indexOfOldDrag = dragHistory.findIndex(drag => drag.dest.index === dest.index);
+    if (indexOfOldDrag !== -1) {
+      dragHistory.splice(indexOfOldDrag + 1, dragHistory.length);
+    } else {
+      dragHistory.push(dragHistoryObj);
+    }
   }
 
 
@@ -43,16 +83,16 @@ function SectionsView(props) {
       <SectionsTopBar dataHandler={props.dataHandler} showDragHandle={showDragHandle} setShowDragHandle={setShowDragHandle} />
 
       <Animate animation={animation}>
-        <DragDropContext onDragEnd={onDragEnd}>
+        <DragDropContext onDragEnd={onDragEnd} onDragUpdate={onDragUpdate}>
           <Droppable droppableId="droppable-1">
             {(provided) => (
               <div ref={provided.innerRef} {...provided.droppableProps}>
-                {Object.keys(props.sections).map((key, index) => (
+                {props.sections.map((section, index) => (
                   <Draggable key={index} draggableId={"draggable-" + index} index={index}>
                     {(provided) => (
                       <div ref={provided.innerRef} {...provided.draggableProps}>
                         <SectionItem
-                          section={props.sections[key]}
+                          section={section}
                           dataHandler={props.dataHandler}
                           setSectionInView={props.setSectionInView}
                           setActiveMenu={props.setActiveMenu}
