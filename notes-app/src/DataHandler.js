@@ -10,26 +10,32 @@ class DataHandler {
     this.DB_NAME = "notes_db";
 
     this.SECTIONS_TB_NAME = "sections";  // TB: table
-    this.SECTION_PK_NAME = "sectionKey";  // PK: Primary key
-
-    this.SECTION_ATTRIBUTES = [
-      { name: "sectionName", sqlType: "TEXT", defaultValue: "" },
-      { name: "sectionCount", sqlType: "INTEGER", defaultValue: 0 },
-      { name: "sectionOrder", sqlType: "INTEGER", defaultValue: 0 }
-    ]
+    this.SECTION_TB_ATTRS = {  // ATTRS: attributes
+      pk: { name: "sectionKey", sqlType: "INTEGER PRIMARY KEY AUTOINCREMENT" },  // pk: primary key
+      sectionName: { name: "sectionName", sqlType: "TEXT", defaultValue: "" },
+      sectionCount: { name: "sectionCount", sqlType: "INTEGER", defaultValue: 0 },
+      sectionOrder: { name: "sectionOrder", sqlType: "INTEGER", defaultValue: 0 },
+    }
 
     this.NOTES_TB_NAME = "notes";
-    this.NOTE_PK_NAME = "noteKey";
+    this.NOTE_TB_ATTRS = {
+      pk: { name: "noteKey", sqlType: "INTEGER PRIMARY KEY AUTOINCREMENT" },
+      noteTitle: { name: "noteTitle", sqlType: "TEXT", defaultValue: "" },
+      noteText: { name: "noteText", sqlType: "TEXT", defaultValue: "" },
+      notePrio: { name: "notePrio", sqlType: "INTEGER", defaultValue: 0 },  // notePrio: note priority
+      fks: {  // fks: foreign keys
+        sectionKey: { name: this.SECTION_TB_ATTRS.pk.name, refTable: this.SECTIONS_TB_NAME, refAttr: this.SECTION_TB_ATTRS.pk.name },
+      }
+    }
+  }
 
-    this.NOTE_ATTRIBUTES = [
-      { name: "noteTitle", sqlType: "TEXT", defaultValue: "" },
-      { name: "noteText", sqlType: "TEXT", defaultValue: "" },
-      { name: "notePrio", sqlType: "INTEGER", defaultValue: 0 },
-    ]
 
-    this.NOTE_FOREIGN_KEYS = [
-      { fkAttrName: this.SECTION_PK_NAME, fkRefTable: this.SECTIONS_TB_NAME, fkRefAttr: this.SECTION_PK_NAME }
-    ]
+  setStates(sections, setSections, sectionNotes, setSectionNotes) {
+    this.sections = sections;
+    this.setSections = setSections;
+
+    this.sectionNotes = sectionNotes;
+    this.setSectionNotes = setSectionNotes;
   }
 
 
@@ -72,8 +78,8 @@ class DataHandler {
 
     await this.runSql("PRAGMA foreign_keys = ON;");
 
-    await this.createTable(this.SECTIONS_TB_NAME, this.SECTION_PK_NAME, this.SECTION_ATTRIBUTES);
-    await this.createTable(this.NOTES_TB_NAME, this.NOTE_PK_NAME, this.NOTE_ATTRIBUTES, this.NOTE_FOREIGN_KEYS);
+    await this.createTable(this.SECTIONS_TB_NAME, this.SECTION_TB_ATTRS);
+    await this.createTable(this.NOTES_TB_NAME, this.NOTE_TB_ATTRS);
 
     if (this.platform === "web") {
       this.sqlite.saveToStore(this.DB_NAME)
@@ -98,55 +104,42 @@ class DataHandler {
   }
 
 
-  async createTable(tableName, tablePk, tableAttributes, foreignKeys = []) {
+  async createTable(tableName, tableAttributes) {
     const createTableQuery = `
       CREATE TABLE IF NOT EXISTS ${tableName} (
-        ${tablePk} INTEGER PRIMARY KEY AUTOINCREMENT,
-        ${this.attributesToSqlString(tableAttributes)}
-        ${this.foreignKeysToSqlString(foreignKeys)}
-      );
+      ${this.attrsToCreateTbSqlString(tableAttributes)}
+    );
     `
 
     await this.runSql(createTableQuery);
   }
 
 
-  attributesToSqlString(tableAttributes) {
-    const sqlAttributeString = tableAttributes.map(attr => (
-      `${attr.name} ${attr.sqlType}`
-    ));
+  attrsToCreateTbSqlString(tableAttributes) {
+    var sqlStringLines = []  // Will hold all lines of the sql statement.
 
-    return sqlAttributeString.join(",\n")
-  }
+    for (var [key, attr] of Object.entries(tableAttributes)) {
 
-
-  foreignKeysToSqlString(foreignKeys) {
-    if (foreignKeys.length !== 0) {
-      const sqlForeignKeysString = foreignKeys.map(fk => (
-        `${fk.fkAttrName} INTEGER,\n` +
-        `FOREIGN KEY(${fk.fkAttrName}) REFERENCES ${fk.fkRefTable}(${fk.fkRefAttr})` +
-        `ON DELETE CASCADE`
-      ));
-
-      return "," + sqlForeignKeysString.join(",\n");
+      // If attribute is not a foreign key.
+      if (key !== "fks") {
+        sqlStringLines.push(`${attr.name} ${attr.sqlType}`)
+      }
+      else {
+        for (var [, fk] of Object.entries(attr)) {
+          sqlStringLines.push(`${fk.name} INTEGER`);
+          sqlStringLines.push(`FOREIGN KEY(${fk.name}) REFERENCES ${fk.refTable}(${fk.refAttr}) ON DELETE CASCADE`)
+        }
+      }
     }
-    return ""
-  }
 
-
-  setStates(sections, setSections, sectionNotes, setSectionNotes) {
-    this.sections = sections;
-    this.setSections = setSections;
-
-    this.sectionNotes = sectionNotes;
-    this.setSectionNotes = setSectionNotes;
+    return sqlStringLines.join(",\n");
   }
 
 
   async loadSections() {
     const loadSectionsQuery = `
       SELECT * FROM ${this.SECTIONS_TB_NAME}
-      ORDER BY sectionOrder
+      ORDER BY ${this.SECTION_TB_ATTRS.sectionOrder.name}
     `
 
     const result = await this.sqlDb.query(loadSectionsQuery);
@@ -159,7 +152,7 @@ class DataHandler {
   async loadSectionNotes(sectionKey) {
     const loadSectionNotesQuery = `
       SELECT * FROM ${this.NOTES_TB_NAME}
-      WHERE ${this.SECTION_PK_NAME}=${sectionKey}
+      WHERE ${this.SECTION_TB_ATTRS.pk.name}=${sectionKey}
     `
 
     const result = await this.sqlDb.query(loadSectionNotesQuery);
@@ -171,8 +164,8 @@ class DataHandler {
 
   async addSection() {
     // Add section to the database.
-    const attrNamesStrList = this.attrNamesToStrList(this.SECTION_ATTRIBUTES);
-    const attrDefValsStrList = this.attrDefValsToStrList(this.SECTION_ATTRIBUTES);
+    const attrNamesStrList = this.attrNamesToStrList(this.SECTION_TB_ATTRS);
+    const attrDefValsStrList = this.attrDefValsToStrList(this.SECTION_TB_ATTRS);
 
     const addSectionQuery = `
       INSERT INTO ${this.SECTIONS_TB_NAME} (${attrNamesStrList})
@@ -183,19 +176,11 @@ class DataHandler {
     const sectionKey = result.changes.lastId;
 
     // Set section order equal to section key to use for ordering.
-    this.changeSectionOrder(sectionKey, sectionKey);
+    await this.changeSectionOrder(sectionKey, sectionKey);
 
 
     // Add locally without needing to re-load all the sections to re-render.
-    const newSectionObj = {}
-    newSectionObj[this.SECTION_PK_NAME] = sectionKey;
-
-    for (let attribute of this.SECTION_ATTRIBUTES) {
-      newSectionObj[attribute.name] = attribute.defaultValue
-    }
-
-    newSectionObj["sectionOrder"] = sectionKey;
-
+    const newSectionObj = await this.getSection(sectionKey);
 
     const newSections = [...this.sections];
     newSections.push(newSectionObj);
@@ -204,36 +189,82 @@ class DataHandler {
     console.log("Section added");
   }
 
+
+  attrNamesToStrList(attributes) {
+    var attrNames = [];
+
+    for (var [key, attr] of Object.entries(attributes)) {
+      if (key === "pk") continue;
+
+      if (key !== "fks") {
+        attrNames.push(attr.name);
+      }
+      else {
+        for (var [, fk] of Object.entries(attr)) {
+          attrNames.push(fk.name);
+        }
+      }
+    }
+
+    return attrNames.join(",");
+  }
+
+
+  attrDefValsToStrList(attributes) {
+    var attrDefValues = [];
+
+    for (var [key, attr] of Object.entries(attributes)) {
+      if (key === "pk") continue;
+
+      if (key !== "fks") {
+        if (attr.defaultValue === "") {
+          attrDefValues.push("\"\"");
+        } else {
+          attrDefValues.push(attr.defaultValue);
+        }
+      }
+    }
+
+    return attrDefValues.join(",");
+  }
+
+
+  async getSection(sectionKey) {
+    const getSectionQuery = `
+      SELECT * FROM ${this.SECTIONS_TB_NAME}
+      WHERE ${this.SECTION_TB_ATTRS.pk.name}=${sectionKey}
+    `
+
+    const result = await this.sqlDb.query(getSectionQuery);
+
+    return result.values[0];
+  }
+
+
   async changeSectionOrder(sectionKey, newSectionOrder) {
     const changeSectionOrderQuery = `
       UPDATE ${this.SECTIONS_TB_NAME}
-      SET sectionOrder="${newSectionOrder}"
-      WHERE ${this.SECTION_PK_NAME}=${sectionKey}
-    `
+      SET ${this.SECTION_TB_ATTRS.sectionOrder.name}="${newSectionOrder}"
+      WHERE ${this.SECTION_TB_ATTRS.pk.name}=${sectionKey}
+      `
 
     await this.runSql(changeSectionOrderQuery);
   }
 
 
   async addNote(sectionInView) {
-    const attrNamesStrList = this.attrNamesToStrList(this.NOTE_ATTRIBUTES);
-    const attrDefValsStrList = this.attrDefValsToStrList(this.NOTE_ATTRIBUTES);
+    const attrNamesStrList = this.attrNamesToStrList(this.NOTE_TB_ATTRS);
+    const attrDefValsStrList = this.attrDefValsToStrList(this.NOTE_TB_ATTRS);
 
     const addNoteQuery = `
-      INSERT INTO ${this.NOTES_TB_NAME} (${attrNamesStrList}, ${this.SECTION_PK_NAME})
+      INSERT INTO ${this.NOTES_TB_NAME} (${attrNamesStrList})
       VALUES(${attrDefValsStrList}, ${sectionInView.sectionKey});
     `
 
     const result = await this.runSql(addNoteQuery);
+    const noteKey = result.changes.lastId;
 
-    const newNoteObj = {}
-    newNoteObj[this.NOTE_PK_NAME] = result.changes.lastId;
-
-    for (let attribute of this.NOTE_ATTRIBUTES) {
-      newNoteObj[attribute.name] = attribute.defaultValue
-    }
-
-    newNoteObj[this.SECTION_PK_NAME] = sectionInView.sectionKey;
+    const newNoteObj = await this.getNote(noteKey);
 
     const newSectionNotes = [...this.sectionNotes];
     newSectionNotes.push(newNoteObj);
@@ -246,25 +277,15 @@ class DataHandler {
   }
 
 
-  attrNamesToStrList(attributes) {
-    const attrNamesStrList = attributes.map(attr => (
-      `${attr.name}`
-    ))
+  async getNote(noteKey) {
+    const getNoteQuery = `
+      SELECT * FROM ${this.NOTES_TB_NAME}
+      WHERE ${this.NOTE_TB_ATTRS.pk.name}=${noteKey}
+    `
 
-    return attrNamesStrList.join(",")
-  }
+    const result = await this.sqlDb.query(getNoteQuery);
 
-
-  attrDefValsToStrList(attributes) {
-    const attrDefValsStrList = attributes.map(attr => {
-      if (attr.defaultValue === "") {
-        return "\"\""
-      } else {
-        return `${attr.defaultValue}`
-      }
-    })
-
-    return attrDefValsStrList.join(",")
+    return result.values[0];
   }
 
 
@@ -273,8 +294,8 @@ class DataHandler {
 
     const updateSectionCountQuery = `
       UPDATE ${this.SECTIONS_TB_NAME}
-      SET sectionCount=${this.sections[sectionIndex].sectionCount + value}
-      WHERE ${this.SECTION_PK_NAME}=${sectionKey}
+      SET ${this.SECTION_TB_ATTRS.sectionCount.name}=${this.sections[sectionIndex].sectionCount + value}
+      WHERE ${this.SECTION_TB_ATTRS.pk.name}=${sectionKey}
     `
 
     await this.runSql(updateSectionCountQuery);
@@ -288,8 +309,8 @@ class DataHandler {
   async changeSectionName(sectionKey, newSectionName) {
     const changeSectionNameQuery = `
       UPDATE ${this.SECTIONS_TB_NAME}
-      SET sectionName="${newSectionName}"
-      WHERE ${this.SECTION_PK_NAME}=${sectionKey}
+      SET ${this.SECTION_TB_ATTRS.sectionName.name}="${newSectionName}"
+      WHERE ${this.SECTION_TB_ATTRS.pk.name}=${sectionKey}
     `
 
     await this.runSql(changeSectionNameQuery);
@@ -299,8 +320,8 @@ class DataHandler {
   async changeNoteTitle(noteKey, newNoteTitle) {
     const changeNoteNameQuery = `
       UPDATE ${this.NOTES_TB_NAME}
-      SET noteTitle="${newNoteTitle}"
-      WHERE ${this.NOTE_PK_NAME}=${noteKey}
+      SET ${this.NOTE_TB_ATTRS.noteTitle.name}="${newNoteTitle}"
+      WHERE ${this.NOTE_TB_ATTRS.pk.name}=${noteKey}
     `
 
     await this.runSql(changeNoteNameQuery);
@@ -310,8 +331,8 @@ class DataHandler {
   async changeNoteText(noteKey, newNoteText) {
     const changeNoteTextQuery = `
       UPDATE ${this.NOTES_TB_NAME}
-      SET noteText="${newNoteText}"
-      WHERE ${this.NOTE_PK_NAME}=${noteKey}
+      SET ${this.NOTE_TB_ATTRS.noteText.name}="${newNoteText}"
+      WHERE ${this.NOTE_TB_ATTRS.pk.name}=${noteKey}
     `
 
     await this.runSql(changeNoteTextQuery);
@@ -323,13 +344,13 @@ class DataHandler {
     // Delete from DB.
     const deleteSectionQuery = `
       DELETE FROM ${this.SECTIONS_TB_NAME}
-      WHERE ${this.SECTION_PK_NAME}=${sectionKey}
+      WHERE ${this.SECTION_TB_ATTRS.pk.name}=${sectionKey}
     `
     await this.runSql(deleteSectionQuery);
 
     const deleteSectionNotesQuery = `
       DELETE FROM ${this.NOTES_TB_NAME}
-      WHERE ${this.SECTION_PK_NAME}=${sectionKey}
+      WHERE ${this.NOTE_TB_ATTRS.fks.sectionKey.name}=${sectionKey}
     `
     await this.runSql(deleteSectionNotesQuery);
 
@@ -348,7 +369,7 @@ class DataHandler {
   async deleteNote(noteKey, sectionKey) {
     const deleteNoteQuery = `
       DELETE FROM ${this.NOTES_TB_NAME}
-      WHERE ${this.NOTE_PK_NAME}=${noteKey}
+      WHERE ${this.NOTE_TB_ATTRS.pk.name}=${noteKey}
     `
     await this.runSql(deleteNoteQuery);
 
@@ -369,12 +390,11 @@ class DataHandler {
       // DB: Change note key.
       const moveNoteQuery = `
         UPDATE ${this.NOTES_TB_NAME}
-        SET sectionKey=${newSectionKey}
-        WHERE ${this.NOTE_PK_NAME}=${note.noteKey}
+        SET ${this.NOTE_TB_ATTRS.fks.sectionKey.name}=${newSectionKey}
+        WHERE ${this.NOTE_TB_ATTRS.pk.name}=${note.noteKey}
       `
 
       await this.runSql(moveNoteQuery);
-
 
       // Delete note locally from sectionNotes for re-render.
       const currNoteKey = note.noteKey;
@@ -385,7 +405,7 @@ class DataHandler {
       this.setSectionNotes(newSectionNotes);
 
       await this.incrementSectionCount(currentSectionKey, -1);
-      this.incrementSectionCount(newSectionKey, 1);
+      await this.incrementSectionCount(newSectionKey, 1);
     }
   }
 
@@ -393,8 +413,8 @@ class DataHandler {
   async setNotePriority(noteKey, newPriority) {
     const setNotePrioQuery = `
        UPDATE ${this.NOTES_TB_NAME}
-       SET notePrio=${newPriority}
-       WHERE ${this.NOTE_PK_NAME}=${noteKey}
+       SET ${this.NOTE_TB_ATTRS.notePrio.name}=${newPriority}
+       WHERE ${this.NOTE_TB_ATTRS.pk.name}=${noteKey}
     `
 
     await this.runSql(setNotePrioQuery);
