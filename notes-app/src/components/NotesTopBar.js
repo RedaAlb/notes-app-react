@@ -9,6 +9,7 @@ import Menu from '@mui/material/Menu';
 import SaveIcon from '@mui/icons-material/Save';
 import DownloadIcon from '@mui/icons-material/Download';
 import MoreIcon from '@mui/icons-material/MoreVert';
+import MenuIcon from '@mui/icons-material/Menu';
 import { Stack } from '@mui/material';
 
 import SearchBox from './SearchBox';
@@ -17,9 +18,11 @@ function NotesTopBar(props) {
   const [moreOptionsAnchor, setMoreOptionsAnchor] = useState(null);
   const isMoreOptionsOpen = Boolean(moreOptionsAnchor);
 
+
   const handleMobileMenuClose = () => {
     setMoreOptionsAnchor(null);
   }
+
 
   const handleMobileMenuOpen = (event) => {
     setMoreOptionsAnchor(event.currentTarget);
@@ -51,7 +54,14 @@ function NotesTopBar(props) {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static" style={{ background: "#6200EE" }}>
-        <Toolbar>
+        <Toolbar disableGutters={true}>
+
+          <Stack direction="row" spacing={1}>
+            <IconButton size="large" onClick={props.toggleDrawer("left", true)}>
+              <MenuIcon sx={{ color: "#ffffff" }} />
+            </IconButton>
+          </Stack>
+
           <Typography variant="h6" noWrap component="div">
             {props.sectionInView.sectionName}
           </Typography>

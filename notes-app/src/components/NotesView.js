@@ -35,7 +35,7 @@ function NotesView(props) {
 
   return (
     <div className="notes-view">
-      <NotesTopBar sectionInView={props.sectionInView} />
+      <NotesTopBar sectionInView={props.sectionInView} toggleDrawer={props.toggleDrawer} />
 
       <Animate animation={animation}>
         {props.sectionNotes.map((note, index) => {

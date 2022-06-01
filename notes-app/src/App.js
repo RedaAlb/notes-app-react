@@ -5,6 +5,8 @@ import SectionsView from "./components/SectionsView";
 import NotesView from "./components/NotesView";
 import { AnimatePresence } from "framer-motion";
 
+import DrawerComp from "./components/DrawerComp";
+
 
 function App(props) {
   const [activeMenu, setActiveMenu] = useState("main");
@@ -12,7 +14,18 @@ function App(props) {
   const [sectionNotes, setSectionNotes] = useState([]);
   const [sectionInView, setSectionInView] = useState({});  // Tracks which was section pressed.
 
+  const [drawerState, setDrawerState] = useState({ left: false });
+
+
   props.dataHandler.setStates(sections, setSections, sectionNotes, setSectionNotes);
+
+
+  const toggleDrawer = (anchor, open) => (event) => {
+    if (event && event.type === "keydown" && (event.key === "Tab" || event.key === "Shift")) {
+      return;
+    }
+    setDrawerState({ ...drawerState, [anchor]: open });
+  }
 
 
   useEffect(() => {
@@ -31,7 +44,8 @@ function App(props) {
               sections={sections}
               setSectionInView={setSectionInView}
               dataHandler={props.dataHandler}
-              setActiveMenu={setActiveMenu} />
+              setActiveMenu={setActiveMenu}
+              toggleDrawer={toggleDrawer} />
           } />
 
           <Route path="/notes" element={
@@ -40,13 +54,17 @@ function App(props) {
               sections={sections}
               sectionInView={sectionInView}
               dataHandler={props.dataHandler}
-              setActiveMenu={setActiveMenu} />
+              setActiveMenu={setActiveMenu}
+              toggleDrawer={toggleDrawer} />
           } />
 
           <Route path="*" element={<h1>No page found</h1>} />
 
         </Routes>
       </AnimatePresence>
+
+      <DrawerComp drawerState={drawerState} toggleDrawer={toggleDrawer} setActiveMenu={setActiveMenu} />
+
     </Router>
   )
 }

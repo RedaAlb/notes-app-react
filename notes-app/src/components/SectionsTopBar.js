@@ -11,6 +11,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import FolderDeleteIcon from '@mui/icons-material/FolderDelete';
 import DragHandleIcon from "@mui/icons-material/DragHandle";
+import MenuIcon from '@mui/icons-material/Menu';
 import { Stack } from '@mui/material';
 
 import SearchBox from './SearchBox';
@@ -89,7 +90,14 @@ function SectionsTopBar(props) {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static" style={{ background: "#6200EE" }}>
-        <Toolbar>
+        <Toolbar disableGutters={true}>
+
+          <Stack direction="row" spacing={1}>
+            <IconButton size="large" onClick={props.toggleDrawer("left", true)}>
+              <MenuIcon sx={{ color: "#ffffff" }} />
+            </IconButton>
+          </Stack>
+
           <Typography variant="h6" noWrap component="div">
             Sections
           </Typography>

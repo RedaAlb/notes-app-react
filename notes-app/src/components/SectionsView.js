@@ -80,7 +80,12 @@ function SectionsView(props) {
 
   return (
     <div>
-      <SectionsTopBar dataHandler={props.dataHandler} showDragHandle={showDragHandle} setShowDragHandle={setShowDragHandle} />
+      <SectionsTopBar
+        dataHandler={props.dataHandler}
+        showDragHandle={showDragHandle}
+        setShowDragHandle={setShowDragHandle}
+        toggleDrawer={props.toggleDrawer}
+      />
 
       <Animate animation={animation}>
         <DragDropContext onDragEnd={onDragEnd} onDragUpdate={onDragUpdate}>
