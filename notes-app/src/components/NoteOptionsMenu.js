@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import ListItemText from '@mui/material/ListItemText';
@@ -8,36 +9,45 @@ import DriveFileMoveIcon from '@mui/icons-material/DriveFileMove';
 import FormatLineSpacingIcon from '@mui/icons-material/FormatLineSpacing';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CircleIcon from '@mui/icons-material/Circle';
-import DeleteNoteDialog from './DeleteNoteDialog';
+
 import NoteMoveDialog from './NoteMoveDialog';
+import ConfirmDialog from './ConfirmDialog';
 
 
 function NoteOptionsMenu(props) {
-
   const [prioMenuAnchor, setPrioMenuAnchor] = useState(null);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [delNoteDialogOpen, setDelNoteDialogOpen] = useState(false);
   const [openMoveDialog, setOpenMoveDialog] = useState(false);
+
   const noteMenuOpen = Boolean(props.noteOptionsAnchor);
   const prioMenuOpen = Boolean(prioMenuAnchor);
+
 
   const onPrioOptionsClick = (event) => {
     setPrioMenuAnchor(event.currentTarget);
   }
+
+
   const onPrioMenuClose = () => {
     setPrioMenuAnchor(null);
   }
+
 
   const onMenuClose = () => {
     props.setNoteOptionsAnchor(null);
   }
 
+
   const onMoveClick = () => {
     setOpenMoveDialog(true);
   }
 
-  const onDeleteClick = () => {
-    setDeleteDialogOpen(true);
+
+  const onDelNoteConfirmed = () => {
+    props.dataHandler.deleteNote(props.note.noteKey, props.sectionInView.sectionKey);
+    setDelNoteDialogOpen(false);
   }
+
 
   const onPriority1Click = () => {
     props.dataHandler.setNotePriority(props.note.noteKey, 0);
@@ -81,7 +91,7 @@ function NoteOptionsMenu(props) {
           <ListItemText>Move</ListItemText>
         </MenuItem>
 
-        <MenuItem onClick={onDeleteClick}>
+        <MenuItem onClick={() => setDelNoteDialogOpen(true)}>
           <ListItemIcon><DeleteIcon fontSize="small" /></ListItemIcon>
           <ListItemText>Delete</ListItemText>
         </MenuItem>
@@ -108,12 +118,12 @@ function NoteOptionsMenu(props) {
         </MenuItem>
       </Menu>
 
-      <DeleteNoteDialog
-        note={props.note}
-        dataHandler={props.dataHandler}
-        sectionInView={props.sectionInView}
-        setDeleteDialogOpen={setDeleteDialogOpen}
-        deleteDialogOpen={deleteDialogOpen}
+      <ConfirmDialog
+        dialogOpen={delNoteDialogOpen}
+        setDialogOpen={setDelNoteDialogOpen}
+        diaTitle="Delete note?"
+        diaText={props.note.noteTitle}
+        onConfirmed={onDelNoteConfirmed}
       />
 
       <NoteMoveDialog

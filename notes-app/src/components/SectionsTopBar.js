@@ -12,16 +12,18 @@ import MoreIcon from '@mui/icons-material/MoreVert';
 import FolderDeleteIcon from '@mui/icons-material/FolderDelete';
 import DragHandleIcon from "@mui/icons-material/DragHandle";
 import MenuIcon from '@mui/icons-material/Menu';
+import WarningIcon from '@mui/icons-material/Warning';
 import { Stack } from '@mui/material';
 
 import SearchBox from './SearchBox';
-import DeleteAllDataDialog from './DeleteAllDataDialog';
+import ConfirmDialog from './ConfirmDialog';
 
 
 function SectionsTopBar(props) {
   const [moreOptionsAnchor, setMoreOptionsAnchor] = useState(null);
-  const isMoreOptionsOpen = Boolean(moreOptionsAnchor);
   const [deleteAllDataDiaOpen, setDeleteAllDataDiaOpen] = useState(false);  // Dia: Dialog
+
+  const isMoreOptionsOpen = Boolean(moreOptionsAnchor);
 
 
   const handleMobileMenuClose = () => {
@@ -43,8 +45,10 @@ function SectionsTopBar(props) {
     console.log("Load");
   }
 
-  const onDbDeleteClick = () => {
-    setDeleteAllDataDiaOpen(true);
+
+  const onDelAllDataConfirmed = () => {
+    props.dataHandler.deleteSqlDb();
+    setDeleteAllDataDiaOpen(false);
   }
 
 
@@ -80,7 +84,7 @@ function SectionsTopBar(props) {
         <p>Load</p>
       </MenuItem>
 
-      <MenuItem onClick={onDbDeleteClick} dense={true}>
+      <MenuItem onClick={() => setDeleteAllDataDiaOpen(true)} dense={true}>
         <IconButton size="large" color="inherit"><FolderDeleteIcon /></IconButton>
         <p>Delete all data</p>
       </MenuItem>
@@ -114,10 +118,13 @@ function SectionsTopBar(props) {
         </Toolbar>
       </AppBar>
 
-      <DeleteAllDataDialog
-        deleteAllDataDiaOpen={deleteAllDataDiaOpen}
-        setDeleteAllDataDiaOpen={setDeleteAllDataDiaOpen}
-        dataHandler={props.dataHandler}
+      <ConfirmDialog
+        dialogOpen={deleteAllDataDiaOpen}
+        setDialogOpen={setDeleteAllDataDiaOpen}
+        diaTitle="Delete ALL data?"
+        diaText="All sections and all notes will be deleted."
+        diaIcon={<WarningIcon sx={{ color: "#ff0000" }} />}
+        onConfirmed={onDelAllDataConfirmed}
       />
     </Box>
   )
