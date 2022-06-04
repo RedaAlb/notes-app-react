@@ -17,7 +17,6 @@ function DrawerComp(props) {
 
 
   const onNotesClick = () => {
-    props.setActiveMenu("main");
     props.toggleDrawer("left", false);
 
     navigate("/");

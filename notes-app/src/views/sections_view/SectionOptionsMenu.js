@@ -1,13 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import DeleteIcon from '@mui/icons-material/Delete';
-import ConfirmDialog from './ConfirmDialog';
+import ConfirmDialog from '../../components/ConfirmDialog';
+
+import sectionsContext from './context/sections-context';
+import { DELETE_SECTION } from './context/sections-actions';
 
 
 function SectionOptionsMenu(props) {
+  const { dispatch } = useContext(sectionsContext);
+
   const [delSectionDiaOpen, setDelSectionDiaOpen] = useState(false);
 
   const sectionMenuOpen = Boolean(props.sectionOptionsAnchor);
@@ -19,7 +24,8 @@ function SectionOptionsMenu(props) {
 
 
   const onDelSectionConfirmed = () => {
-    props.dataHandler.deleteSection(props.section.sectionKey);
+    dispatch({ type: DELETE_SECTION, payload: props.section });
+
     setDelSectionDiaOpen(false);
   }
 

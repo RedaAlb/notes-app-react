@@ -13,7 +13,6 @@ class DataHandler {
     this.SECTION_TB_ATTRS = {  // ATTRS: attributes
       pk: { name: "sectionKey", sqlType: "INTEGER PRIMARY KEY AUTOINCREMENT" },  // pk: primary key
       sectionName: { name: "sectionName", sqlType: "TEXT", defaultValue: "" },
-      sectionCount: { name: "sectionCount", sqlType: "INTEGER", defaultValue: 0 },
       sectionOrder: { name: "sectionOrder", sqlType: "INTEGER", defaultValue: 0 },
     }
 
@@ -30,10 +29,7 @@ class DataHandler {
   }
 
 
-  setStates(sections, setSections, sectionNotes, setSectionNotes) {
-    this.sections = sections;
-    this.setSections = setSections;
-
+  setStates(sectionNotes, setSectionNotes) {
     this.sectionNotes = sectionNotes;
     this.setSectionNotes = setSectionNotes;
   }
@@ -80,10 +76,6 @@ class DataHandler {
 
     await this.createTable(this.SECTIONS_TB_NAME, this.SECTION_TB_ATTRS);
     await this.createTable(this.NOTES_TB_NAME, this.NOTE_TB_ATTRS);
-
-    if (this.platform === "web") {
-      this.sqlite.saveToStore(this.DB_NAME)
-    }
   }
 
 
@@ -137,15 +129,25 @@ class DataHandler {
 
 
   async loadSections() {
+    // Query to get the number of notes each section contains.
+    const sectionCountQuery = `
+      SELECT COUNT(*)
+      FROM ${this.NOTES_TB_NAME}
+      WHERE ${this.SECTIONS_TB_NAME}.${this.SECTION_TB_ATTRS.pk.name} =
+            ${this.NOTES_TB_NAME}.${this.NOTE_TB_ATTRS.fks.sectionKey.name}
+    `
+
     const loadSectionsQuery = `
-      SELECT * FROM ${this.SECTIONS_TB_NAME}
+      SELECT *,
+      (${sectionCountQuery}) AS "sectionCount"
+      FROM ${this.SECTIONS_TB_NAME}
       ORDER BY ${this.SECTION_TB_ATTRS.sectionOrder.name}
     `
 
     const result = await this.sqlDb.query(loadSectionsQuery);
-    this.setSections(result.values);
 
     console.log("Loaded sections");
+    return result.values;
   }
 
 
@@ -162,7 +164,7 @@ class DataHandler {
   }
 
 
-  async addSection() {
+  async addSection(sections) {
     // Add section to the database.
     const attrNamesStrList = this.attrNamesToStrList(this.SECTION_TB_ATTRS);
     const attrDefValsStrList = this.attrDefValsToStrList(this.SECTION_TB_ATTRS);
@@ -182,11 +184,12 @@ class DataHandler {
     // Add locally without needing to re-load all the sections to re-render.
     const newSectionObj = await this.getSection(sectionKey);
 
-    const newSections = [...this.sections];
+    const newSections = [...sections];
     newSections.push(newSectionObj);
-    this.setSections(newSections);
 
     console.log("Section added");
+
+    return newSections
   }
 
 
@@ -270,9 +273,6 @@ class DataHandler {
     newSectionNotes.push(newNoteObj);
     this.setSectionNotes(newSectionNotes);
 
-    // Adding one to the section count.
-    this.incrementSectionCount(sectionInView.sectionKey, 1);
-
     console.log("Note added");
   }
 
@@ -286,23 +286,6 @@ class DataHandler {
     const result = await this.sqlDb.query(getNoteQuery);
 
     return result.values[0];
-  }
-
-
-  async incrementSectionCount(sectionKey, value) {
-    const sectionIndex = this.sections.findIndex(section => section.sectionKey === sectionKey);
-
-    const updateSectionCountQuery = `
-      UPDATE ${this.SECTIONS_TB_NAME}
-      SET ${this.SECTION_TB_ATTRS.sectionCount.name}=${this.sections[sectionIndex].sectionCount + value}
-      WHERE ${this.SECTION_TB_ATTRS.pk.name}=${sectionKey}
-    `
-
-    await this.runSql(updateSectionCountQuery);
-
-    const newSections = [...this.sections];
-    newSections[sectionIndex].sectionCount = this.sections[sectionIndex].sectionCount + value
-    this.setSections(newSections);
   }
 
 
@@ -379,9 +362,6 @@ class DataHandler {
     const newSectionNotes = [...this.sectionNotes];
     newSectionNotes.splice(noteIndex, 1);
     this.setSectionNotes(newSectionNotes);
-
-    // Update section count.
-    this.incrementSectionCount(sectionKey, -1);
   }
 
 
@@ -403,9 +383,6 @@ class DataHandler {
       const newSectionNotes = [...this.sectionNotes];
       newSectionNotes.splice(noteIndex, 1);
       this.setSectionNotes(newSectionNotes);
-
-      await this.incrementSectionCount(currentSectionKey, -1);
-      await this.incrementSectionCount(newSectionKey, 1);
     }
   }
 

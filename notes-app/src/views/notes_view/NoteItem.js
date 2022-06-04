@@ -77,7 +77,6 @@ function NoteItem(props) {
               note={note}
               setNote={setNote}
               dataHandler={props.dataHandler}
-              sections={props.sections}
               sectionInView={props.sectionInView}
               noteOptionsAnchor={noteOptionsAnchor}
               setNoteOptionsAnchor={setNoteOptionsAnchor}

@@ -8,7 +8,7 @@ import NoteItem from './NoteItem';
 import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 
-import Animate from './Animate';
+import Animate from '../../components/Animate';
 
 
 const animation = {
@@ -28,7 +28,6 @@ function NotesView(props) {
   App.addListener('backButton', ({ d }) => {
     console.log("Back button pressed");
 
-    props.setActiveMenu("main");
     navigate("/");
   })
 
@@ -44,7 +43,7 @@ function NotesView(props) {
               note={note}
               sectionInView={props.sectionInView}
               dataHandler={props.dataHandler}
-              sections={props.sections} />
+            />
           )
         })}
       </Animate>

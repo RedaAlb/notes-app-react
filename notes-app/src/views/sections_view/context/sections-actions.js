@@ -1,0 +1,3 @@
+export const LOAD_SECTIONS = "LOAD_SECTIONS";
+export const ADD_SECTION = "ADD_SECTION";
+export const DELETE_SECTION = "DELETE_SECTION";

@@ -12,7 +12,7 @@ import MoreIcon from '@mui/icons-material/MoreVert';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Stack } from '@mui/material';
 
-import SearchBox from './SearchBox';
+import SearchBox from '../../components/SearchBox';
 
 function NotesTopBar(props) {
   const [moreOptionsAnchor, setMoreOptionsAnchor] = useState(null);

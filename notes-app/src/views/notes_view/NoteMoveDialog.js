@@ -31,6 +31,9 @@ function NoteMoveDialog(props) {
   }
 
 
+  const tempSections = [{ sectionKey: "key", sectionName: "Name" }]
+
+
   return (
     <>
       <Dialog open={props.openMoveDialog} onClose={handleClose} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
@@ -47,7 +50,7 @@ function NoteMoveDialog(props) {
                 label="sections"
                 inputProps={{ name: 'section', id: 'section', }}
               >
-                {props.sections.map((section, index) => {
+                {tempSections.map((section, index) => {
                   return (
                     <MenuItem key={index} value={section.sectionKey}>
                       {section.sectionName}

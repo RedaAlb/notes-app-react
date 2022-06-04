@@ -9,23 +9,23 @@ import DragHandleIcon from "@mui/icons-material/DragHandle";
 
 import SectionOptionsMenu from "./SectionOptionsMenu";
 
+import { changeSectionName } from "../../utils/notes-app-utils";
+
 
 function SectionItem(props) {
+
   const navigate = useNavigate();
 
   const [section, setSection] = useState(props.section);
   const [sectionOptionsAnchor, setSectionOptionsAnchor] = useState(null);
 
 
-  const onSectionNameChange = evt => {
-    const tVal = evt.target.value;
+  const onSectionNameChange = (event) => {
+    const tbVal = event.target.value;  // tb: textbox
 
-    setSection(prevSection => ({
-      ...prevSection,
-      sectionName: tVal
-    }));
+    setSection(prevSection => ({ ...prevSection, sectionName: tbVal }));
 
-    props.dataHandler.changeSectionName(section.sectionKey, tVal);
+    changeSectionName(section, tbVal);
   }
 
 
@@ -34,8 +34,6 @@ function SectionItem(props) {
     props.setSectionInView(section);
 
     navigate("/notes")
-
-    props.setActiveMenu("notes");
   }
 
 
@@ -73,7 +71,7 @@ function SectionItem(props) {
       <div className="section-middle" onClick={onSectionItemClick}>
         <div className="section-info-items">
           <Stack direction="row">
-            <div className="section-count">{section.sectionCount}</div>
+            <div className="section-count">{section.sectionCount ? section.sectionCount : 0}</div>
             <ChevronRightIcon fontSize="medium" />
           </Stack>
         </div>
@@ -85,7 +83,6 @@ function SectionItem(props) {
 
       <SectionOptionsMenu
         section={section}
-        dataHandler={props.dataHandler}
         sectionOptionsAnchor={sectionOptionsAnchor}
         setSectionOptionsAnchor={setSectionOptionsAnchor}
       />

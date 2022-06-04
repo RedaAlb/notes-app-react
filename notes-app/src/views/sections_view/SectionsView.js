@@ -1,13 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useReducer } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd"
-
-import SectionItem from "./SectionItem";
-import SectionsTopBar from "./SectionsTopBar";
 
 import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
 
-import Animate from "./Animate";
+import SectionsContext from "./context/sections-context";
+import sectionsReducer from "./context/sections-reducer";
+import { ADD_SECTION, LOAD_SECTIONS } from "./context/sections-actions";
+
+import Animate from "../../components/Animate";
+
+import SectionItem from "./SectionItem";
+import SectionsTopBar from "./SectionsTopBar";
+
+import { addSection, loadSections, swapSectionsOrder } from "../../utils/notes-app-utils";
 
 
 const animation = {
@@ -16,15 +22,23 @@ const animation = {
   exit: { opacity: 1, x: 0 },
 }
 
+const initialState = {
+  sections: []
+}
+
 
 function SectionsView(props) {
+  const [state, dispatch] = useReducer(sectionsReducer, initialState);
+
   const [showDragHandle, setShowDragHandle] = useState(false)
 
   const dragHistory = [];  // Used to persist the order of the sections when dragged.
 
 
   const onAddButtonClick = () => {
-    props.dataHandler.addSection();
+    addSection().then(newSection => {
+      dispatch({ type: ADD_SECTION, payload: newSection });
+    })
   }
 
 
@@ -41,7 +55,8 @@ function SectionsView(props) {
     }
 
     // Swap all the moved sections order for persistence.
-    props.dataHandler.swapSectionsOrder(dragHistory, source.index, dest.index);
+    // props.dataHandler.swapSectionsOrder(dragHistory, source.index, dest.index);
+    swapSectionsOrder(state.sections, dragHistory, source.index, dest.index);
   }
 
 
@@ -70,18 +85,16 @@ function SectionsView(props) {
   }
 
 
-  // On back button from /notes page.
   useEffect(() => {
-    window.onpopstate = () => {
-      props.setActiveMenu("main");
-    }
-  })
+    loadSections().then(newSections => {
+      dispatch({ type: LOAD_SECTIONS, payload: newSections });
+    })
+  }, [dispatch])
 
 
   return (
     <div>
       <SectionsTopBar
-        dataHandler={props.dataHandler}
         showDragHandle={showDragHandle}
         setShowDragHandle={setShowDragHandle}
         toggleDrawer={props.toggleDrawer}
@@ -92,22 +105,23 @@ function SectionsView(props) {
           <Droppable droppableId="droppable-1">
             {(provided) => (
               <div ref={provided.innerRef} {...provided.droppableProps}>
-                {props.sections.map((section, index) => (
-                  <Draggable key={index} draggableId={"draggable-" + index} index={index}>
-                    {(provided) => (
-                      <div ref={provided.innerRef} {...provided.draggableProps}>
-                        <SectionItem
-                          section={section}
-                          dataHandler={props.dataHandler}
-                          setSectionInView={props.setSectionInView}
-                          setActiveMenu={props.setActiveMenu}
-                          showDragHandle={showDragHandle}
-                          provided={provided}
-                        />
-                      </div>
-                    )}
-                  </Draggable>
-                ))}
+                <SectionsContext.Provider value={{ dispatch: dispatch }}>
+                  {state.sections.map((section, index) => (
+                    <Draggable key={index} draggableId={"draggable-" + index} index={index}>
+                      {(provided) => (
+                        <div ref={provided.innerRef} {...provided.draggableProps}>
+                          <SectionItem
+                            section={section}
+                            dataHandler={props.dataHandler}
+                            setSectionInView={props.setSectionInView}
+                            showDragHandle={showDragHandle}
+                            provided={provided}
+                          />
+                        </div>
+                      )}
+                    </Draggable>
+                  ))}
+                </SectionsContext.Provider>
                 {provided.placeholder}
               </div>
             )}

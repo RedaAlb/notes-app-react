@@ -15,8 +15,9 @@ import MenuIcon from '@mui/icons-material/Menu';
 import WarningIcon from '@mui/icons-material/Warning';
 import { Stack } from '@mui/material';
 
-import SearchBox from './SearchBox';
-import ConfirmDialog from './ConfirmDialog';
+import SearchBox from '../../components/SearchBox';
+import ConfirmDialog from '../../components/ConfirmDialog';
+import { deleteSqlDb } from '../../utils/sql';
 
 
 function SectionsTopBar(props) {
@@ -47,13 +48,12 @@ function SectionsTopBar(props) {
 
 
   const onDelAllDataConfirmed = () => {
-    props.dataHandler.deleteSqlDb();
+    deleteSqlDb();
     setDeleteAllDataDiaOpen(false);
   }
 
 
   const onToggleDragHandleClick = () => {
-    console.log("Toggle drag handle");
     props.setShowDragHandle(!props.showDragHandle)
     setMoreOptionsAnchor(null)
   }

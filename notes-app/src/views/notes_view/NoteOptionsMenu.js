@@ -11,7 +11,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import CircleIcon from '@mui/icons-material/Circle';
 
 import NoteMoveDialog from './NoteMoveDialog';
-import ConfirmDialog from './ConfirmDialog';
+import ConfirmDialog from '../../components/ConfirmDialog';
 
 
 function NoteOptionsMenu(props) {
@@ -129,7 +129,6 @@ function NoteOptionsMenu(props) {
       <NoteMoveDialog
         setOpenMoveDialog={setOpenMoveDialog}
         openMoveDialog={openMoveDialog}
-        sections={props.sections}
         note={props.note}
         dataHandler={props.dataHandler}
         sectionInView={props.sectionInView}
