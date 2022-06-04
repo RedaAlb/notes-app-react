@@ -55,7 +55,6 @@ function SectionsView(props) {
     }
 
     // Swap all the moved sections order for persistence.
-    // props.dataHandler.swapSectionsOrder(dragHistory, source.index, dest.index);
     swapSectionsOrder(state.sections, dragHistory, source.index, dest.index);
   }
 
@@ -86,10 +85,10 @@ function SectionsView(props) {
 
 
   useEffect(() => {
-    loadSections().then(newSections => {
-      dispatch({ type: LOAD_SECTIONS, payload: newSections });
+    loadSections().then(sections => {
+      dispatch({ type: LOAD_SECTIONS, payload: sections });
     })
-  }, [dispatch])
+  }, [])
 
 
   return (
@@ -112,7 +111,6 @@ function SectionsView(props) {
                         <div ref={provided.innerRef} {...provided.draggableProps}>
                           <SectionItem
                             section={section}
-                            dataHandler={props.dataHandler}
                             setSectionInView={props.setSectionInView}
                             showDragHandle={showDragHandle}
                             provided={provided}

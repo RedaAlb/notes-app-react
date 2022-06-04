@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
@@ -11,63 +11,83 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
+import { FormHelperText } from '@mui/material';
+
+import notesContext from './context/notes-context';
+import { MOVE_NOTE } from './context/notes-actions';
+import { loadSections } from '../../utils/notes-app-utils';
 
 
 function NoteMoveDialog(props) {
+  const { dispatch } = useContext(notesContext);
 
-  const [sectionSelected, setSectionSelected] = useState("");
+  const [sections, setSections] = useState([]);
+  const [sectionKeySelected, setSectionKeySelected] = useState("");
+  const [error, setError] = useState(false);
+
 
   const handleClose = () => {
     props.setOpenMoveDialog(false);
   }
 
+
   const handleMaxWidthChange = (event) => {
-    setSectionSelected(event.target.value);
+    setSectionKeySelected(event.target.value);
   }
 
-  const onSectionMoveClick = () => {
-    props.dataHandler.moveNote(props.note, props.sectionInView.sectionKey, sectionSelected);
+
+  const onNoteMoveClick = () => {
+    if (sectionKeySelected === "" || sectionKeySelected === props.sectionInView.sectionKey) {
+      setError(true);
+      return;
+    }
+    setError(false);
+
+    dispatch({ type: MOVE_NOTE, payload: { note: props.note, sectionKeySelected: sectionKeySelected } })
     props.setOpenMoveDialog(false);
   }
 
 
-  const tempSections = [{ sectionKey: "key", sectionName: "Name" }]
+  useEffect(() => {
+    loadSections().then(sections => {
+      setSections(sections);
+    })
+  }, [])
 
 
   return (
-    <>
-      <Dialog open={props.openMoveDialog} onClose={handleClose} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
-        <DialogTitle id="alert-dialog-title">Select section to move note to:</DialogTitle>
+    <Dialog open={props.openMoveDialog} onClose={handleClose} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+      <DialogTitle id="alert-dialog-title">Select section to move note to:</DialogTitle>
 
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description"></DialogContentText>
-          <Box noValidate component="form" sx={{ display: 'flex', flexDirection: 'column', m: 'auto', width: 'fit-content', }}>
-            <FormControl sx={{ mt: 2, minWidth: 180 }}>
-              <InputLabel htmlFor="section">Sections</InputLabel>
-              <Select
-                value={sectionSelected}
-                onChange={handleMaxWidthChange}
-                label="sections"
-                inputProps={{ name: 'section', id: 'section', }}
-              >
-                {tempSections.map((section, index) => {
-                  return (
-                    <MenuItem key={index} value={section.sectionKey}>
-                      {section.sectionName}
-                    </MenuItem>
-                  )
-                })}
-              </Select>
-            </FormControl>
-          </Box>
-        </DialogContent>
+      <DialogContent>
+        <DialogContentText id="alert-dialog-description"></DialogContentText>
+        <Box noValidate component="form" sx={{ display: 'flex', flexDirection: 'column', m: 'auto', width: 'fit-content', }}>
+          <FormControl sx={{ mt: 2, minWidth: 250 }} error={error}>
+            <InputLabel htmlFor="section">Sections</InputLabel>
+            <Select
+              value={sectionKeySelected}
+              onChange={handleMaxWidthChange}
+              label="sections"
+              inputProps={{ name: 'section', id: 'section', }}
+            >
+              {sections.map((section, index) => {
+                return (
+                  <MenuItem key={index} value={section.sectionKey}>
+                    {section.sectionName}
+                  </MenuItem>
+                )
+              })}
+            </Select>
+            {error ? (<FormHelperText>No section or same section selected</FormHelperText>) : null}
+          </FormControl>
+        </Box>
+      </DialogContent>
 
-        <DialogActions>
-          <Button onClick={onSectionMoveClick}>Move</Button>
-          <Button onClick={handleClose}>Cancel</Button>
-        </DialogActions>
-      </Dialog>
-    </>
+      <DialogActions>
+        <Button onClick={onNoteMoveClick}>Move</Button>
+        <Button onClick={handleClose}>Cancel</Button>
+      </DialogActions>
+    </Dialog>
   )
 }
 

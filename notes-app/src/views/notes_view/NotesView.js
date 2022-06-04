@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useReducer } from 'react';
 import { useNavigate } from "react-router-dom";
 import { App } from '@capacitor/app';
 
@@ -10,6 +10,11 @@ import AddIcon from '@mui/icons-material/Add';
 
 import Animate from '../../components/Animate';
 
+import notesReducer from './context/notes-reducer';
+import NotesContext from "./context/notes-context";
+import { addNote, loadSectionNotes } from '../../utils/notes-app-utils';
+import { ADD_NOTE, LOAD_NOTES } from './context/notes-actions';
+
 
 const animation = {
   initial: { opacity: 1, x: 100 },
@@ -17,19 +22,35 @@ const animation = {
   exit: { opacity: 1, x: 0 },
 }
 
+const initialState = {
+  sectionNotes: []
+}
+
 
 function NotesView(props) {
+  const [state, dispatch] = useReducer(notesReducer, initialState);
+
   const navigate = useNavigate();
 
+
   const onAddButtonClick = () => {
-    props.dataHandler.addNote(props.sectionInView);
+    addNote(props.sectionInView).then(newNote => {
+      dispatch({ type: ADD_NOTE, payload: newNote });
+    })
   }
 
-  App.addListener('backButton', ({ d }) => {
-    console.log("Back button pressed");
 
+  // For phone back button.
+  App.addListener('backButton', ({ d }) => {
     navigate("/");
   })
+
+
+  useEffect(() => {
+    loadSectionNotes(props.sectionInView).then(sectionNotes => {
+      dispatch({ type: LOAD_NOTES, payload: sectionNotes });
+    })
+  }, [props.sectionInView])
 
 
   return (
@@ -37,18 +58,24 @@ function NotesView(props) {
       <NotesTopBar sectionInView={props.sectionInView} toggleDrawer={props.toggleDrawer} />
 
       <Animate animation={animation}>
-        {props.sectionNotes.map((note, index) => {
-          return (
-            <NoteItem key={index}
-              note={note}
-              sectionInView={props.sectionInView}
-              dataHandler={props.dataHandler}
-            />
-          )
-        })}
+        <NotesContext.Provider value={{ dispatch: dispatch }}>
+          {state.sectionNotes.map((note, index) => {
+            return (
+              <NoteItem key={index}
+                note={note}
+                sectionInView={props.sectionInView}
+              />
+            )
+          })}
+        </NotesContext.Provider>
       </Animate>
 
-      <Fab onClick={onAddButtonClick} size="large" color="primary" aria-label="add" sx={{ position: "fixed", bottom: 26, right: 26 }}>
+      <Fab
+        onClick={onAddButtonClick}
+        size="large" color="primary"
+        aria-label="add"
+        sx={{ position: "fixed", bottom: 26, right: 26 }}
+      >
         <AddIcon />
       </Fab>
     </div>

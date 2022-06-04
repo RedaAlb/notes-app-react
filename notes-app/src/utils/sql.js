@@ -5,17 +5,17 @@ import { defineCustomElements as jeepSqlite, applyPolyfills } from "jeep-sqlite/
 import { createNotesAppTables } from "./notes-app-utils";
 
 
-applyPolyfills().then(() => {
-  jeepSqlite(window);
-});
-
-
 const DB_NAME = "notes_db";
 
 const platform = Capacitor.getPlatform();
 const sqlite = new SQLiteConnection(CapacitorSQLite)
 
 var sqlDb;
+
+
+applyPolyfills().then(() => {
+  jeepSqlite(window);
+});
 
 
 export const initSqlDb = async () => {
@@ -45,9 +45,9 @@ export const initSqlDb = async () => {
 
   await runSql("PRAGMA foreign_keys = ON;");
 
-  console.log("SQL DB initialised");
-
   await createNotesAppTables();
+
+  console.log("SQL DB initialised");
 }
 
 
@@ -85,7 +85,7 @@ export const createTable = async (tableName, tableAttributes) => {
 }
 
 
-export const attrsToCreateTbSqlString = async (tableAttributes) => {
+export const attrsToCreateTbSqlString = (tableAttributes) => {
   var sqlStringLines = []  // Will hold all lines of the sql statement.
 
   for (var [key, attr] of Object.entries(tableAttributes)) {

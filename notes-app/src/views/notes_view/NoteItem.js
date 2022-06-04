@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useState, useEffect } from "react"
 
 import TextareaAutosize from 'react-textarea-autosize';
 import NoteOptionsMenu from "./NoteOptionsMenu";
@@ -7,6 +7,8 @@ import Stack from '@mui/material/Stack';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+
+import { changeNoteText, changeNoteTitle } from "../../utils/notes-app-utils";
 
 
 function NoteItem(props) {
@@ -21,26 +23,20 @@ function NoteItem(props) {
 
 
   const noteTitleChangeHandler = (event) => {
-    const tVal = event.target.value;
+    const tbVal = event.target.value;  // tb: textbox
 
-    setNote(prevNote => ({
-      ...prevNote,
-      noteTitle: tVal
-    }));
+    setNote(prevNote => ({ ...prevNote, noteTitle: tbVal }));
 
-    props.dataHandler.changeNoteTitle(note.noteKey, tVal);
+    changeNoteTitle(note, tbVal);
   }
 
 
   const noteTextChangeHandler = (event) => {
-    const tVal = event.target.value;
+    const tbVal = event.target.value;
 
-    setNote(prevNote => ({
-      ...prevNote,
-      noteText: tVal
-    }));
+    setNote(prevNote => ({ ...prevNote, noteText: tbVal }));
 
-    props.dataHandler.changeNoteText(note.noteKey, tVal);
+    changeNoteText(note, tbVal);
   }
 
 
@@ -76,7 +72,6 @@ function NoteItem(props) {
             <NoteOptionsMenu
               note={note}
               setNote={setNote}
-              dataHandler={props.dataHandler}
               sectionInView={props.sectionInView}
               noteOptionsAnchor={noteOptionsAnchor}
               setNoteOptionsAnchor={setNoteOptionsAnchor}

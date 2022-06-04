@@ -27,6 +27,7 @@ export const createNotesAppTables = async () => {
 
 
 export const loadSections = async () => {
+
   // Query to get the number of notes each section contains.
   const sectionCountQuery = `
     SELECT COUNT(*)
@@ -50,8 +51,16 @@ export const loadSections = async () => {
 }
 
 
-export const loadSectionNotes = async () => {
+export const loadSectionNotes = async (section) => {
+  const loadSectionNotesQuery = `
+    SELECT * FROM ${NOTES_TB_NAME}
+    WHERE ${SECTION_TB_ATTRS.pk.name}=${section.sectionKey}
+  `
+  const result = await sql.query(loadSectionNotesQuery);
 
+  console.log("Loaded section notes");
+
+  return result.values;
 }
 
 
@@ -131,12 +140,34 @@ export const swapSectionsOrder = async (sections, dragHistory, finalSourceIndex,
 
 
 export const addNote = async (sectionInView) => {
+  const attrNamesStrList = sql.attrNamesToStrList(NOTE_TB_ATTRS);
+  const attrDefValsStrList = sql.attrDefValsToStrList(NOTE_TB_ATTRS);
 
+  const addNoteQuery = `
+    INSERT INTO ${NOTES_TB_NAME} (${attrNamesStrList})
+    VALUES(${attrDefValsStrList}, ${sectionInView.sectionKey});
+  `
+
+  const result = await sql.runSql(addNoteQuery);
+  const noteKey = result.changes.lastId;
+
+  const newNoteObj = await getNote(noteKey);
+
+  console.log("Note added");
+
+  return newNoteObj;
 }
 
 
 export const getNote = async (noteKey) => {
+  const getNoteQuery = `
+    SELECT * FROM ${NOTES_TB_NAME}
+    WHERE ${NOTE_TB_ATTRS.pk.name} = ${noteKey}
+  `
 
+  const result = await sql.query(getNoteQuery);
+
+  return result.values[0];
 }
 
 
@@ -152,12 +183,24 @@ export const changeSectionName = async (section, newSectionName) => {
 
 
 export const changeNoteTitle = async (note, newNoteTitle) => {
+  const changeNoteNameQuery = `
+    UPDATE ${NOTES_TB_NAME}
+    SET ${NOTE_TB_ATTRS.noteTitle.name} = "${newNoteTitle}"
+    WHERE ${NOTE_TB_ATTRS.pk.name} = ${note.noteKey}
+  `
 
+  await sql.runSql(changeNoteNameQuery);
 }
 
 
 export const changeNoteText = async (note, newNoteText) => {
+  const changeNoteTextQuery = `
+    UPDATE ${NOTES_TB_NAME}
+    SET ${NOTE_TB_ATTRS.noteText.name} = "${newNoteText}"
+    WHERE ${NOTE_TB_ATTRS.pk.name} = ${note.noteKey}
+  `
 
+  await sql.runSql(changeNoteTextQuery);
 }
 
 
@@ -178,17 +221,31 @@ export const deleteSection = async (section) => {
 
 
 export const deleteNote = async (note) => {
-
+  const deleteNoteQuery = `
+    DELETE FROM ${NOTES_TB_NAME}
+    WHERE ${NOTE_TB_ATTRS.pk.name} = ${note.noteKey}
+  `
+  await sql.runSql(deleteNoteQuery);
 }
 
 
-export const moveNote = async (note, currentSectionKey, newSectionKey) => {
+export const setNotePriority = async (note, newPriority) => {
+  const setNotePrioQuery = `
+    UPDATE ${NOTES_TB_NAME}
+    SET ${NOTE_TB_ATTRS.notePrio.name} = ${newPriority}
+    WHERE ${NOTE_TB_ATTRS.pk.name} = ${note.noteKey}
+  `
 
+  await sql.runSql(setNotePrioQuery);
 }
 
 
-export const setNotePriority = async () => {
+export const moveNote = async (note, newSectionKey) => {
+  const moveNoteQuery = `
+    UPDATE ${NOTES_TB_NAME}
+    SET ${NOTE_TB_ATTRS.fks.sectionKey.name} = ${newSectionKey}
+    WHERE ${NOTE_TB_ATTRS.pk.name} = ${note.noteKey}
+  `
 
+  await sql.runSql(moveNoteQuery);
 }
-
-

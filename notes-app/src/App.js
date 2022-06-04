@@ -9,13 +9,8 @@ import DrawerComp from "./components/DrawerComp";
 
 
 function App(props) {
-  const [sectionNotes, setSectionNotes] = useState([]);
   const [sectionInView, setSectionInView] = useState({});  // Tracks which was section pressed.
-
   const [drawerState, setDrawerState] = useState({ left: false });
-
-
-  props.dataHandler.setStates(sectionNotes, setSectionNotes);
 
 
   const toggleDrawer = (anchor, open) => (event) => {
@@ -33,15 +28,12 @@ function App(props) {
           <Route path="/" element={
             <SectionsView
               setSectionInView={setSectionInView}
-              dataHandler={props.dataHandler}
               toggleDrawer={toggleDrawer} />
           } />
 
           <Route path="/notes" element={
             <NotesView
-              sectionNotes={sectionNotes}
               sectionInView={sectionInView}
-              dataHandler={props.dataHandler}
               toggleDrawer={toggleDrawer} />
           } />
 

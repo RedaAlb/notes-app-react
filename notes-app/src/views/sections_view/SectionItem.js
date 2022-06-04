@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom";
 import AutowidthInput from "react-autowidth-input";
 
@@ -30,7 +30,6 @@ function SectionItem(props) {
 
 
   const onSectionItemClick = () => {
-    props.dataHandler.loadSectionNotes(section.sectionKey);
     props.setSectionInView(section);
 
     navigate("/notes")

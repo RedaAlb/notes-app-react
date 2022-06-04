@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
@@ -13,8 +13,14 @@ import CircleIcon from '@mui/icons-material/Circle';
 import NoteMoveDialog from './NoteMoveDialog';
 import ConfirmDialog from '../../components/ConfirmDialog';
 
+import notesContext from './context/notes-context';
+import { DELETE_NOTE } from './context/notes-actions';
+import { setNotePriority } from '../../utils/notes-app-utils';
+
 
 function NoteOptionsMenu(props) {
+  const { dispatch } = useContext(notesContext);
+
   const [prioMenuAnchor, setPrioMenuAnchor] = useState(null);
   const [delNoteDialogOpen, setDelNoteDialogOpen] = useState(false);
   const [openMoveDialog, setOpenMoveDialog] = useState(false);
@@ -44,28 +50,23 @@ function NoteOptionsMenu(props) {
 
 
   const onDelNoteConfirmed = () => {
-    props.dataHandler.deleteNote(props.note.noteKey, props.sectionInView.sectionKey);
+    dispatch({ type: DELETE_NOTE, payload: props.note });
     setDelNoteDialogOpen(false);
   }
 
 
   const onPriority1Click = () => {
-    props.dataHandler.setNotePriority(props.note.noteKey, 0);
+    setNotePriority(props.note, 0);
 
-    props.setNote(prevNote => ({
-      ...prevNote,
-      notePrio: 0
-    }));
+    props.setNote(prevNote => ({ ...prevNote, notePrio: 0 }));
     setPrioMenuAnchor(null);
   }
 
-  const onPriority2Click = () => {
-    props.dataHandler.setNotePriority(props.note.noteKey, 1);
 
-    props.setNote(prevNote => ({
-      ...prevNote,
-      notePrio: 1
-    }));
+  const onPriority2Click = () => {
+    setNotePriority(props.note, 1);
+
+    props.setNote(prevNote => ({ ...prevNote, notePrio: 1 }));
     setPrioMenuAnchor(null);
   }
 
@@ -126,13 +127,14 @@ function NoteOptionsMenu(props) {
         onConfirmed={onDelNoteConfirmed}
       />
 
-      <NoteMoveDialog
-        setOpenMoveDialog={setOpenMoveDialog}
-        openMoveDialog={openMoveDialog}
-        note={props.note}
-        dataHandler={props.dataHandler}
-        sectionInView={props.sectionInView}
-      />
+      {openMoveDialog ? (
+        <NoteMoveDialog
+          setOpenMoveDialog={setOpenMoveDialog}
+          openMoveDialog={openMoveDialog}
+          note={props.note}
+          sectionInView={props.sectionInView}
+        />
+      ) : null}
     </>
   )
 }
