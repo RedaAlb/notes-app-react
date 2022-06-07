@@ -2,6 +2,7 @@ import React, { useContext, useState } from 'react';
 
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import IconButton from '@mui/material/IconButton';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -9,6 +10,7 @@ import DriveFileMoveIcon from '@mui/icons-material/DriveFileMove';
 import FormatLineSpacingIcon from '@mui/icons-material/FormatLineSpacing';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CircleIcon from '@mui/icons-material/Circle';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 import NoteMoveDialog from './NoteMoveDialog';
 import ConfirmDialog from '../../components/ConfirmDialog';
@@ -19,122 +21,97 @@ import { setNotePriority } from '../../utils/notes-app-utils';
 
 
 function NoteOptionsMenu(props) {
+  const [menuAnchor, setMenuAnchor] = useState(null);
+  const menuOpen = Boolean(menuAnchor);
+
+
   const { dispatch } = useContext(notesContext);
 
   const [prioMenuAnchor, setPrioMenuAnchor] = useState(null);
+  const prioMenuOpen = Boolean(prioMenuAnchor);
+
   const [delNoteDialogOpen, setDelNoteDialogOpen] = useState(false);
   const [openMoveDialog, setOpenMoveDialog] = useState(false);
 
-  const noteMenuOpen = Boolean(props.noteOptionsAnchor);
-  const prioMenuOpen = Boolean(prioMenuAnchor);
-
-
-  const onPrioOptionsClick = (event) => {
-    setPrioMenuAnchor(event.currentTarget);
-  }
-
-
-  const onPrioMenuClose = () => {
-    setPrioMenuAnchor(null);
-  }
-
-
-  const onMenuClose = () => {
-    props.setNoteOptionsAnchor(null);
-  }
-
-
-  const onMoveClick = () => {
-    setOpenMoveDialog(true);
-  }
-
 
   const onDelNoteConfirmed = () => {
-    dispatch({ type: DELETE_NOTE, payload: props.note });
-    setDelNoteDialogOpen(false);
+    dispatch({ type: DELETE_NOTE, payload: props.note.current });
   }
 
 
-  const onPriority1Click = () => {
-    setNotePriority(props.note, 0);
+  const onPriorityClick = (priority) => {
+    setNotePriority(props.note.current, priority);
 
-    props.setNote(prevNote => ({ ...prevNote, notePrio: 0 }));
+    props.setNotePriority(priority);
     setPrioMenuAnchor(null);
-  }
-
-
-  const onPriority2Click = () => {
-    setNotePriority(props.note, 1);
-
-    props.setNote(prevNote => ({ ...prevNote, notePrio: 1 }));
-    setPrioMenuAnchor(null);
+    setMenuAnchor(null);
   }
 
 
   return (
     <>
+      <IconButton onClick={(e) => setMenuAnchor(e.currentTarget)}> <MoreVertIcon /> </IconButton>
+
       <Menu
         id="note-options-menu"
-        anchorEl={props.noteOptionsAnchor}
-        open={noteMenuOpen}
-        onClose={onMenuClose}
+        anchorEl={menuAnchor}
+        open={menuOpen}
+        onClose={() => setMenuAnchor(null)}
         MenuListProps={{ 'aria-labelledby': 'basic-button', }}
         PaperProps={{ style: { minWidth: 180, }, }}
       >
-        <MenuItem onClick={onPrioOptionsClick}>
+        <MenuItem onClick={(e) => setPrioMenuAnchor(e.currentTarget)}>
           <ListItemIcon><FormatLineSpacingIcon fontSize="small" /></ListItemIcon>
           <ListItemText>Priority</ListItemText>
           <ChevronRightIcon />
         </MenuItem>
 
-        <MenuItem onClick={onMoveClick}>
+        <MenuItem onClick={() => setOpenMoveDialog(true)}>
           <ListItemIcon><DriveFileMoveIcon fontSize="small" /></ListItemIcon>
           <ListItemText>Move</ListItemText>
         </MenuItem>
+
+        <NoteMoveDialog
+          note={props.note.current}
+          setOpenMoveDialog={setOpenMoveDialog}
+          openMoveDialog={openMoveDialog}
+          sectionInView={props.sectionInView}
+        />
+
 
         <MenuItem onClick={() => setDelNoteDialogOpen(true)}>
           <ListItemIcon><DeleteIcon fontSize="small" /></ListItemIcon>
           <ListItemText>Delete</ListItemText>
         </MenuItem>
+
+        <ConfirmDialog
+          dialogOpen={delNoteDialogOpen}
+          setDialogOpen={setDelNoteDialogOpen}
+          diaTitle="Delete note?"
+          diaText={props.note.current.noteTitle}
+          onConfirmed={onDelNoteConfirmed}
+        />
       </Menu>
 
       <Menu
-        id="demo-positioned-menu"
-        aria-labelledby="demo-positioned-button"
+        id="note-priority-options"
         anchorEl={prioMenuAnchor}
         open={prioMenuOpen}
-        onClose={onPrioMenuClose}
+        onClose={() => setPrioMenuAnchor(null)}
         anchorOrigin={{ vertical: 'top', horizontal: 'left', }}
         transformOrigin={{ vertical: 'top', horizontal: 'left', }}
         PaperProps={{ style: { width: 180, }, }}
       >
-        <MenuItem onClick={onPriority1Click}>
+        <MenuItem onClick={() => onPriorityClick(0)}>
           <ListItemIcon><CircleIcon fontSize="small" sx={{ color: "#3ad83a" }} /></ListItemIcon>
           <ListItemText>Priority 1</ListItemText>
         </MenuItem>
 
-        <MenuItem onClick={onPriority2Click}>
+        <MenuItem onClick={() => onPriorityClick(1)}>
           <ListItemIcon><CircleIcon fontSize="small" sx={{ color: "#ffcc23" }} /></ListItemIcon>
           <ListItemText>Priority 2</ListItemText>
         </MenuItem>
       </Menu>
-
-      <ConfirmDialog
-        dialogOpen={delNoteDialogOpen}
-        setDialogOpen={setDelNoteDialogOpen}
-        diaTitle="Delete note?"
-        diaText={props.note.noteTitle}
-        onConfirmed={onDelNoteConfirmed}
-      />
-
-      {openMoveDialog ? (
-        <NoteMoveDialog
-          setOpenMoveDialog={setOpenMoveDialog}
-          openMoveDialog={openMoveDialog}
-          note={props.note}
-          sectionInView={props.sectionInView}
-        />
-      ) : null}
     </>
   )
 }

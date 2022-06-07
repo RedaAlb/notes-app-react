@@ -8,10 +8,20 @@
   font-size: 22px;
   padding-left: 12px;
   font-weight: 600;
-  line-height: calc(var(--section-height) - 2px);
+  line-height: calc(var(--large-list-item) - 2px);
   background: transparent;
 }
 
 .auto-width-tb-wrapper {
   float: left;
+}
+
+.autosize-textarea {
+  border: none;
+  overflow: hidden;
+  resize: none;
+  padding: 15px 8px;
+  width: 100%;
+  font-size: 18px;
+  background: transparent;
 }

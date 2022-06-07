@@ -49,10 +49,12 @@ function NoteMoveDialog(props) {
 
 
   useEffect(() => {
-    loadSections().then(sections => {
-      setSections(sections);
-    })
-  }, [])
+    if (props.openMoveDialog) {
+      loadSections().then(sections => {
+        setSections(sections);
+      })
+    }
+  }, [props.openMoveDialog])
 
 
   return (

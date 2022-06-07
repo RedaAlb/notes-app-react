@@ -61,7 +61,7 @@ function NotesView(props) {
         <NotesContext.Provider value={{ dispatch: dispatch }}>
           {state.sectionNotes.map((note, index) => {
             return (
-              <NoteItem key={index}
+              <NoteItem key={note.noteKey}
                 note={note}
                 sectionInView={props.sectionInView}
               />

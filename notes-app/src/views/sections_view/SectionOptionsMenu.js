@@ -25,8 +25,6 @@ function SectionOptionsMenu(props) {
 
   const onDelSectionConfirmed = () => {
     dispatch({ type: DELETE_SECTION, payload: props.section.current });
-
-    setMenuAnchor(null);
   }
 
 
@@ -49,15 +47,14 @@ function SectionOptionsMenu(props) {
           <ListItemText>Delete</ListItemText>
         </MenuItem>
 
+        <ConfirmDialog
+          dialogOpen={delSectionDiaOpen}
+          setDialogOpen={setDelSectionDiaOpen}
+          diaTitle={`Delete (${props.section.current.sectionName}) section?`}
+          diaText="All section notes will be deleted."
+          onConfirmed={onDelSectionConfirmed}
+        />
       </Menu>
-
-      <ConfirmDialog
-        dialogOpen={delSectionDiaOpen}
-        setDialogOpen={setDelSectionDiaOpen}
-        diaTitle={`Delete (${props.section.current.sectionName}) section?`}
-        diaText="All section notes will be deleted."
-        onConfirmed={onDelSectionConfirmed}
-      />
     </>
   )
 }

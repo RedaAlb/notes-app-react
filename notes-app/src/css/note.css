@@ -37,39 +37,12 @@
   height: 20px;
 }
 
-.note-title-textarea {
-  background-color: #ff8f8f;
-  border: none;
-  overflow: hidden;
-  resize: none;
-  padding: 15px 8px;
-  width: 100%;
-  font-size: 18px;
-}
-
-.note-text-textarea {
-  background-color: white;
-  border: none;
-  overflow: hidden;
-  resize: none;
-  padding: 15px 0px 15px 8px;
-  font-size: 18px;
-}
-
 .note-icon-right {
   fill: var(--note-item-right-icon-color);
   margin-left: auto;
   display: flex;
   align-items: center;
   cursor: pointer;
-}
-
-.prio-0 {
-  background-color: var(--note-prio1-bg-color);
-}
-
-.prio-1 {
-  background-color: var(--note-prio2-bg-color);
 }
 
 .note-content-wrapper {
