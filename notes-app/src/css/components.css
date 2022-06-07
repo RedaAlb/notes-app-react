@@ -1,27 +1,20 @@
-:root {
-  --large-list-item: 64px;
-}
-
-
 .auto-width-tb {
+  height: -webkit-fill-available;
   border: none;
   font-size: 22px;
   padding-left: 12px;
   font-weight: 600;
-  line-height: calc(var(--large-list-item) - 2px);
   background: transparent;
 }
 
-.auto-width-tb-wrapper {
-  float: left;
-}
+.auto-width-tb-wrapper {}
 
 .autosize-textarea {
   border: none;
+  font-size: 18px;
+  padding: 15px 8px;
+  background: transparent;
   overflow: hidden;
   resize: none;
-  padding: 15px 8px;
   width: 100%;
-  font-size: 18px;
-  background: transparent;
 }

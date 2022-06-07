@@ -1,56 +1,9 @@
-:root {
-  --note-item-right-icon-color: black;
-  --note-prio1-bg-color: #a3ffb0;
-  --note-prio2-bg-color: #f9ffa1;
-}
-
-.notes-view {
-  overflow: hidden;
-}
-
 .note-item {
   display: flex;
-  align-items: stretch;
-  color: var(--note-item-color);
-}
-
-.note-top {
-  display: flex;
   align-items: center;
 }
 
-.note-button {
-  --button-size: calc(var(--nav-size) * 0.5);
-  width: var(--button-size);
-  height: var(--button-size);
-  border-radius: 50%;
-  padding: 5px;
-  margin: 2px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.note-button svg {
-  fill: var(--text-color);
-  width: 20px;
-  height: 20px;
-}
-
-.note-icon-right {
-  fill: var(--note-item-right-icon-color);
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-}
-
-.note-content-wrapper {
-  width: 100%;
+.note-item-wrapper {
   display: flex;
   flex-direction: column;
-}
-
-.note-header {
-  display: flex;
 }

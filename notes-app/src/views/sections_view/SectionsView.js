@@ -88,7 +88,7 @@ function SectionsView(props) {
 
 
   return (
-    <div>
+    <>
       <SectionsTopBar
         showDragHandle={showDragHandle}
         setShowDragHandle={setShowDragHandle}
@@ -132,7 +132,7 @@ function SectionsView(props) {
       >
         <AddIcon />
       </Fab>
-    </div>
+    </>
   )
 }
 

@@ -33,7 +33,9 @@ function SectionItem(props) {
   return (
     <div className="section-item">
       <div {...props.provided.dragHandleProps}>
-        {props.showDragHandle ? (<DragHandleIcon className="drag-handle" />) : null}
+        <Stack direction="row">
+          {props.showDragHandle ? (<DragHandleIcon className="drag-handle" />) : null}
+        </Stack>
       </div>
 
       <AutoWidthTb
@@ -43,18 +45,15 @@ function SectionItem(props) {
         minWidth={100}
       />
 
-
       <div className="section-middle" onClick={onSectionItemClick}>
-        <div className="section-info-items">
-          <Stack direction="row">
-            <div className="section-count">{props.section.sectionCount ? props.section.sectionCount : 0}</div>
-            <ChevronRightIcon fontSize="medium" />
-          </Stack>
-        </div>
+        <Stack direction="row">
+          <div className="section-count">{props.section.sectionCount ? props.section.sectionCount : 0}</div>
+          <ChevronRightIcon fontSize="medium" />
+        </Stack>
       </div>
 
 
-      <Stack direction="row" spacing={1}>
+      <Stack direction="row">
         <SectionOptionsMenu section={sectionRef} />
       </Stack>
     </div>

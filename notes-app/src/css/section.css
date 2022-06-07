@@ -1,33 +1,23 @@
 :root {
   --section-height: 64px;
-  --section-item-bg: #ffffff;
-  --section-item-color: #000000;
   --border-bottom-color: rgb(184, 184, 184);
-  --section-item-left-icon-color: #6bff9c;
-  --section-item-right-icon-color: black;
 }
 
 .section-item {
+  height: var(--section-height);
   display: flex;
-  flex-direction: row;
   align-items: center;
   border-bottom: 1px solid var(--border-bottom-color);
 }
 
 .section-middle {
-  height: var(--section-height);
+  height: -webkit-fill-available;
   display: flex;
   align-items: center;
-  padding: 0rem;
-  color: var(--section-item-color);
+  justify-content: flex-end;
   cursor: pointer;
   user-select: none;
   width: -webkit-fill-available;
-}
-
-.section-info-items {
-  margin-left: auto;
-  display: flex;
 }
 
 .section-count {

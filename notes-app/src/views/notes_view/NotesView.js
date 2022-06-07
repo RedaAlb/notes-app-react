@@ -50,7 +50,7 @@ function NotesView(props) {
 
 
   return (
-    <div className="notes-view">
+    <>
       <NotesTopBar sectionInView={props.sectionInView} toggleDrawer={props.toggleDrawer} />
 
       <Animate animation={NOTES_ANIM}>
@@ -74,7 +74,7 @@ function NotesView(props) {
       >
         <AddIcon />
       </Fab>
-    </div>
+    </>
   )
 }
 

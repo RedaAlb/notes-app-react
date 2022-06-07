@@ -32,40 +32,36 @@ function NoteItem(props) {
 
 
   return (
-    <div className="note-item">
-      <div className="note-content-wrapper">
-        <div className="note-header" style={{ background: `${NOTE_PRIO_BG_COLS[notePriority]}` }}>
+    <div className="note-item-wrapper">
+      <div className="note-item" style={{ background: `${NOTE_PRIO_BG_COLS[notePriority]}` }}>
 
-          <AutoSizeTb
-            value={props.note.noteTitle}
-            onTextChange={onNoteTitleChange}
-            placeholder="Title"
+        <AutoSizeTb
+          value={props.note.noteTitle}
+          onTextChange={onNoteTitleChange}
+          placeholder="Title"
+        />
+
+        <Stack direction="row">
+          <IconButton onClick={() => setShowNoteText(!showNoteText)}>
+            {showNoteText ? <KeyboardArrowUpIcon pr={0} /> : <KeyboardArrowDownIcon />}
+          </IconButton>
+
+          <NoteOptionsMenu
+            note={noteRef}
+            setNotePriority={setNotePriority}
+            sectionInView={props.sectionInView}
           />
+        </Stack>
 
-          <div className={`note-icon-right`}>
-            <Stack direction="row">
-              <IconButton onClick={() => setShowNoteText(!showNoteText)}>
-                {showNoteText ? <KeyboardArrowUpIcon pr={0} /> : <KeyboardArrowDownIcon />}
-              </IconButton>
-
-              <NoteOptionsMenu
-                note={noteRef}
-                setNotePriority={setNotePriority}
-                sectionInView={props.sectionInView}
-              />
-            </Stack>
-
-          </div>
-        </div>
-
-        {showNoteText ?
-          <AutoSizeTb
-            value={props.note.noteText}
-            onTextChange={onNoteTextChange}
-            placeholder="Note"
-          />
-          : null}
       </div>
+
+      {showNoteText ?
+        <AutoSizeTb
+          value={props.note.noteText}
+          onTextChange={onNoteTextChange}
+          placeholder="Note"
+        />
+        : null}
     </div>
   )
 }
