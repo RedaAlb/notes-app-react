@@ -8,6 +8,7 @@ import "./css/index.css";
 import "./css/topbar.css";
 import "./css/section.css";
 import "./css/note.css";
+import "./css/components.css";
 
 
 window.addEventListener('DOMContentLoaded', async () => {

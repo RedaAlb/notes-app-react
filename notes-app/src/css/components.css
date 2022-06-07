@@ -1,0 +1,17 @@
+:root {
+  --large-list-item: 64px;
+}
+
+
+.auto-width-tb {
+  border: none;
+  font-size: 22px;
+  padding-left: 12px;
+  font-weight: 600;
+  line-height: calc(var(--section-height) - 2px);
+  background: transparent;
+}
+
+.auto-width-tb-wrapper {
+  float: left;
+}

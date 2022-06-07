@@ -35,19 +35,6 @@
   color: gray;
 }
 
-.section-textbox {
-  border: none;
-  font-size: 22px;
-  padding-left: 12px;
-  font-weight: 600;
-  line-height: calc(var(--section-height) - 2px);
-  background: transparent;
-}
-
-.section-textbox-wrapper {
-  float: left;
-}
-
 .drag-handle {
   padding: 0px 0px 0 10px;
 }

@@ -106,7 +106,7 @@ function SectionsView(props) {
               <div ref={provided.innerRef} {...provided.droppableProps}>
                 <SectionsContext.Provider value={{ dispatch: dispatch }}>
                   {state.sections.map((section, index) => (
-                    <Draggable key={index} draggableId={"draggable-" + index} index={index}>
+                    <Draggable key={section.sectionKey} draggableId={"draggable-" + index} index={index}>
                       {(provided) => (
                         <div ref={provided.innerRef} {...provided.draggableProps}>
                           <SectionItem
@@ -127,7 +127,13 @@ function SectionsView(props) {
         </DragDropContext>
       </Animate>
 
-      <Fab onClick={onAddButtonClick} size="large" color="primary" aria-label="add" sx={{ position: "fixed", bottom: 26, right: 26 }}>
+      <Fab
+        onClick={onAddButtonClick}
+        size="large"
+        color="primary"
+        aria-label="add"
+        sx={{ position: "fixed", bottom: 26, right: 26 }}
+      >
         <AddIcon />
       </Fab>
     </div>
