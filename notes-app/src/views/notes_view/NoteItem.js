@@ -9,11 +9,7 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { changeNoteText, changeNoteTitle } from "../../utils/notes-app-utils";
 import AutoSizeTb from "../../components/AutoSizeTb";
 
-
-const NOTE_PRIORITIES = {
-  0: "#a3ffb0",
-  1: "#f9ffa1"
-}
+import { NOTE_PRIO_BG_COLS } from "../../utils/constants";
 
 
 function NoteItem(props) {
@@ -38,7 +34,7 @@ function NoteItem(props) {
   return (
     <div className="note-item">
       <div className="note-content-wrapper">
-        <div className="note-header" style={{ background: `${NOTE_PRIORITIES[notePriority]}` }}>
+        <div className="note-header" style={{ background: `${NOTE_PRIO_BG_COLS[notePriority]}` }}>
 
           <AutoSizeTb
             value={props.note.noteTitle}

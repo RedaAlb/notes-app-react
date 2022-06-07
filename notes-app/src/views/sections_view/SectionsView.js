@@ -15,12 +15,8 @@ import SectionsTopBar from "./SectionsTopBar";
 
 import { addSection, loadSections, swapSectionsOrder } from "../../utils/notes-app-utils";
 
+import { SECTIONS_ANIM } from "../../utils/constants";
 
-const animation = {
-  initial: { opacity: 1, x: -100 },
-  animate: { opacity: 1, x: 0 },
-  exit: { opacity: 1, x: 0 },
-}
 
 const initialState = {
   sections: []
@@ -99,7 +95,7 @@ function SectionsView(props) {
         toggleDrawer={props.toggleDrawer}
       />
 
-      <Animate animation={animation}>
+      <Animate animation={SECTIONS_ANIM}>
         <DragDropContext onDragEnd={onDragEnd} onDragUpdate={onDragUpdate}>
           <Droppable droppableId="droppable-1">
             {(provided) => (

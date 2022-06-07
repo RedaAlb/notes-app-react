@@ -8,7 +8,7 @@ import { AnimatePresence } from "framer-motion";
 import DrawerComp from "./components/DrawerComp";
 
 
-function App(props) {
+function App() {
   const [sectionInView, setSectionInView] = useState({});  // Tracks which was section pressed.
   const [drawerState, setDrawerState] = useState({ left: false });
 

@@ -19,6 +19,8 @@ import notesContext from './context/notes-context';
 import { DELETE_NOTE } from './context/notes-actions';
 import { setNotePriority } from '../../utils/notes-app-utils';
 
+import { NOTE_PRIO_ICON_COLS } from '../../utils/constants';
+
 
 function NoteOptionsMenu(props) {
   const [menuAnchor, setMenuAnchor] = useState(null);
@@ -103,12 +105,12 @@ function NoteOptionsMenu(props) {
         PaperProps={{ style: { width: 180, }, }}
       >
         <MenuItem onClick={() => onPriorityClick(0)}>
-          <ListItemIcon><CircleIcon fontSize="small" sx={{ color: "#3ad83a" }} /></ListItemIcon>
+          <ListItemIcon><CircleIcon fontSize="small" sx={{ color: NOTE_PRIO_ICON_COLS[0] }} /></ListItemIcon>
           <ListItemText>Priority 1</ListItemText>
         </MenuItem>
 
         <MenuItem onClick={() => onPriorityClick(1)}>
-          <ListItemIcon><CircleIcon fontSize="small" sx={{ color: "#ffcc23" }} /></ListItemIcon>
+          <ListItemIcon><CircleIcon fontSize="small" sx={{ color: NOTE_PRIO_ICON_COLS[1] }} /></ListItemIcon>
           <ListItemText>Priority 2</ListItemText>
         </MenuItem>
       </Menu>

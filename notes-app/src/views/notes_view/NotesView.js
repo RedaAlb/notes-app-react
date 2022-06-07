@@ -15,12 +15,8 @@ import NotesContext from "./context/notes-context";
 import { addNote, loadSectionNotes } from '../../utils/notes-app-utils';
 import { ADD_NOTE, LOAD_NOTES } from './context/notes-actions';
 
+import { NOTES_ANIM } from '../../utils/constants';
 
-const animation = {
-  initial: { opacity: 1, x: 100 },
-  animate: { opacity: 1, x: 0 },
-  exit: { opacity: 1, x: 0 },
-}
 
 const initialState = {
   sectionNotes: []
@@ -57,7 +53,7 @@ function NotesView(props) {
     <div className="notes-view">
       <NotesTopBar sectionInView={props.sectionInView} toggleDrawer={props.toggleDrawer} />
 
-      <Animate animation={animation}>
+      <Animate animation={NOTES_ANIM}>
         <NotesContext.Provider value={{ dispatch: dispatch }}>
           {state.sectionNotes.map((note, index) => {
             return (
