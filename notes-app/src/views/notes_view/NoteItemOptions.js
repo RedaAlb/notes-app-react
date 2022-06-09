@@ -2,7 +2,6 @@ import React, { useContext, useState } from 'react';
 
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import IconButton from '@mui/material/IconButton';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -12,6 +11,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import CircleIcon from '@mui/icons-material/Circle';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
+import OptionsMenu from '../../components/OptionsMenu';
 import NoteMoveDialog from './NoteMoveDialog';
 import ConfirmDialog from '../../components/ConfirmDialog';
 
@@ -20,12 +20,11 @@ import { DELETE_NOTE } from './context/notes-actions';
 import { setNotePriority } from '../../utils/notes-app-utils';
 
 import { NOTE_PRIO_ICON_COLS } from '../../utils/constants';
+import { Divider } from '@mui/material';
 
 
-function NoteOptionsMenu(props) {
+function NoteItemOptions(props) {
   const [menuAnchor, setMenuAnchor] = useState(null);
-  const menuOpen = Boolean(menuAnchor);
-
 
   const { dispatch } = useContext(notesContext);
 
@@ -46,27 +45,25 @@ function NoteOptionsMenu(props) {
 
     props.setNotePriority(priority);
     setPrioMenuAnchor(null);
-    setMenuAnchor(null);
   }
 
 
   return (
     <>
-      <IconButton onClick={(e) => setMenuAnchor(e.currentTarget)}> <MoreVertIcon /> </IconButton>
-
-      <Menu
+      <OptionsMenu
         id="note-options-menu"
-        anchorEl={menuAnchor}
-        open={menuOpen}
-        onClose={() => setMenuAnchor(null)}
-        MenuListProps={{ 'aria-labelledby': 'basic-button', }}
-        PaperProps={{ style: { minWidth: 180, }, }}
+        btnContent={<MoreVertIcon />}
+        minWidth={180}
+        menuAnchor={menuAnchor}
+        setMenuAnchor={setMenuAnchor}
       >
         <MenuItem onClick={(e) => setPrioMenuAnchor(e.currentTarget)}>
           <ListItemIcon><FormatLineSpacingIcon fontSize="small" /></ListItemIcon>
           <ListItemText>Priority</ListItemText>
           <ChevronRightIcon />
         </MenuItem>
+
+        <Divider />
 
         <MenuItem onClick={() => setOpenMoveDialog(true)}>
           <ListItemIcon><DriveFileMoveIcon fontSize="small" /></ListItemIcon>
@@ -80,7 +77,6 @@ function NoteOptionsMenu(props) {
           sectionInView={props.sectionInView}
         />
 
-
         <MenuItem onClick={() => setDelNoteDialogOpen(true)}>
           <ListItemIcon><DeleteIcon fontSize="small" /></ListItemIcon>
           <ListItemText>Delete</ListItemText>
@@ -93,7 +89,7 @@ function NoteOptionsMenu(props) {
           diaText={props.note.current.noteTitle}
           onConfirmed={onDelNoteConfirmed}
         />
-      </Menu>
+      </OptionsMenu>
 
       <Menu
         id="note-priority-options"
@@ -118,4 +114,4 @@ function NoteOptionsMenu(props) {
   )
 }
 
-export default NoteOptionsMenu;
+export default NoteItemOptions;

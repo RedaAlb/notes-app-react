@@ -1,6 +1,6 @@
 import React, { useState, memo, useRef } from "react"
 
-import NoteOptionsMenu from "./NoteOptionsMenu";
+import NoteItemOptions from "./NoteItemOptions";
 import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
@@ -46,7 +46,7 @@ function NoteItem(props) {
             {showNoteText ? <KeyboardArrowUpIcon pr={0} /> : <KeyboardArrowDownIcon />}
           </IconButton>
 
-          <NoteOptionsMenu
+          <NoteItemOptions
             note={noteRef}
             setNotePriority={setNotePriority}
             sectionInView={props.sectionInView}

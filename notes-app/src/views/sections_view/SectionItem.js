@@ -5,7 +5,7 @@ import { Stack } from "@mui/material";
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import DragHandleIcon from "@mui/icons-material/DragHandle";
 
-import SectionOptionsMenu from "./SectionOptionsMenu";
+import SectionItemOptions from "./SectionItemOptions";
 
 import { changeSectionName } from "../../utils/notes-app-utils";
 import AutoWidthTb from "../../components/AutoWidthTb";
@@ -54,7 +54,7 @@ function SectionItem(props) {
 
 
       <Stack direction="row">
-        <SectionOptionsMenu section={sectionRef} />
+        <SectionItemOptions section={sectionRef} />
       </Stack>
     </div>
   )
