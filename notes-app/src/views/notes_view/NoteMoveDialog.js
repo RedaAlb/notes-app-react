@@ -31,8 +31,13 @@ function NoteMoveDialog(props) {
   }
 
 
-  const handleMaxWidthChange = (event) => {
-    setSectionKeySelected(event.target.value);
+  const onSelectChange = (event) => {
+    const selectedKey = event.target.value
+    setSectionKeySelected(selectedKey);
+
+    if (selectedKey !== props.sectionInView.sectionKey) {
+      setError(false);
+    }
   }
 
 
@@ -41,7 +46,6 @@ function NoteMoveDialog(props) {
       setError(true);
       return;
     }
-    setError(false);
 
     dispatch({ type: MOVE_NOTE, payload: { note: props.note, sectionKeySelected: sectionKeySelected } })
     props.setOpenMoveDialog(false);
@@ -59,7 +63,7 @@ function NoteMoveDialog(props) {
 
   return (
     <Dialog open={props.openMoveDialog} onClose={handleClose} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
-      <DialogTitle id="alert-dialog-title">Select section to move note to:</DialogTitle>
+      <DialogTitle id="alert-dialog-title">Select section to move note to</DialogTitle>
 
       <DialogContent>
         <DialogContentText id="alert-dialog-description"></DialogContentText>
@@ -68,7 +72,7 @@ function NoteMoveDialog(props) {
             <InputLabel htmlFor="section">Sections</InputLabel>
             <Select
               value={sectionKeySelected}
-              onChange={handleMaxWidthChange}
+              onChange={onSelectChange}
               label="sections"
               inputProps={{ name: 'section', id: 'section', }}
             >
