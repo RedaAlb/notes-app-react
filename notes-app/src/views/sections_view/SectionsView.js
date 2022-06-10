@@ -6,7 +6,7 @@ import AddIcon from "@mui/icons-material/Add";
 
 import SectionsContext from "./context/sections-context";
 import sectionsReducer from "./context/sections-reducer";
-import { ADD_SECTION, LOAD_SECTIONS } from "./context/sections-actions";
+import { ADD_SECTION, LOAD_SECTIONS, SET_SECTIONS } from "./context/sections-actions";
 
 import Animate from "../../components/Animate";
 
@@ -51,7 +51,11 @@ function SectionsView(props) {
     }
 
     // Swap all the moved sections order for persistence.
-    swapSectionsOrder(state.sections, dragHistory, source.index, dest.index);
+    swapSectionsOrder(state.sections, dragHistory, source.index, dest.index).then(newSections => {
+      dispatch({ type: SET_SECTIONS, payload: newSections });
+
+      dragHistory.splice(0, dragHistory.length);  // Reset drag history after drag end.
+    })
   }
 
 
@@ -102,7 +106,7 @@ function SectionsView(props) {
               <div ref={provided.innerRef} {...provided.droppableProps}>
                 <SectionsContext.Provider value={{ dispatch: dispatch }}>
                   {state.sections.map((section, index) => (
-                    <Draggable key={section.sectionKey} draggableId={"draggable-" + index} index={index}>
+                    <Draggable key={section.sectionKey} draggableId={"draggable-" + section.sectionKey} index={index}>
                       {(provided) => (
                         <div ref={provided.innerRef} {...provided.draggableProps}>
                           <SectionItem

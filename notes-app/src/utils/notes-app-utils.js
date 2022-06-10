@@ -114,28 +114,35 @@ export const changeSectionOrder = async (sectionKey, newSectionOrder) => {
 
 
 export const swapSectionsOrder = async (sections, dragHistory, finalSourceIndex, finalDestIndex) => {
-  // const newSections = [...sections];
+  const newSections = [...sections];
 
   for (const drag of dragHistory) {
     const sourceIndex = drag.source.index;
     const destIndex = drag.dest.index;
 
-    const sourceSection = sections[sourceIndex];
-    const destSection = sections[destIndex];
+    const sourceSection = newSections[sourceIndex];
+    const destSection = newSections[destIndex];
 
-    // Swapping db values.
+    // // Swapping db values.
     await changeSectionOrder(sourceSection.sectionKey, destSection.sectionOrder);
     await changeSectionOrder(destSection.sectionKey, sourceSection.sectionOrder);
 
-    // Swapping local values.
-    // const tempSection = newSections[sourceIndex];
-    // newSections[sourceIndex].sectionOrder = destSection.sectionOrder;
-    // newSections[destIndex].sectionOrder = tempSection.sectionOrder;
+
+    // // Swapping local values.
+    const tempSection = newSections[sourceIndex];
+
+    const newSection = { ...newSections[sourceIndex] };
+    newSection.sectionOrder = destSection.sectionOrder;
+    newSections[sourceIndex] = newSection;
+
+    const newSection2 = { ...newSections[destIndex] };
+    newSection2.sectionOrder = tempSection.sectionOrder;
+    newSections[destIndex] = newSection2;
   }
 
-  // newSections.splice(finalDestIndex, 0, newSections.splice(finalSourceIndex, 1)[0]);
+  newSections.splice(finalDestIndex, 0, newSections.splice(finalSourceIndex, 1)[0]);
 
-  loadSections();
+  return newSections;
 }
 
 

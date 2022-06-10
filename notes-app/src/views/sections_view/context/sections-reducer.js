@@ -31,6 +31,11 @@ const sectionsReducer = (state, action) => {
     }
 
 
+    case actions.SET_SECTIONS: {
+      return { ...state, sections: action.payload }
+    }
+
+
     default:
       throw new Error(`No case for action type ${action.type} in sections reducer.`);
   }
