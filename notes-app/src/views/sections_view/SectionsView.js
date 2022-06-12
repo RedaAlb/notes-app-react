@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useReducer } from "react";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd"
 
 import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
@@ -9,6 +8,8 @@ import sectionsReducer from "./context/sections-reducer";
 import { ADD_SECTION, LOAD_SECTIONS, SET_SECTIONS } from "./context/sections-actions";
 
 import Animate from "../../components/Animate";
+import DragArea from "../../components/DragArea";
+import DragItem from "../../components/DragItem";
 
 import SectionItem from "./SectionItem";
 import SectionsTopBar from "./SectionsTopBar";
@@ -28,8 +29,6 @@ function SectionsView(props) {
 
   const [showDragHandle, setShowDragHandle] = useState(false)
 
-  const dragHistory = [];  // Used to persist the order of the sections when dragged.
-
 
   const onAddButtonClick = () => {
     addSection().then(newSection => {
@@ -38,55 +37,19 @@ function SectionsView(props) {
   }
 
 
-  const onDragEnd = (result) => {
-    const source = result.source;
-    const dest = result.destination;
-
-    if (!dest) {
-      return;
-    }
-
-    if (dest.droppableId === source.droppableId && dest.index === source.index) {
-      return;
-    }
-
+  const onDragEnd = (dragHistory, sourceIndex, destIndex) => {
     // Swap all the moved sections order for persistence.
-    swapSectionsOrder(state.sections, dragHistory, source.index, dest.index).then(newSections => {
+    swapSectionsOrder(state.sections, dragHistory, sourceIndex, destIndex).then(newSections => {
       dispatch({ type: SET_SECTIONS, payload: newSections });
-
-      dragHistory.splice(0, dragHistory.length);  // Reset drag history after drag end.
     })
   }
 
 
-  const onDragUpdate = (result) => {
-    const source = result.source;
-    const dest = result.destination;
-
-    if (!dest) {
-      return;
-    }
-
-    if (dest.droppableId === source.droppableId && dest.index === source.index) {
-      dragHistory.splice(0, dragHistory.length)  // Reset drag history as section was dragged to the same starting position.
-      return;
-    }
-
-    const dragHistoryObj = { source: source, dest: dest };
-
-    // This removes unnecessary drags from the drag history.
-    const indexOfOldDrag = dragHistory.findIndex(drag => drag.dest.index === dest.index);
-    if (indexOfOldDrag !== -1) {
-      dragHistory.splice(indexOfOldDrag + 1, dragHistory.length);
-    } else {
-      dragHistory.push(dragHistoryObj);
-    }
-  }
-
-
   useEffect(() => {
+
     loadSections().then(sections => {
       dispatch({ type: LOAD_SECTIONS, payload: sections });
+      console.log(sections)
     })
   }, [])
 
@@ -100,31 +63,22 @@ function SectionsView(props) {
       />
 
       <Animate animation={SECTIONS_ANIM}>
-        <DragDropContext onDragEnd={onDragEnd} onDragUpdate={onDragUpdate}>
-          <Droppable droppableId="droppable-1">
-            {(provided) => (
-              <div ref={provided.innerRef} {...provided.droppableProps}>
-                <SectionsContext.Provider value={{ dispatch: dispatch }}>
-                  {state.sections.map((section, index) => (
-                    <Draggable key={section.sectionKey} draggableId={"draggable-" + section.sectionKey} index={index}>
-                      {(provided) => (
-                        <div ref={provided.innerRef} {...provided.draggableProps}>
-                          <SectionItem
-                            section={section}
-                            setSectionInView={props.setSectionInView}
-                            showDragHandle={showDragHandle}
-                            provided={provided}
-                          />
-                        </div>
-                      )}
-                    </Draggable>
-                  ))}
-                </SectionsContext.Provider>
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
-        </DragDropContext>
+        <DragArea onDragEnd={onDragEnd}>
+          <SectionsContext.Provider value={{ dispatch: dispatch }}>
+            {state.sections.map((section, index) => (
+              <DragItem key={section.sectionKey} itemKey={section.sectionKey} index={index}>
+                {(provided) => (
+                  <SectionItem
+                    section={section}
+                    setSectionInView={props.setSectionInView}
+                    showDragHandle={showDragHandle}
+                    provided={provided}
+                  />
+                )}
+              </DragItem>
+            ))}
+          </SectionsContext.Provider>
+        </DragArea>
       </Animate>
 
       <Fab
