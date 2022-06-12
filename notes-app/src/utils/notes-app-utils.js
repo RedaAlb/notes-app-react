@@ -267,5 +267,19 @@ export const moveNote = async (note, newSectionKey) => {
     WHERE ${NOTE_TB_ATTRS.pk.name} = ${note.noteKey}
   `
 
+  await setSectionCount(newSectionKey, 1);
+  await setSectionCount(note.sectionKey, -1);
+
   await sql.runSql(moveNoteQuery);
+}
+
+
+export const setSectionCount = async (sectionKey, value) => {
+  const setSectionCountQuery = `
+    UPDATE ${SECTIONS_TB_NAME}
+    SET ${SECTION_TB_ATTRS.sectionCount.name} = ${SECTION_TB_ATTRS.sectionCount.name} + ${value}
+    WHERE ${SECTION_TB_ATTRS.pk.name} = ${sectionKey}
+  `
+
+  await sql.runSql(setSectionCountQuery);
 }

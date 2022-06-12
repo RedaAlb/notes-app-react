@@ -45,7 +45,6 @@ function SectionsView(props) {
 
 
   useEffect(() => {
-
     loadSections().then(sections => {
       dispatch({ type: LOAD_SECTIONS, payload: sections });
     })
