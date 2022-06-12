@@ -5,8 +5,10 @@ import Typography from '@mui/material/Typography';
 import MenuIcon from '@mui/icons-material/Menu';
 
 import SearchBox from '../../components/SearchBox';
-import NotesViewMenu from './NotesViewMenu';
 import TopBar from '../../components/TopBar';
+
+import NotesViewMenu from './NotesViewMenu';
+import { NOTES_TOPBAR_BG } from '../../utils/constants';
 
 
 function NotesTopBar(props) {
@@ -34,6 +36,7 @@ function NotesTopBar(props) {
 
   return (
     <TopBar
+      bgColour={NOTES_TOPBAR_BG}
       leftSide={leftSide}
       rightSide={rightSide}
     />

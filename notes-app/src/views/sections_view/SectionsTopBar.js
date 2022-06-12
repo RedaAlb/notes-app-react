@@ -5,8 +5,10 @@ import Typography from '@mui/material/Typography';
 import MenuIcon from '@mui/icons-material/Menu';
 
 import SearchBox from '../../components/SearchBox';
-import SectionsViewMenu from './SectionsViewMenu';
 import TopBar from '../../components/TopBar';
+
+import SectionsViewMenu from './SectionsViewMenu';
+import { SECTIONS_TOPBAR_BG } from '../../utils/constants';
 
 
 function SectionsTopBar(props) {
@@ -37,6 +39,7 @@ function SectionsTopBar(props) {
 
   return (
     <TopBar
+      bgColour={SECTIONS_TOPBAR_BG}
       leftSide={leftSide}
       rightSide={rightSide}
     />

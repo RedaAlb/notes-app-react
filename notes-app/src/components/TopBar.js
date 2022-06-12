@@ -9,7 +9,7 @@ import { Stack } from '@mui/material';
 function TopBar(props) {
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static" style={{ background: "#6200EE" }}>
+      <AppBar position="static" style={{ background: props.bgColour }}>
         <Toolbar disableGutters={true}>
           <Stack direction="row" spacing={1} alignItems={"center"}>
             {props.leftSide}

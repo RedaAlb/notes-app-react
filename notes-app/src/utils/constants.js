@@ -1,3 +1,10 @@
+// Sections top bar bg colour
+export const SECTIONS_TOPBAR_BG = "#5600ff";
+
+// Notes top  bar bg colour
+export const NOTES_TOPBAR_BG = "#5600ff";
+
+
 // Note priority background colours.
 export const NOTE_PRIO_BG_COLS = {
   0: "#a3ffb0",
