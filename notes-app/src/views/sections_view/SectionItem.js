@@ -50,7 +50,7 @@ function SectionItem(props) {
 
       <div className="section-middle" onClick={onSectionItemClick}>
         <Stack direction="row">
-          <div className="section-count">{props.section.sectionCount ? props.section.sectionCount : 0}</div>
+          <div className="section-count">{props.section.sectionCount}</div>
           <ChevronRightIcon fontSize="medium" />
         </Stack>
       </div>

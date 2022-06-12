@@ -6,6 +6,7 @@ const SECTION_TB_ATTRS = {  // ATTRS: attributes
   pk: { name: "sectionKey", sqlType: "INTEGER PRIMARY KEY AUTOINCREMENT" },  // pk: primary key
   sectionName: { name: "sectionName", sqlType: "TEXT", defaultValue: "" },
   sectionOrder: { name: "sectionOrder", sqlType: "INTEGER", defaultValue: 0 },
+  sectionCount: { name: "sectionCount", sqlType: "INTEGER", defaultValue: 0 }
 }
 
 const NOTES_TB_NAME = "notes";
@@ -20,26 +21,38 @@ const NOTE_TB_ATTRS = {
 }
 
 
+const NOTE_INSERT_TRIGGER = `
+  CREATE TRIGGER IF NOT EXISTS incrementSectionCount
+  AFTER INSERT ON ${NOTES_TB_NAME}
+  BEGIN
+    UPDATE ${SECTIONS_TB_NAME}
+    SET ${SECTION_TB_ATTRS.sectionCount.name} = ${SECTION_TB_ATTRS.sectionCount.name} + 1
+    WHERE ${SECTION_TB_ATTRS.pk.name} = NEW.${NOTE_TB_ATTRS.fks.sectionKey.name};
+  END
+`
+const NOTE_DELETE_TRIGGER = `
+  CREATE TRIGGER IF NOT EXISTS decrementSectionCount
+  AFTER DELETE ON ${NOTES_TB_NAME}
+  BEGIN
+    UPDATE ${SECTIONS_TB_NAME}
+    SET ${SECTION_TB_ATTRS.sectionCount.name} = ${SECTION_TB_ATTRS.sectionCount.name} - 1
+    WHERE ${SECTION_TB_ATTRS.pk.name} = OLD.${NOTE_TB_ATTRS.fks.sectionKey.name};
+  END
+`
+
+
 export const createNotesAppTables = async () => {
   await sql.createTable(SECTIONS_TB_NAME, SECTION_TB_ATTRS);
   await sql.createTable(NOTES_TB_NAME, NOTE_TB_ATTRS);
+
+  await sql.runSql(NOTE_INSERT_TRIGGER);
+  await sql.runSql(NOTE_DELETE_TRIGGER);
 }
 
 
 export const loadSections = async () => {
-
-  // Query to get the number of notes each section contains.
-  const sectionCountQuery = `
-    SELECT COUNT(*)
-    FROM ${NOTES_TB_NAME}
-    WHERE ${SECTIONS_TB_NAME}.${SECTION_TB_ATTRS.pk.name} =
-          ${NOTES_TB_NAME}.${NOTE_TB_ATTRS.fks.sectionKey.name}
-  `
-
   const loadSectionsQuery = `
-    SELECT *,
-    (${sectionCountQuery}) AS "sectionCount"
-    FROM ${SECTIONS_TB_NAME}
+    SELECT * FROM ${SECTIONS_TB_NAME}
     ORDER BY ${SECTION_TB_ATTRS.sectionOrder.name}
   `
 
