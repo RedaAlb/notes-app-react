@@ -1,5 +1,5 @@
 import React, { useEffect, useReducer } from 'react';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { App } from '@capacitor/app';
 
 import NotesTopBar from './NotesTopBar';
@@ -27,10 +27,11 @@ function NotesView(props) {
   const [state, dispatch] = useReducer(notesReducer, initialState);
 
   const navigate = useNavigate();
+  const sectionInView = useLocation().state;
 
 
   const onAddButtonClick = () => {
-    addNote(props.sectionInView).then(newNote => {
+    addNote(sectionInView).then(newNote => {
       dispatch({ type: ADD_NOTE, payload: newNote });
     })
   }
@@ -43,23 +44,23 @@ function NotesView(props) {
 
 
   useEffect(() => {
-    loadSectionNotes(props.sectionInView).then(sectionNotes => {
+    loadSectionNotes(sectionInView).then(sectionNotes => {
       dispatch({ type: LOAD_NOTES, payload: sectionNotes });
     })
-  }, [props.sectionInView])
+  }, [sectionInView])
 
 
   return (
     <>
-      <NotesTopBar sectionInView={props.sectionInView} />
+      <NotesTopBar />
 
       <Animate animation={NOTES_ANIM}>
         <NotesContext.Provider value={{ dispatch: dispatch }}>
           {state.sectionNotes.map((note, index) => {
             return (
-              <NoteItem key={note.noteKey}
+              <NoteItem
+                key={note.noteKey}
                 note={note}
-                sectionInView={props.sectionInView}
               />
             )
           })}

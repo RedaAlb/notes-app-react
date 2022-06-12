@@ -1,4 +1,5 @@
 import React, { memo } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import Typography from '@mui/material/Typography';
 
@@ -12,10 +13,12 @@ import NotesViewMenu from './NotesViewMenu';
 
 function NotesTopBar(props) {
 
+  const sectionInView = useLocation().state;
+
   const leftSide = (
     <>
       <Typography variant="h6" noWrap component="div">
-        {props.sectionInView.sectionName}
+        {sectionInView.sectionName}
       </Typography>
     </>
   )

@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
+import { useLocation } from "react-router-dom";
 
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
@@ -19,6 +20,9 @@ import { loadSections } from '../../utils/notes-app-utils';
 
 
 function NoteMoveDialog(props) {
+  const sectionInView = useLocation().state;
+
+
   const { dispatch } = useContext(notesContext);
 
   const [sections, setSections] = useState([]);
@@ -35,14 +39,14 @@ function NoteMoveDialog(props) {
     const selectedKey = event.target.value
     setSectionKeySelected(selectedKey);
 
-    if (selectedKey !== props.sectionInView.sectionKey) {
+    if (selectedKey !== sectionInView.sectionKey) {
       setError(false);
     }
   }
 
 
   const onNoteMoveClick = () => {
-    if (sectionKeySelected === "" || sectionKeySelected === props.sectionInView.sectionKey) {
+    if (sectionKeySelected === "" || sectionKeySelected === sectionInView.sectionKey) {
       setError(true);
       return;
     }

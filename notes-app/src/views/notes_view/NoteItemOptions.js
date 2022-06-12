@@ -74,7 +74,6 @@ function NoteItemOptions(props) {
           note={props.note.current}
           setOpenMoveDialog={setOpenMoveDialog}
           openMoveDialog={openMoveDialog}
-          sectionInView={props.sectionInView}
         />
 
         <MenuItem onClick={() => setDelNoteDialogOpen(true)}>

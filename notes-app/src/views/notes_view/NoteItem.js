@@ -34,7 +34,6 @@ function NoteItem(props) {
   return (
     <div className="note-item-wrapper">
       <div className="note-item" style={{ background: `${NOTE_PRIO_BG_COLS[notePriority]}` }}>
-
         <AutoSizeTb
           value={props.note.noteTitle}
           onTextChange={onNoteTitleChange}
@@ -49,10 +48,8 @@ function NoteItem(props) {
           <NoteItemOptions
             note={noteRef}
             setNotePriority={setNotePriority}
-            sectionInView={props.sectionInView}
           />
         </Stack>
-
       </div>
 
       {showNoteText ?

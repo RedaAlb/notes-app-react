@@ -27,9 +27,7 @@ function SectionItem(props) {
 
 
   const onSectionItemClick = () => {
-    props.setSectionInView(props.section);
-
-    navigate("/notes")
+    navigate("/notes", { state: props.section });
   }
 
 
