@@ -7,6 +7,12 @@
   background: transparent;
 }
 
+.list-item {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--border-bottom-color);
+}
+
 .auto-width-tb-wrapper {}
 
 .autosize-textarea {

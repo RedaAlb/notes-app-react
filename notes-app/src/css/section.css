@@ -3,13 +3,6 @@
   --border-bottom-color: rgb(184, 184, 184);
 }
 
-.section-item {
-  height: var(--section-height);
-  display: flex;
-  align-items: center;
-  border-bottom: 1px solid var(--border-bottom-color);
-}
-
 .section-middle {
   height: -webkit-fill-available;
   display: flex;

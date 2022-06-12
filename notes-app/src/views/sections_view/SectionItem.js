@@ -7,8 +7,11 @@ import DragHandleIcon from "@mui/icons-material/DragHandle";
 
 import SectionItemOptions from "./SectionItemOptions";
 
-import { changeSectionName } from "../../utils/notes-app-utils";
 import AutoWidthTb from "../../components/AutoWidthTb";
+import ListItem from "../../components/ListItem";
+
+import { changeSectionName } from "../../utils/notes-app-utils";
+import { SECTION_ITEM_HEIGHT } from "../../utils/constants";
 
 
 function SectionItem(props) {
@@ -31,7 +34,7 @@ function SectionItem(props) {
 
 
   return (
-    <div className="section-item">
+    <ListItem height={SECTION_ITEM_HEIGHT}>
       <div {...props.provided.dragHandleProps}>
         <Stack direction="row">
           {props.showDragHandle ? (<DragHandleIcon className="drag-handle" />) : null}
@@ -56,7 +59,7 @@ function SectionItem(props) {
       <Stack direction="row">
         <SectionItemOptions section={sectionRef} />
       </Stack>
-    </div>
+    </ListItem>
   )
 }
 

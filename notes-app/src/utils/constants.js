@@ -3,6 +3,9 @@ export const SECTIONS_TOPBAR_BG = "#5600ff";
 export const NOTES_TOPBAR_BG = "#5600ff";
 
 
+export const SECTION_ITEM_HEIGHT = "64px";
+
+
 // Note priority background colours.
 export const NOTE_PRIO_BG_COLS = {
   0: "#a3ffb0",
