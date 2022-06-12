@@ -57,7 +57,6 @@ function SectionsView(props) {
       <SectionsTopBar
         showDragHandle={showDragHandle}
         setShowDragHandle={setShowDragHandle}
-        toggleDrawer={props.toggleDrawer}
       />
 
       <Animate animation={SECTIONS_ANIM}>

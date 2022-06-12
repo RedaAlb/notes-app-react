@@ -51,7 +51,7 @@ function NotesView(props) {
 
   return (
     <>
-      <NotesTopBar sectionInView={props.sectionInView} toggleDrawer={props.toggleDrawer} />
+      <NotesTopBar sectionInView={props.sectionInView} />
 
       <Animate animation={NOTES_ANIM}>
         <NotesContext.Provider value={{ dispatch: dispatch }}>

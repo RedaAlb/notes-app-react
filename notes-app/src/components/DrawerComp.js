@@ -17,7 +17,7 @@ function DrawerComp(props) {
 
 
   const onNotesClick = () => {
-    props.toggleDrawer("left", false);
+    props.setDrawerState(false);
 
     navigate("/");
   }
@@ -29,36 +29,34 @@ function DrawerComp(props) {
 
 
   return (
-    <React.Fragment>
-      <Drawer anchor={"left"} open={props.drawerState["left"]} onClose={props.toggleDrawer("left", false)}>
-        <Box sx={{ width: "left" === "top" || "left" === "bottom" ? "auto" : 250 }} role="presentation">
+    <Drawer anchor={"left"} open={props.drawerState} onClose={() => props.setDrawerState(false)}>
+      <Box sx={{ width: "left" === "top" || "left" === "bottom" ? "auto" : 250 }} role="presentation">
 
-          <List>
-            <ListItem>
-              <Typography variant="h6" noWrap component="div">Main</Typography>
-            </ListItem>
+        <List>
+          <ListItem>
+            <Typography variant="h6" noWrap component="div">Main</Typography>
+          </ListItem>
 
-            <ListItem button onClick={onNotesClick}>
-              <ListItemIcon> <NoteIcon /> </ListItemIcon>
-              <ListItemText primary={"Notes"} />
-            </ListItem>
-          </List>
+          <ListItem button onClick={onNotesClick}>
+            <ListItemIcon> <NoteIcon /> </ListItemIcon>
+            <ListItemText primary={"Notes"} />
+          </ListItem>
+        </List>
 
-          <Divider />
+        <Divider />
 
-          <List>
-            <ListItem>
-              <Typography variant="h6" noWrap component="div">Extensions</Typography>
-            </ListItem>
+        <List>
+          <ListItem>
+            <Typography variant="h6" noWrap component="div">Extensions</Typography>
+          </ListItem>
 
-            <ListItem button onClick={onPlaceholderClick}>
-              <ListItemIcon> <InboxIcon /> </ListItemIcon>
-              <ListItemText primary={"Placeholder"} />
-            </ListItem>
-          </List>
-        </Box>
-      </Drawer>
-    </React.Fragment>
+          <ListItem button onClick={onPlaceholderClick}>
+            <ListItemIcon> <InboxIcon /> </ListItemIcon>
+            <ListItemText primary={"Placeholder"} />
+          </ListItem>
+        </List>
+      </Box>
+    </Drawer>
   )
 }
 
