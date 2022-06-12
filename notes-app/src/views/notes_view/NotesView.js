@@ -5,16 +5,16 @@ import { App } from '@capacitor/app';
 import NotesTopBar from './NotesTopBar';
 import NoteItem from './NoteItem';
 
-import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 
 import Animate from '../../components/Animate';
+import FloatingButton from '../../components/FloatingButton';
 
 import notesReducer from './context/notes-reducer';
 import NotesContext from "./context/notes-context";
-import { addNote, loadSectionNotes } from '../../utils/notes-app-utils';
 import { ADD_NOTE, LOAD_NOTES } from './context/notes-actions';
 
+import { addNote, loadSectionNotes } from '../../utils/notes-app-utils';
 import { NOTES_ANIM } from '../../utils/constants';
 
 
@@ -66,14 +66,11 @@ function NotesView(props) {
         </NotesContext.Provider>
       </Animate>
 
-      <Fab
-        onClick={onAddButtonClick}
-        size="large" color="primary"
-        aria-label="add"
-        sx={{ position: "fixed", bottom: 26, right: 26 }}
-      >
-        <AddIcon />
-      </Fab>
+
+      <FloatingButton
+        onClickHandler={onAddButtonClick}
+        icon={<AddIcon />}
+      />
     </>
   )
 }

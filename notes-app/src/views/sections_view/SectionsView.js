@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useReducer } from "react";
 
-import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
 
 import SectionsContext from "./context/sections-context";
@@ -10,12 +9,12 @@ import { ADD_SECTION, LOAD_SECTIONS, SET_SECTIONS } from "./context/sections-act
 import Animate from "../../components/Animate";
 import DragArea from "../../components/DragArea";
 import DragItem from "../../components/DragItem";
+import FloatingButton from "../../components/FloatingButton";
 
 import SectionItem from "./SectionItem";
 import SectionsTopBar from "./SectionsTopBar";
 
 import { addSection, loadSections, swapSectionsOrder } from "../../utils/notes-app-utils";
-
 import { SECTIONS_ANIM } from "../../utils/constants";
 
 
@@ -49,7 +48,6 @@ function SectionsView(props) {
 
     loadSections().then(sections => {
       dispatch({ type: LOAD_SECTIONS, payload: sections });
-      console.log(sections)
     })
   }, [])
 
@@ -81,15 +79,11 @@ function SectionsView(props) {
         </DragArea>
       </Animate>
 
-      <Fab
-        onClick={onAddButtonClick}
-        size="large"
-        color="primary"
-        aria-label="add"
-        sx={{ position: "fixed", bottom: 26, right: 26 }}
-      >
-        <AddIcon />
-      </Fab>
+
+      <FloatingButton
+        onClickHandler={onAddButtonClick}
+        icon={<AddIcon />}
+      />
     </>
   )
 }
