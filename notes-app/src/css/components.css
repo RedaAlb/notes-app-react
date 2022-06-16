@@ -22,5 +22,5 @@
   background: transparent;
   overflow: hidden;
   resize: none;
-  width: 100%;
+  width: -webkit-fill-available;
 }
