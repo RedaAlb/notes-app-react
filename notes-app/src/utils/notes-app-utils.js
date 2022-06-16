@@ -70,7 +70,7 @@ export const loadSectionNotes = async (section) => {
   const loadSectionNotesQuery = `
     SELECT * FROM ${NOTES_TB_NAME}
     WHERE ${SECTION_TB_ATTRS.pk.name} = ${section.sectionKey}
-    ORDER BY ${NOTE_TB_ATTRS.noteCreateDate.name} DESC
+    ORDER BY ${NOTE_TB_ATTRS.notePrio.name}, ${NOTE_TB_ATTRS.noteCreateDate.name} DESC
   `
   const result = await sql.query(loadSectionNotesQuery);
 

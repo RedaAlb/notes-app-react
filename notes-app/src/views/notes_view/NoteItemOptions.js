@@ -1,4 +1,5 @@
 import React, { useContext, useState } from 'react';
+import { useLocation } from 'react-router';
 
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
@@ -10,23 +11,25 @@ import FormatLineSpacingIcon from '@mui/icons-material/FormatLineSpacing';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CircleIcon from '@mui/icons-material/Circle';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { Divider } from '@mui/material';
 
 import OptionsMenu from '../../components/OptionsMenu';
-import NoteMoveDialog from './NoteMoveDialog';
 import ConfirmDialog from '../../components/ConfirmDialog';
+import NoteMoveDialog from './NoteMoveDialog';
 
 import notesContext from './context/notes-context';
-import { DELETE_NOTE } from './context/notes-actions';
-import { setNotePriority } from '../../utils/notes-app-utils';
+import { DELETE_NOTE, LOAD_NOTES } from './context/notes-actions';
+import { loadSectionNotes, setNotePriority } from '../../utils/notes-app-utils';
 
 import { NOTE_PRIO_ICON_COLS } from '../../utils/constants';
-import { Divider } from '@mui/material';
+
 
 
 function NoteItemOptions(props) {
-  const [menuAnchor, setMenuAnchor] = useState(null);
-
   const { dispatch } = useContext(notesContext);
+  const sectionInView = useLocation().state;
+
+  const [menuAnchor, setMenuAnchor] = useState(null);
 
   const [prioMenuAnchor, setPrioMenuAnchor] = useState(null);
   const prioMenuOpen = Boolean(prioMenuAnchor);
@@ -40,11 +43,20 @@ function NoteItemOptions(props) {
   }
 
 
-  const onPriorityClick = (priority) => {
-    setNotePriority(props.note.current, priority);
+  const onPriorityClick = async (priority) => {
+    if (priority === props.note.current.notePrio) return;
+
+    await setNotePriority(props.note.current, priority);
+
+    // Re-load section notes to get the correct order again.
+    loadSectionNotes(sectionInView).then(sectionNotes => {
+      dispatch({ type: LOAD_NOTES, payload: sectionNotes });
+    })
 
     props.setNotePriority(priority);
+
     setPrioMenuAnchor(null);
+    setMenuAnchor(null);
   }
 
 
