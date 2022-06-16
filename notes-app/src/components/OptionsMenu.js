@@ -23,6 +23,7 @@ function OptionsMenu(props) {
         open={menuOpen}
         onClose={() => props.setMenuAnchor(null)}
         MenuListProps={{ "aria-labelledby": "basic-button", }}
+        disableScrollLock={true}
       >
         {props.children}
       </Menu>
