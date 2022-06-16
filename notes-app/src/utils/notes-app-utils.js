@@ -6,7 +6,8 @@ const SECTION_TB_ATTRS = {  // ATTRS: attributes
   pk: { name: "sectionKey", sqlType: "INTEGER PRIMARY KEY AUTOINCREMENT" },  // pk: primary key
   sectionName: { name: "sectionName", sqlType: "TEXT", defaultValue: "" },
   sectionOrder: { name: "sectionOrder", sqlType: "INTEGER", defaultValue: 0 },
-  sectionCount: { name: "sectionCount", sqlType: "INTEGER", defaultValue: 0 }
+  sectionCount: { name: "sectionCount", sqlType: "INTEGER", defaultValue: 0 },
+  sectionCreateDate: { name: "sectionCreateDate", sqlType: "TEXT", defaultValue: "datetime('now')" },
 }
 
 const NOTES_TB_NAME = "notes";
@@ -15,6 +16,7 @@ const NOTE_TB_ATTRS = {
   noteTitle: { name: "noteTitle", sqlType: "TEXT", defaultValue: "" },
   noteText: { name: "noteText", sqlType: "TEXT", defaultValue: "" },
   notePrio: { name: "notePrio", sqlType: "INTEGER", defaultValue: 0 },  // notePrio: note priority
+  noteCreateDate: { name: "noteCreateDate", sqlType: "TEXT", defaultValue: "datetime('now')" },
   fks: {  // fks: foreign keys
     sectionKey: { name: SECTION_TB_ATTRS.pk.name, refTable: SECTIONS_TB_NAME, refAttr: SECTION_TB_ATTRS.pk.name },
   }
@@ -67,7 +69,8 @@ export const loadSections = async () => {
 export const loadSectionNotes = async (section) => {
   const loadSectionNotesQuery = `
     SELECT * FROM ${NOTES_TB_NAME}
-    WHERE ${SECTION_TB_ATTRS.pk.name}=${section.sectionKey}
+    WHERE ${SECTION_TB_ATTRS.pk.name} = ${section.sectionKey}
+    ORDER BY ${NOTE_TB_ATTRS.noteCreateDate.name} DESC
   `
   const result = await sql.query(loadSectionNotesQuery);
 

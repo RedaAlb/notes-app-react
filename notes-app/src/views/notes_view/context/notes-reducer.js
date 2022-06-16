@@ -11,7 +11,7 @@ const notesReducer = (state, action) => {
 
     case actions.ADD_NOTE: {
       const newSectionNotes = [...state.sectionNotes];
-      newSectionNotes.push(action.payload);
+      newSectionNotes.unshift(action.payload);
 
       return { ...state, sectionNotes: newSectionNotes };
     }
