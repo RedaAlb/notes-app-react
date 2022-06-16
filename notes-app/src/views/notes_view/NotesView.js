@@ -1,13 +1,13 @@
 import React, { useEffect, useReducer } from 'react';
 import { useNavigate, useLocation } from "react-router-dom";
 import { App } from '@capacitor/app';
+import { useSpring } from 'react-spring'
 
 import NotesTopBar from './NotesTopBar';
 import NoteItem from './NoteItem';
 
 import AddIcon from '@mui/icons-material/Add';
 
-import Animate from '../../components/Animate';
 import FloatingButton from '../../components/FloatingButton';
 
 import notesReducer from './context/notes-reducer';
@@ -16,6 +16,7 @@ import { ADD_NOTE, LOAD_NOTES } from './context/notes-actions';
 
 import { addNote, loadSectionNotes } from '../../utils/notes-app-utils';
 import { NOTES_ANIM } from '../../utils/constants';
+import Animate from '../../components/Animate';
 
 
 const initialState = {
@@ -28,6 +29,8 @@ function NotesView(props) {
 
   const navigate = useNavigate();
   const sectionInView = useLocation().state;
+
+  const animation = useSpring(NOTES_ANIM);
 
 
   const onAddButtonClick = () => {
@@ -54,7 +57,7 @@ function NotesView(props) {
     <>
       <NotesTopBar />
 
-      <Animate animation={NOTES_ANIM}>
+      <Animate animation={animation}>
         <NotesContext.Provider value={{ dispatch: dispatch }}>
           {state.sectionNotes.map((note, index) => {
             return (

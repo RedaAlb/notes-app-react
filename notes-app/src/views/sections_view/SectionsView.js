@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useReducer } from "react";
+import { useSpring } from 'react-spring'
 
 import AddIcon from "@mui/icons-material/Add";
 
@@ -6,7 +7,6 @@ import SectionsContext from "./context/sections-context";
 import sectionsReducer from "./context/sections-reducer";
 import { ADD_SECTION, LOAD_SECTIONS, SET_SECTIONS } from "./context/sections-actions";
 
-import Animate from "../../components/Animate";
 import DragArea from "../../components/DragArea";
 import DragItem from "../../components/DragItem";
 import FloatingButton from "../../components/FloatingButton";
@@ -16,6 +16,7 @@ import SectionsTopBar from "./SectionsTopBar";
 
 import { addSection, loadSections, swapSectionsOrder } from "../../utils/notes-app-utils";
 import { SECTIONS_ANIM } from "../../utils/constants";
+import Animate from "../../components/Animate";
 
 
 const initialState = {
@@ -26,7 +27,9 @@ const initialState = {
 function SectionsView(props) {
   const [state, dispatch] = useReducer(sectionsReducer, initialState);
 
-  const [showDragHandle, setShowDragHandle] = useState(false)
+  const [showDragHandle, setShowDragHandle] = useState(false);
+
+  const animation = useSpring(SECTIONS_ANIM);
 
 
   const onAddButtonClick = () => {
@@ -58,8 +61,8 @@ function SectionsView(props) {
         setShowDragHandle={setShowDragHandle}
       />
 
-      <Animate animation={SECTIONS_ANIM}>
-        <DragArea onDragEnd={onDragEnd}>
+      <DragArea onDragEnd={onDragEnd}>
+        <Animate animation={animation}>
           <SectionsContext.Provider value={{ dispatch: dispatch }}>
             {state.sections.map((section, index) => (
               <DragItem key={section.sectionKey} itemKey={section.sectionKey} index={index}>
@@ -74,8 +77,8 @@ function SectionsView(props) {
               </DragItem>
             ))}
           </SectionsContext.Provider>
-        </DragArea>
-      </Animate>
+        </Animate>
+      </DragArea>
 
 
       <FloatingButton

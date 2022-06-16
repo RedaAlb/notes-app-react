@@ -1,3 +1,6 @@
+import { config } from 'react-spring'
+
+
 // Top bar bg colours
 export const SECTIONS_TOPBAR_BG = "#5600ff";
 export const NOTES_TOPBAR_BG = "#5600ff";
@@ -21,13 +24,13 @@ export const NOTE_PRIO_ICON_COLS = {
 
 // Animations
 export const SECTIONS_ANIM = {
-  initial: { opacity: 1, x: -100 },
-  animate: { opacity: 1, x: 0 },
-  exit: { opacity: 1, x: 0 }
+  from: { x: -100, opacity: 0 },
+  to: { x: 0, opacity: 1 },
+  config: config.stiff
 }
 
 export const NOTES_ANIM = {
-  initial: { opacity: 1, x: 100 },
-  animate: { opacity: 1, x: 0 },
-  exit: { opacity: 1, x: 0 }
+  from: { x: 100, opacity: 0 },
+  to: { x: 0, opacity: 1 },
+  config: config.stiff
 }

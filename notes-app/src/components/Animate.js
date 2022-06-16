@@ -1,11 +1,11 @@
-import { motion } from "framer-motion"
+import { animated } from 'react-spring';
 
 
-const Animate = ({ animation, children }) => {
+const Animate = (props) => {
   return (
-    <motion.div variants={animation} initial="initial" animate="animate" exit="exit">
-      {children}
-    </motion.div>
+    <animated.div style={props.animation}>
+      {props.children}
+    </animated.div>
   )
 }
 
