@@ -44,6 +44,11 @@ const notesReducer = (state, action) => {
     }
 
 
+    case actions.SET_NOTES: {
+      return { ...state, sectionNotes: action.payload };
+    }
+
+
     default:
       throw new Error(`No case for action type ${action.type} in notes reducer.`);
   }

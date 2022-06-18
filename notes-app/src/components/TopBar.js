@@ -24,9 +24,9 @@ function TopBar(props) {
               <IconButton size="large" onClick={() => setDrawerState(true)}>
                 <MenuIcon sx={{ color: "#ffffff" }} />
               </IconButton>
-
-              {props.leftSide}
             </Stack>
+
+            {props.leftSide}
 
             <Box sx={{ flexGrow: 1 }} />
 

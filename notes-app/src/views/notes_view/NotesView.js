@@ -55,10 +55,10 @@ function NotesView(props) {
 
   return (
     <>
-      <NotesTopBar />
+      <NotesContext.Provider value={{ dispatch: dispatch }}>
+        <NotesTopBar />
 
-      <Animate animation={animation}>
-        <NotesContext.Provider value={{ dispatch: dispatch }}>
+        <Animate animation={animation}>
           {state.sectionNotes.map((note, index) => {
             return (
               <NoteItem
@@ -67,8 +67,8 @@ function NotesView(props) {
               />
             )
           })}
-        </NotesContext.Provider>
-      </Animate>
+        </Animate>
+      </NotesContext.Provider>
 
 
       <FloatingButton

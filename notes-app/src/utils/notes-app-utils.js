@@ -43,6 +43,16 @@ const NOTE_DELETE_TRIGGER = `
 `
 
 
+const SECTIONS_ORDER = `
+  ORDER BY ${SECTION_TB_ATTRS.sectionOrder.name}
+`
+
+
+const NOTES_ORDER = `
+  ORDER BY ${NOTE_TB_ATTRS.notePrio.name}, ${NOTE_TB_ATTRS.noteCreateDate.name} DESC
+`
+
+
 export const createNotesAppTables = async () => {
   await sql.createTable(SECTIONS_TB_NAME, SECTION_TB_ATTRS);
   await sql.createTable(NOTES_TB_NAME, NOTE_TB_ATTRS);
@@ -55,7 +65,7 @@ export const createNotesAppTables = async () => {
 export const loadSections = async () => {
   const loadSectionsQuery = `
     SELECT * FROM ${SECTIONS_TB_NAME}
-    ORDER BY ${SECTION_TB_ATTRS.sectionOrder.name}
+    ${SECTIONS_ORDER}
   `
 
   const result = await sql.query(loadSectionsQuery);
@@ -70,7 +80,7 @@ export const loadSectionNotes = async (section) => {
   const loadSectionNotesQuery = `
     SELECT * FROM ${NOTES_TB_NAME}
     WHERE ${SECTION_TB_ATTRS.pk.name} = ${section.sectionKey}
-    ORDER BY ${NOTE_TB_ATTRS.notePrio.name}, ${NOTE_TB_ATTRS.noteCreateDate.name} DESC
+    ${NOTES_ORDER}
   `
   const result = await sql.query(loadSectionNotesQuery);
 
@@ -284,5 +294,36 @@ export const setSectionCount = async (sectionKey, value) => {
     WHERE ${SECTION_TB_ATTRS.pk.name} = ${sectionKey}
   `
 
-  await sql.runSql(setSectionCountQuery);
+  const result = await sql.query(setSectionCountQuery);
+
+  return result.values
+}
+
+
+export const searchSections = async (searchValue) => {
+  const searchSectionsQuery = `
+    SELECT * FROM ${SECTIONS_TB_NAME}
+    WHERE ${SECTION_TB_ATTRS.sectionName.name} LIKE '%${searchValue}%'
+    ${SECTIONS_ORDER}
+  `
+
+  const result = await sql.query(searchSectionsQuery);
+
+  return result.values;
+}
+
+
+export const searchNotes = async (searchValue, sectionKey) => {
+  const searchNotesQuery = `
+    SELECT * FROM ${NOTES_TB_NAME}
+    WHERE ${NOTE_TB_ATTRS.fks.sectionKey.name} = ${sectionKey} AND (
+      ${NOTE_TB_ATTRS.noteTitle.name} LIKE '%${searchValue}%' OR
+      ${NOTE_TB_ATTRS.noteText.name} LIKE '%${searchValue}%'
+    )
+    ${NOTES_ORDER}
+  `
+
+  const result = await sql.query(searchNotesQuery);
+
+  return result.values;
 }

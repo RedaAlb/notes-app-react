@@ -56,14 +56,14 @@ function SectionsView(props) {
 
   return (
     <>
-      <SectionsTopBar
-        showDragHandle={showDragHandle}
-        setShowDragHandle={setShowDragHandle}
-      />
+      <SectionsContext.Provider value={{ dispatch: dispatch }}>
+        <SectionsTopBar
+          showDragHandle={showDragHandle}
+          setShowDragHandle={setShowDragHandle}
+        />
 
-      <DragArea onDragEnd={onDragEnd}>
-        <Animate animation={animation}>
-          <SectionsContext.Provider value={{ dispatch: dispatch }}>
+        <DragArea onDragEnd={onDragEnd}>
+          <Animate animation={animation}>
             {state.sections.map((section, index) => (
               <DragItem key={section.sectionKey} itemKey={section.sectionKey} index={index}>
                 {(provided) => (
@@ -76,9 +76,9 @@ function SectionsView(props) {
                 )}
               </DragItem>
             ))}
-          </SectionsContext.Provider>
-        </Animate>
-      </DragArea>
+          </Animate>
+        </DragArea>
+      </SectionsContext.Provider>
 
 
       <FloatingButton
