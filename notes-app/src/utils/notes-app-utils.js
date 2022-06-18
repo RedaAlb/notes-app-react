@@ -62,6 +62,14 @@ export const createNotesAppTables = async () => {
 }
 
 
+export const delAllSectionsNotesTbs = async () => {
+  await sql.deleteTable(SECTIONS_TB_NAME);
+  await sql.deleteTable(NOTES_TB_NAME);
+
+  window.location.reload();
+}
+
+
 export const loadSections = async () => {
   const loadSectionsQuery = `
     SELECT * FROM ${SECTIONS_TB_NAME}

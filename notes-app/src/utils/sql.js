@@ -57,6 +57,15 @@ export const deleteSqlDb = async () => {
 }
 
 
+export const deleteTable = async (tableName) => {
+  const deleteTableQuery = `
+    DROP TABLE IF EXISTS ${tableName};
+  `
+
+  await runSql(deleteTableQuery);
+}
+
+
 export const runSql = async (sqlString) => {
   const result = await sqlDb.run(sqlString);
 
