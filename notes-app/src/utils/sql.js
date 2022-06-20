@@ -1,8 +1,11 @@
 import { Capacitor } from '@capacitor/core';
 import { CapacitorSQLite, SQLiteConnection } from '@capacitor-community/sqlite';
+import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
+
 import { defineCustomElements as jeepSqlite, applyPolyfills } from "jeep-sqlite/loader";
 
 import { createNotesAppTables } from "./notes-app-utils";
+import { EXPORTS_DIR_NAME } from './constants';
 
 
 const DB_NAME = "notes_db";
@@ -151,4 +154,166 @@ export const attrDefValsToStrList = (tableAttributes) => {
   }
 
   return attrDefValues.join(",");
+}
+
+
+export const exportTables = async (fileNamePrefix, tableNames) => {
+  const tablesJsonArray = [];
+
+  // Getting all data from tables and converting them to json.
+  for (const tableName of tableNames) {
+    const result = await query(`SELECT * FROM ${tableName}`);
+    const tableData = { tableName: tableName, data: result.values };
+
+    tablesJsonArray.push(tableData);
+  }
+
+  const tablesJsonString = JSON.stringify(tablesJsonArray, null, 2);
+
+  // Forming a unique filename.
+  var dt = new Date();  // dt: dateTime
+  const nowDateTimeString =
+    `${dt.getDate()}-${dt.getMonth() + 1}-${dt.getFullYear()}_${dt.getHours()}-${dt.getMinutes()}-${dt.getSeconds()}`
+
+  const fileName = `${fileNamePrefix}_${nowDateTimeString}`;
+
+  await saveDataToFile(fileName, tablesJsonString);
+}
+
+
+export const saveDataToFile = async (fileName, dataToSave) => {
+  if (platform === "web") {
+    const element = document.createElement("a");
+    const file = new Blob([dataToSave], {
+      type: "text/plain;charset=utf-8"
+    })
+
+    element.href = URL.createObjectURL(file);
+    element.download = fileName;
+    element.click();
+  }
+  else {
+    // While loop is used here to ensure the directory is initially created.
+    while (true) {
+      try {
+        await Filesystem.writeFile({
+          path: `${EXPORTS_DIR_NAME}/${fileName}.txt`,
+          data: dataToSave,
+          directory: Directory.Documents,
+          encoding: Encoding.UTF8,
+        })
+
+        break;
+
+      } catch (e) {
+        await Filesystem.mkdir({
+          path: `${EXPORTS_DIR_NAME}`,
+          directory: Directory.Documents,
+        })
+
+        console.log("Directory created in documents");
+      }
+    }
+  }
+}
+
+
+export const importDataFromFile = () => {
+  const input = document.createElement("input");
+  input.type = "file";
+
+  input.onchange = (e) => {
+    const file = e.target.files[0];
+
+    const reader = new FileReader();
+    reader.readAsText(file, "UTF-8");
+
+    reader.onload = (readerEvent) => {
+      const content = readerEvent.target.result;
+      importTables(JSON.parse(content));
+    }
+  }
+  input.click();
+}
+
+
+export const importTables = async (json) => {
+  // Deleting all triggers to prevent conflicts when inserting imported data.
+  // All triggers are re-created after page re-fresh.
+  await deleteAllTriggers();
+
+  // Going through all the tables and inserting each row into the sql database.
+  for (const table of json) {
+    // Using the first row to get the attribute names.
+    const tableAttributes = Object.keys(table.data[0]).join(",");
+
+    const tableDataInsertValues = getTableInsertValues(table.data);
+
+    const tableInsertDataQuery = `
+      INSERT OR IGNORE INTO ${table.tableName} (${tableAttributes})
+      VALUES
+      ${tableDataInsertValues}
+    `
+
+    await runSql(tableInsertDataQuery);
+  }
+
+  window.location.reload();
+}
+
+
+export const getTableInsertValues = (tableData) => {
+  const rowInsertStatements = [];  // Will hold all insert statements for all rows.
+
+  // Converting row values into sql insert string format.
+  for (const row of tableData) {
+    const rowValuesString = Object.keys(row).map((key) => {
+      const value = row[key];
+
+      // Surround strings by quotes to maintain string formatting.
+      if (typeof value === "string") return `"${value}"`
+      else return value;
+
+    }).join(",")
+
+    const rowInsertStatement = `(${rowValuesString})`;
+    rowInsertStatements.push(rowInsertStatement);
+  }
+
+  const tableDataInsertValues = rowInsertStatements.join(",");
+
+  return tableDataInsertValues;
+}
+
+
+export const deleteAllTriggers = async () => {
+  const allTriggersResult = await query(`SELECT * FROM sqlite_master WHERE type="trigger"`);
+
+  for (const trigger of allTriggersResult.values) {
+    await runSql(`DROP TRIGGER IF EXISTS ${trigger.name}`);
+  }
+}
+
+
+export const getAllTableNames = async () => {
+  const getAllTableNamesQuery = `
+    SELECT name
+    FROM sqlite_schema
+    WHERE type = 'table' AND name NOT LIKE 'sqlite_%'
+  `
+
+  const result = await query(getAllTableNamesQuery);
+
+  const tableNames = result.values.map((item) => {
+    return item["name"];
+  })
+
+  return tableNames;
+}
+
+
+export const exportDb = async () => {
+  const tableNames = await getAllTableNames();
+
+  await exportTables("db", tableNames);
 }

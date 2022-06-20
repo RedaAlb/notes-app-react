@@ -16,7 +16,7 @@ import ConfirmDialog from './ConfirmDialog';
 import WarningIcon from '@mui/icons-material/Warning';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 
-import { deleteSqlDb } from '../utils/sql';
+import { deleteSqlDb, exportDb, importDataFromFile } from '../utils/sql';
 
 
 function DrawerComp(props) {
@@ -33,6 +33,17 @@ function DrawerComp(props) {
 
   const onPlaceholderClick = () => {
     console.log("Place holder pressed.")
+  }
+
+
+  const onExportClick = () => {
+    exportDb();
+    props.setDrawerState(false);
+  }
+
+
+  const onImportClick = () => {
+    importDataFromFile();
   }
 
 
@@ -76,12 +87,12 @@ function DrawerComp(props) {
             <Typography variant="h6" noWrap component="div">Misc</Typography>
           </ListItem>
 
-          <ListItem button>
+          <ListItem button onClick={onExportClick}>
             <ListItemIcon> <SaveIcon /> </ListItemIcon>
             <ListItemText primary={"Export"} />
           </ListItem>
 
-          <ListItem button>
+          <ListItem button onClick={onImportClick}>
             <ListItemIcon> <DownloadIcon /> </ListItemIcon>
             <ListItemText primary={"Import"} />
           </ListItem>

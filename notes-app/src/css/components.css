@@ -13,7 +13,9 @@
   border-bottom: 1px solid var(--border-bottom-color);
 }
 
-.auto-width-tb-wrapper {}
+.auto-width-tb-wrapper {
+  height: -webkit-fill-available;
+}
 
 .autosize-textarea {
   border: none;

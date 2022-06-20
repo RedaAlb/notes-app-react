@@ -34,3 +34,6 @@ export const NOTES_ANIM = {
   to: { x: 0, opacity: 1 },
   config: config.stiff
 }
+
+
+export const EXPORTS_DIR_NAME = "notes_app_exports";
