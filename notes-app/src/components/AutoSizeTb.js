@@ -9,9 +9,11 @@ function AutoSizeTb(props) {
   const onTextChange = (event) => {
     const tbVal = event.target.value;  // tb: textbox
 
-    setValue(tbVal);
+    // This is needed to be able to insert quotes (") into sql insert statement.
+    const apostropheRemoved = tbVal.replace(/'/g, "");
 
-    props.onTextChange(tbVal);
+    setValue(apostropheRemoved);
+    props.onTextChange(apostropheRemoved);
   }
 
 
