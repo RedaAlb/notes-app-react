@@ -26,13 +26,11 @@ function TopBar(props) {
               </IconButton>
             </Stack>
 
-            {props.leftSide}
+            <LeftSide> {props.children[0]} </LeftSide>
 
             <Box sx={{ flexGrow: 1 }} />
 
-            <Stack direction="row" spacing={1} alignItems={"center"}>
-              {props.rightSide}
-            </Stack>
+            <RightSide> {props.children[1]} </RightSide>
           </Toolbar>
         </AppBar>
       </Box>
@@ -41,5 +39,27 @@ function TopBar(props) {
     </>
   )
 }
+
+
+function LeftSide(props) {
+  return (
+    <>
+      {props.children}
+    </>
+  )
+}
+
+
+function RightSide(props) {
+  return (
+    <Stack direction="row" spacing={1} alignItems={"center"}>
+      {props.children}
+    </Stack>
+  )
+}
+
+
+TopBar.LeftSide = LeftSide;
+TopBar.RightSide = RightSide;
 
 export default TopBar;

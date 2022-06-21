@@ -28,29 +28,19 @@ function NotesTopBar(props) {
   }
 
 
-  const leftSide = (
-    <>
-      <Typography variant="h6" noWrap component="div">
-        {sectionInView.sectionName}
-      </Typography>
-    </>
-  )
-
-
-  const rightSide = (
-    <>
-      <SearchBox onChangeHandler={searchOnChangeHandler} />
-      <NotesViewMenu />
-    </>
-  )
-
-
   return (
-    <TopBar
-      bgColour={NOTES_TOPBAR_BG}
-      leftSide={leftSide}
-      rightSide={rightSide}
-    />
+    <TopBar bgColour={NOTES_TOPBAR_BG}>
+      <TopBar.LeftSide>
+        <Typography variant="h6" noWrap component="div">
+          {sectionInView.sectionName}
+        </Typography>
+      </TopBar.LeftSide>
+
+      <TopBar.RightSide>
+        <SearchBox onChangeHandler={searchOnChangeHandler} />
+        <NotesViewMenu />
+      </TopBar.RightSide>
+    </TopBar>
   )
 }
 

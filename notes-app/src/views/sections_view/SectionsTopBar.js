@@ -24,32 +24,22 @@ function SectionsTopBar(props) {
   }
 
 
-  const leftSide = (
-    <>
-      <Typography variant="h6" noWrap component="div">
-        Sections
-      </Typography>
-    </>
-  )
-
-
-  const rightSide = (
-    <>
-      <SearchBox onChangeHandler={searchOnChangeHandler} />
-      <SectionsViewMenu
-        showDragHandle={props.showDragHandle}
-        setShowDragHandle={props.setShowDragHandle}
-      />
-    </>
-  )
-
-
   return (
-    <TopBar
-      bgColour={SECTIONS_TOPBAR_BG}
-      leftSide={leftSide}
-      rightSide={rightSide}
-    />
+    <TopBar bgColour={SECTIONS_TOPBAR_BG}>
+      <TopBar.LeftSide>
+        <Typography variant="h6" noWrap component="div">
+          Sections
+        </Typography>
+      </TopBar.LeftSide>
+
+      <TopBar.RightSide>
+        <SearchBox onChangeHandler={searchOnChangeHandler} />
+        <SectionsViewMenu
+          showDragHandle={props.showDragHandle}
+          setShowDragHandle={props.setShowDragHandle}
+        />
+      </TopBar.RightSide>
+    </TopBar>
   )
 }
 
