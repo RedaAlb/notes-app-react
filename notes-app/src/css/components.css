@@ -1,3 +1,7 @@
+:root {
+  --border-bottom-color: rgb(184, 184, 184);
+}
+
 .auto-width-tb {
   height: -webkit-fill-available;
   border: none;
@@ -5,12 +9,6 @@
   padding-left: 12px;
   font-weight: 600;
   background: transparent;
-}
-
-.list-item {
-  display: flex;
-  align-items: center;
-  border-bottom: 1px solid var(--border-bottom-color);
 }
 
 .auto-width-tb-wrapper {
@@ -25,4 +23,23 @@
   overflow: hidden;
   resize: none;
   width: -webkit-fill-available;
+}
+
+.list-item {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--border-bottom-color);
+}
+
+.list-item-left {
+  height: -webkit-fill-available;
+}
+
+.list-item-middle {
+  height: -webkit-fill-available;
+  width: -webkit-fill-available;
+  align-items: center;
+  justify-content: flex-end;
+  cursor: pointer;
+  user-select: none;
 }

@@ -5,10 +5,9 @@ import App from "./App";
 import { initSqlDb } from "./utils/sql";
 
 import "./css/index.css";
-import "./css/topbar.css";
-import "./css/section.css";
-import "./css/note.css";
 import "./css/components.css";
+import "./css/note.css";
+import "./css/search-icon.css";
 
 
 window.addEventListener('DOMContentLoaded', async () => {

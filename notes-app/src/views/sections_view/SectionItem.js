@@ -1,14 +1,13 @@
 import React, { memo, useRef } from "react"
 import { useNavigate } from "react-router-dom";
 
-import { Stack } from "@mui/material";
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import DragHandleIcon from "@mui/icons-material/DragHandle";
 
 import SectionItemOptions from "./SectionItemOptions";
 
 import AutoWidthTb from "../../components/AutoWidthTb";
 import ListItem from "../../components/ListItem";
+import DragHandle from "../../components/DragHandle";
 
 import { changeSectionName } from "../../utils/notes-app-utils";
 import { SECTION_ITEM_HEIGHT } from "../../utils/constants";
@@ -33,30 +32,28 @@ function SectionItem(props) {
 
   return (
     <ListItem height={SECTION_ITEM_HEIGHT}>
-      <div {...props.provided.dragHandleProps}>
-        <Stack direction="row">
-          {props.showDragHandle ? (<DragHandleIcon className="drag-handle" />) : null}
-        </Stack>
-      </div>
+      <ListItem.LeftSide>
+        <DragHandle
+          dragHandleProps={props.provided.dragHandleProps}
+          showDragHandle={props.showDragHandle}
+        />
 
-      <AutoWidthTb
-        value={props.section.sectionName}
-        onTextChange={onSectionNameChange}
-        placeholder={"Name"}
-        minWidth={100}
-      />
+        <AutoWidthTb
+          value={props.section.sectionName}
+          onTextChange={onSectionNameChange}
+          placeholder={"Name"}
+          minWidth={100}
+        />
+      </ListItem.LeftSide>
 
-      <div className="section-middle" onClick={onSectionItemClick}>
-        <Stack direction="row">
-          <div className="section-count">{props.section.sectionCount}</div>
-          <ChevronRightIcon fontSize="medium" />
-        </Stack>
-      </div>
+      <ListItem.Middle onClick={onSectionItemClick}>
+        <div style={{ color: "gray" }}>{props.section.sectionCount}</div>
+        <ChevronRightIcon fontSize="medium" />
+      </ListItem.Middle>
 
-
-      <Stack direction="row">
+      <ListItem.RightSide>
         <SectionItemOptions section={sectionRef} />
-      </Stack>
+      </ListItem.RightSide>
     </ListItem>
   )
 }
