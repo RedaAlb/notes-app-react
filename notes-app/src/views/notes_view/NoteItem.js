@@ -1,21 +1,17 @@
 import React, { useState, memo, useRef } from "react"
 
 import NoteItemOptions from "./NoteItemOptions";
-import IconButton from '@mui/material/IconButton';
-import Stack from '@mui/material/Stack';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
 import { changeNoteText, changeNoteTitle } from "../../utils/notes-app-utils";
 import AutoSizeTb from "../../components/AutoSizeTb";
 
 import { NOTE_PRIO_BG_COLS } from "../../utils/constants";
+import Accordion from "../../components/Accordion";
 
 
 function NoteItem(props) {
   const noteRef = useRef(props.note);
 
-  const [showNoteText, setShowNoteText] = useState(false);
   const [notePriority, setNotePriority] = useState(props.note.notePrio);
 
 
@@ -32,34 +28,30 @@ function NoteItem(props) {
 
 
   return (
-    <div className="note-item-wrapper">
-      <div className="note-item" style={{ background: `${NOTE_PRIO_BG_COLS[notePriority]}` }}>
+    <Accordion>
+      <Accordion.Primary background={NOTE_PRIO_BG_COLS[notePriority]}>
         <AutoSizeTb
           value={props.note.noteTitle}
           onTextChange={onNoteTitleChange}
           placeholder="Title"
         />
 
-        <Stack direction="row">
-          <IconButton onClick={() => setShowNoteText(!showNoteText)}>
-            {showNoteText ? <KeyboardArrowUpIcon pr={0} /> : <KeyboardArrowDownIcon />}
-          </IconButton>
+        <Accordion.Primary.Toggle useToggleButton={true} />
 
-          <NoteItemOptions
-            note={noteRef}
-            setNotePriority={setNotePriority}
-          />
-        </Stack>
-      </div>
+        <NoteItemOptions
+          note={noteRef}
+          setNotePriority={setNotePriority}
+        />
+      </Accordion.Primary>
 
-      {showNoteText ?
+      <Accordion.Secondary>
         <AutoSizeTb
           value={props.note.noteText}
           onTextChange={onNoteTextChange}
           placeholder="Note"
         />
-        : null}
-    </div>
+      </Accordion.Secondary>
+    </Accordion>
   )
 }
 

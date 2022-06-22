@@ -6,7 +6,6 @@ import { initSqlDb } from "./utils/sql";
 
 import "./css/index.css";
 import "./css/components.css";
-import "./css/note.css";
 import "./css/search-icon.css";
 
 

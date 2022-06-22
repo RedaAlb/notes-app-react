@@ -29,6 +29,7 @@
   display: flex;
   align-items: center;
   border-bottom: 1px solid var(--border-bottom-color);
+  width: -webkit-fill-available;
 }
 
 .list-item-left {
@@ -42,4 +43,22 @@
   justify-content: flex-end;
   cursor: pointer;
   user-select: none;
+}
+
+.accordion {
+  display: flex;
+  flex-direction: column;
+}
+
+.accordion-primary {
+  display: flex;
+  align-items: center;
+  width: -webkit-fill-available;
+}
+
+.accordion-toggle {
+  width: -webkit-fill-available;
+  height: -webkit-fill-available;
+  display: flex;
+  align-items: center;
 }

@@ -1,9 +1,0 @@
-.note-item {
-  display: flex;
-  align-items: center;
-}
-
-.note-item-wrapper {
-  display: flex;
-  flex-direction: column;
-}
