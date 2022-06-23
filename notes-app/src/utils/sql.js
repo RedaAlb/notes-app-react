@@ -101,15 +101,27 @@ export const attrsToCreateTbSqlString = (tableAttributes) => {
   var sqlStringLines = []  // Will hold all lines of the sql statement.
 
   for (var [key, attr] of Object.entries(tableAttributes)) {
+    switch (key) {
+      case "pk": {
+        sqlStringLines.push(`${attr.name} ${attr.sqlType}`);
+        break;
+      }
+      case "fks": {
+        for (var [, fk] of Object.entries(attr)) {
+          sqlStringLines.push(`${fk.name} INTEGER`);
+          sqlStringLines.push(`FOREIGN KEY(${fk.name}) REFERENCES ${fk.refTable}(${fk.refAttr}) ON DELETE CASCADE`)
+        }
+        break;
+      }
+      default: {
+        var defValueSqlString;  // Used to get a correct default value that SQLite will accept.
+        switch (attr.sqlType) {
+          case "TEXT": defValueSqlString = attr.defaultValue === "" ? '""' : `${attr.defaultValue}`; break;
+          case "INTEGER": defValueSqlString = attr.defaultValue; break;
+          default: throw new Error(`Invalid SQLite data type on table creation for the ${attr.name} attribute.`);
+        }
 
-    // If attribute is not a foreign key.
-    if (key !== "fks") {
-      sqlStringLines.push(`${attr.name} ${attr.sqlType}`)
-    }
-    else {
-      for (var [, fk] of Object.entries(attr)) {
-        sqlStringLines.push(`${fk.name} INTEGER`);
-        sqlStringLines.push(`FOREIGN KEY(${fk.name}) REFERENCES ${fk.refTable}(${fk.refAttr}) ON DELETE CASCADE`)
+        sqlStringLines.push(`${attr.name} ${attr.sqlType} DEFAULT ${defValueSqlString} NOT NULL`)
       }
     }
   }
@@ -122,14 +134,16 @@ export const attrNamesToStrList = (tableAttributes) => {
   var attrNames = [];
 
   for (var [key, attr] of Object.entries(tableAttributes)) {
-    if (key === "pk") continue;
-
-    if (key !== "fks") {
-      attrNames.push(attr.name);
-    }
-    else {
-      for (var [, fk] of Object.entries(attr)) {
-        attrNames.push(fk.name);
+    switch (key) {
+      case "pk": continue;
+      case "fks": {
+        for (var [, fk] of Object.entries(attr)) {
+          attrNames.push(fk.name);
+        }
+        break;
+      }
+      default: {
+        attrNames.push(attr.name);
       }
     }
   }
@@ -142,13 +156,15 @@ export const attrDefValsToStrList = (tableAttributes) => {
   var attrDefValues = [];
 
   for (var [key, attr] of Object.entries(tableAttributes)) {
-    if (key === "pk") continue;
-
-    if (key !== "fks") {
-      if (attr.defaultValue === "") {
-        attrDefValues.push("\"\"");
-      } else {
-        attrDefValues.push(attr.defaultValue);
+    switch (key) {
+      case "pk": continue;
+      case "fks": continue;
+      default: {
+        if (attr.defaultValue === "") {
+          attrDefValues.push("\"\"");
+        } else {
+          attrDefValues.push(attr.defaultValue);
+        }
       }
     }
   }

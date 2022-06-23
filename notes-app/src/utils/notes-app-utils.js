@@ -7,7 +7,7 @@ const SECTION_TB_ATTRS = {  // ATTRS: attributes
   sectionName: { name: "sectionName", sqlType: "TEXT", defaultValue: "" },
   sectionOrder: { name: "sectionOrder", sqlType: "INTEGER", defaultValue: 0 },
   sectionCount: { name: "sectionCount", sqlType: "INTEGER", defaultValue: 0 },
-  sectionCreateDate: { name: "sectionCreateDate", sqlType: "TEXT", defaultValue: "datetime('now')" },
+  sectionCreateDate: { name: "sectionCreateDate", sqlType: "TEXT", defaultValue: "CURRENT_TIMESTAMP" },
 }
 
 const NOTES_TB_NAME = "notes";
@@ -16,7 +16,7 @@ const NOTE_TB_ATTRS = {
   noteTitle: { name: "noteTitle", sqlType: "TEXT", defaultValue: "" },
   noteText: { name: "noteText", sqlType: "TEXT", defaultValue: "" },
   notePrio: { name: "notePrio", sqlType: "INTEGER", defaultValue: 0 },  // notePrio: note priority
-  noteCreateDate: { name: "noteCreateDate", sqlType: "TEXT", defaultValue: "datetime('now')" },
+  noteCreateDate: { name: "noteCreateDate", sqlType: "TEXT", defaultValue: "CURRENT_TIMESTAMP" },
   fks: {  // fks: foreign keys
     sectionKey: { name: SECTION_TB_ATTRS.pk.name, refTable: SECTIONS_TB_NAME, refAttr: SECTION_TB_ATTRS.pk.name },
   }
