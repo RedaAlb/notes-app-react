@@ -333,3 +333,11 @@ export const exportDb = async () => {
 
   await exportTables("db", tableNames);
 }
+
+
+export const cleanStringForSql = (stringText) => {
+  // Escape quotation marks to maintain original text and prevent sql string error.
+  const cleanedString = stringText.replaceAll("\"", "\"\"");
+
+  return cleanedString;
+}

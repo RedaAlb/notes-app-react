@@ -213,9 +213,11 @@ export const getNote = async (noteKey) => {
 
 
 export const changeSectionName = async (section, newSectionName) => {
+  const newSectionNameCleaned = sql.cleanStringForSql(newSectionName);
+
   const changeSectionNameQuery = `
     UPDATE ${SECTIONS_TB_NAME}
-    SET ${SECTION_TB_ATTRS.sectionName.name} = "${newSectionName}"
+    SET ${SECTION_TB_ATTRS.sectionName.name} = "${newSectionNameCleaned}"
     WHERE ${SECTION_TB_ATTRS.pk.name} = ${section.sectionKey}
   `
 
@@ -224,9 +226,11 @@ export const changeSectionName = async (section, newSectionName) => {
 
 
 export const changeNoteTitle = async (note, newNoteTitle) => {
+  const newNoteTitleCleaned = sql.cleanStringForSql(newNoteTitle);
+
   const changeNoteNameQuery = `
     UPDATE ${NOTES_TB_NAME}
-    SET ${NOTE_TB_ATTRS.noteTitle.name} = "${newNoteTitle}"
+    SET ${NOTE_TB_ATTRS.noteTitle.name} = "${newNoteTitleCleaned}"
     WHERE ${NOTE_TB_ATTRS.pk.name} = ${note.noteKey}
   `
 
@@ -235,9 +239,11 @@ export const changeNoteTitle = async (note, newNoteTitle) => {
 
 
 export const changeNoteText = async (note, newNoteText) => {
+  const newNoteTextCleaned = sql.cleanStringForSql(newNoteText);
+
   const changeNoteTextQuery = `
     UPDATE ${NOTES_TB_NAME}
-    SET ${NOTE_TB_ATTRS.noteText.name} = "${newNoteText}"
+    SET ${NOTE_TB_ATTRS.noteText.name} = "${newNoteTextCleaned}"
     WHERE ${NOTE_TB_ATTRS.pk.name} = ${note.noteKey}
   `
 
