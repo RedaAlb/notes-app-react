@@ -287,7 +287,7 @@ export const getTableInsertValues = (tableData) => {
       const value = row[key];
 
       // Surround strings by quotes to maintain string formatting.
-      if (typeof value === "string") return `"${value}"`
+      if (typeof value === "string") return `"${cleanStringForSql(value)}"`
       else return value;
 
     }).join(",")
