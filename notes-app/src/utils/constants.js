@@ -11,7 +11,7 @@ export const SECTION_ITEM_HEIGHT = "64px";
 
 // Note priority background colours.
 export const NOTE_PRIO_BG_COLS = {
-  0: "#a3ffb0",
+  0: "#7aff8e",
   1: "#f9ffa1"
 }
 
