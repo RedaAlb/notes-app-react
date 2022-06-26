@@ -1,12 +1,15 @@
-# Personal Notes app
+# Personal Notes App
 
-Personal notes app using React web.
+Personal notes app using React web with Capacitor for native mobile platforms.
+
+There was no app that did exactly what I wanted to organise my personal notes, so I made this app.
 
 # To build/deploy as a "native" app using Capacitor
 
 ## Install node modules
 
 ```
+cd .\notes-app\
 npm install
 ```
 
@@ -23,9 +26,12 @@ npm run build
 
 ## Install native platforms needed
 ```
-npm i @capacitor/ios @capacitor/android
+npm i @capacitor/android @capacitor/ios
 npx cap add android
 npx cap add ios
+
+npx cap copy
+npx cap copy web
 ```
 
 ## Deploy
