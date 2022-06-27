@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from "react-router-dom";
 
 import { Drawer, Typography } from "@mui/material";
@@ -9,19 +9,12 @@ import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import NoteIcon from '@mui/icons-material/Note';
-import SaveIcon from '@mui/icons-material/Save';
-import DownloadIcon from '@mui/icons-material/Download';
-import FolderDeleteIcon from '@mui/icons-material/FolderDelete';
-import ConfirmDialog from './ConfirmDialog';
-import WarningIcon from '@mui/icons-material/Warning';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
-
-import { deleteSqlDb, exportDb, importDataFromFile } from '../utils/sql';
+import SettingsIcon from '@mui/icons-material/Settings';
 
 
 function DrawerComp(props) {
   const navigate = useNavigate();
-  const [deleteAllDataDiaOpen, setDeleteAllDataDiaOpen] = useState(false);  // Dia: Dialog
 
 
   const onNotesClick = () => {
@@ -36,26 +29,14 @@ function DrawerComp(props) {
   }
 
 
-  const onExportClick = () => {
-    exportDb();
-    props.setDrawerState(false);
-  }
-
-
-  const onImportClick = () => {
-    importDataFromFile();
-  }
-
-
-  const onDelAllDataConfirmed = () => {
-    deleteSqlDb();
+  const onSettingsClick = () => {
+    navigate("/settings");
   }
 
 
   return (
     <Drawer anchor={"left"} open={props.drawerState} onClose={() => props.setDrawerState(false)}>
       <Box sx={{ width: "left" === "top" || "left" === "bottom" ? "auto" : 250 }} role="presentation">
-
         <List>
           <ListItem>
             <Typography variant="h6" noWrap component="div">Main</Typography>
@@ -84,33 +65,14 @@ function DrawerComp(props) {
 
         <List>
           <ListItem>
-            <Typography variant="h6" noWrap component="div">Misc</Typography>
+            <Typography variant="h6" noWrap component="div">App</Typography>
           </ListItem>
 
-          <ListItem button onClick={onExportClick}>
-            <ListItemIcon> <SaveIcon /> </ListItemIcon>
-            <ListItemText primary={"Export"} />
-          </ListItem>
-
-          <ListItem button onClick={onImportClick}>
-            <ListItemIcon> <DownloadIcon /> </ListItemIcon>
-            <ListItemText primary={"Import"} />
-          </ListItem>
-
-          <ListItem button onClick={() => setDeleteAllDataDiaOpen(true)}>
-            <ListItemIcon> <FolderDeleteIcon /> </ListItemIcon>
-            <ListItemText primary={"Delete all data"} />
+          <ListItem button onClick={onSettingsClick}>
+            <ListItemIcon><SettingsIcon /></ListItemIcon>
+            <ListItemText primary={"Settings"} />
           </ListItem>
         </List>
-
-        <ConfirmDialog
-          dialogOpen={deleteAllDataDiaOpen}
-          setDialogOpen={setDeleteAllDataDiaOpen}
-          diaTitle="Delete ALL data?"
-          diaText="All data in the app will be deleted."
-          diaIcon={<WarningIcon sx={{ color: "#ff0000" }} />}
-          onConfirmed={onDelAllDataConfirmed}
-        />
       </Box>
     </Drawer>
   )

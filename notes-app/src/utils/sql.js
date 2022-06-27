@@ -273,8 +273,6 @@ export const importTables = async (json) => {
 
     await runSql(tableInsertDataQuery);
   }
-
-  window.location.reload();
 }
 
 

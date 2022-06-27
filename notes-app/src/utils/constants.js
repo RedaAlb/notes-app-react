@@ -4,9 +4,12 @@ import { config } from 'react-spring'
 // Top bar bg colours
 export const SECTIONS_TOPBAR_BG = "#5600ff";
 export const NOTES_TOPBAR_BG = "#5600ff";
+export const SETTINGS_TOPBAR_BG = "#2c2c2c";
 
 
+// Item heights
 export const SECTION_ITEM_HEIGHT = "64px";
+export const SETTING_ITEM_HEIGHT = "64px";
 
 
 // Note priority background colours.
@@ -33,6 +36,13 @@ export const NOTES_ANIM = {
   from: { x: 100, opacity: 0 },
   to: { x: 0, opacity: 1 },
   config: config.stiff
+}
+
+export const SETTINGS_ANIM = {
+  from: { x: 100, opacity: 0 },
+  to: { x: 0, opacity: 1 },
+  config: config.stiff,
+  overflowY: "hidden"
 }
 
 

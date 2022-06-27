@@ -34,6 +34,7 @@
 
 .list-item-left {
   height: -webkit-fill-available;
+  width: fit-content;
 }
 
 .list-item-middle {
@@ -61,4 +62,9 @@
   height: -webkit-fill-available;
   display: flex;
   align-items: center;
+}
+
+.text-divider {
+  color: gray;
+  padding: 22px 0px 0px 5px;
 }
