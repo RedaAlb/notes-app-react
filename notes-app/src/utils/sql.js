@@ -234,7 +234,7 @@ export const saveDataToFile = async (fileName, dataToSave) => {
 }
 
 
-export const importDataFromFile = () => {
+export const importDataFromFile = (setImportSnackbar) => {
   const input = document.createElement("input");
   input.type = "file";
 
@@ -247,6 +247,7 @@ export const importDataFromFile = () => {
     reader.onload = (readerEvent) => {
       const content = readerEvent.target.result;
       importTables(JSON.parse(content));
+      setImportSnackbar(true);
     }
   }
   input.click();

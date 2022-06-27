@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useSpring } from 'react-spring';
+import { Capacitor } from '@capacitor/core';
 
 import DownloadIcon from '@mui/icons-material/Download';
 import SaveIcon from '@mui/icons-material/Save';
@@ -9,15 +10,22 @@ import WarningIcon from '@mui/icons-material/Warning';
 import TextDivider from '../../components/TextDivider';
 import ConfirmDialog from '../../components/ConfirmDialog';
 import Animate from '../../components/Animate';
+import SnackbarComp from '../../components/SnackbarComp';
 
 import { deleteSqlDb, exportDb, importDataFromFile } from '../../utils/sql';
-import { SETTINGS_ANIM } from '../../utils/constants';
+import { EXPORTS_DIR_NAME, SETTINGS_ANIM } from '../../utils/constants';
 
 import SettingsItem from './SettingsItem';
 import SettingsTopBar from './SettingsTopBar';
 
 
+const platform = Capacitor.getPlatform();
+
+
 function SettingsView(props) {
+  const [importSnackbar, setImportSnackbar] = useState(false);
+  const [exportSnackbar, setExportSnackbar] = useState(false);
+
   const [deleteAllDataDiaOpen, setDeleteAllDataDiaOpen] = useState(false);  // Dia: Dialog
 
   const animation = useSpring(SETTINGS_ANIM);
@@ -29,12 +37,16 @@ function SettingsView(props) {
 
 
   const onImportClick = () => {
-    importDataFromFile();
+    importDataFromFile(setImportSnackbar);
   }
 
 
   const onExportClick = () => {
     exportDb();
+
+    if (platform !== "web") {
+      setExportSnackbar(true);
+    }
   }
 
 
@@ -65,6 +77,9 @@ function SettingsView(props) {
           diaIcon={<WarningIcon sx={{ color: "#ff0000" }} />}
           onConfirmed={onDelAllDataConfirmed}
         />
+
+        <SnackbarComp text="Imported successfully" open={importSnackbar} setOpen={setImportSnackbar} />
+        <SnackbarComp text={`Exported successfully to /Documents/${EXPORTS_DIR_NAME}`} open={exportSnackbar} setOpen={setExportSnackbar} />
       </Animate>
     </>
   )

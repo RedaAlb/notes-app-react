@@ -5,9 +5,9 @@ import React from "react";
 function ListItem(props) {
   return (
     <div className="list-item" style={{ height: props.height }}>
-      <LeftSide>{props.children[0]}</LeftSide>
-      <Middle>{props.children[1]}</Middle>
-      <RightSide>{props.children[2]}</RightSide>
+      {props.children[0]}
+      {props.children[1]}
+      {props.children[2]}
     </div>
   )
 }
