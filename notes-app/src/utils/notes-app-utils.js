@@ -1,4 +1,5 @@
 import * as sql from "./sql";
+import { DEFAULT_DATE_VAL, DEFAULT_LOCATION_VAL } from "./constants";
 
 
 const SECTIONS_TB_NAME = "sections";  // TB: table
@@ -7,7 +8,8 @@ const SECTION_TB_ATTRS = {  // ATTRS: attributes
   sectionName: { name: "sectionName", sqlType: "TEXT", defaultValue: "" },
   sectionOrder: { name: "sectionOrder", sqlType: "INTEGER", defaultValue: 0 },
   sectionCount: { name: "sectionCount", sqlType: "INTEGER", defaultValue: 0 },
-  sectionCreateDate: { name: "sectionCreateDate", sqlType: "TEXT", defaultValue: "CURRENT_TIMESTAMP" },
+  sectionLocation: { name: "sectionLocation", sqlType: "TEXT", defaultValue: DEFAULT_LOCATION_VAL },
+  sectionCreateDate: { name: "sectionCreateDate", sqlType: "TEXT", defaultValue: DEFAULT_DATE_VAL },
 }
 
 const NOTES_TB_NAME = "notes";
@@ -16,7 +18,8 @@ const NOTE_TB_ATTRS = {
   noteTitle: { name: "noteTitle", sqlType: "TEXT", defaultValue: "" },
   noteText: { name: "noteText", sqlType: "TEXT", defaultValue: "" },
   notePrio: { name: "notePrio", sqlType: "INTEGER", defaultValue: 0 },  // notePrio: note priority
-  noteCreateDate: { name: "noteCreateDate", sqlType: "TEXT", defaultValue: "CURRENT_TIMESTAMP" },
+  noteLocation: { name: "noteLocation", sqlType: "TEXT", defaultValue: DEFAULT_LOCATION_VAL },
+  noteCreateDate: { name: "noteCreateDate", sqlType: "TEXT", defaultValue: DEFAULT_DATE_VAL },
   fks: {  // fks: foreign keys
     sectionKey: { name: SECTION_TB_ATTRS.pk.name, refTable: SECTIONS_TB_NAME, refAttr: SECTION_TB_ATTRS.pk.name },
   }
@@ -101,7 +104,7 @@ export const loadSectionNotes = async (section) => {
 export const addSection = async () => {
   // Add section to the database.
   const attrNamesStrList = sql.attrNamesToStrList(SECTION_TB_ATTRS);
-  const attrDefValsStrList = sql.attrDefValsToStrList(SECTION_TB_ATTRS);
+  const attrDefValsStrList = await sql.attrDefValsToStrList(SECTION_TB_ATTRS);
 
   const addSectionQuery = `
     INSERT INTO ${SECTIONS_TB_NAME} (${attrNamesStrList})
@@ -182,7 +185,7 @@ export const swapSectionsOrder = async (sections, dragHistory, finalSourceIndex,
 
 export const addNote = async (sectionInView) => {
   const attrNamesStrList = sql.attrNamesToStrList(NOTE_TB_ATTRS);
-  const attrDefValsStrList = sql.attrDefValsToStrList(NOTE_TB_ATTRS);
+  const attrDefValsStrList = await sql.attrDefValsToStrList(NOTE_TB_ATTRS);
 
   const addNoteQuery = `
     INSERT INTO ${NOTES_TB_NAME} (${attrNamesStrList})

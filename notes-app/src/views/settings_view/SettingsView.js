@@ -6,6 +6,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 import SaveIcon from '@mui/icons-material/Save';
 import FolderDeleteIcon from '@mui/icons-material/FolderDelete';
 import WarningIcon from '@mui/icons-material/Warning';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
 
 import TextDivider from '../../components/TextDivider';
 import ConfirmDialog from '../../components/ConfirmDialog';
@@ -13,7 +14,7 @@ import Animate from '../../components/Animate';
 import SnackbarComp from '../../components/SnackbarComp';
 
 import { deleteSqlDb, exportDb, importDataFromFile } from '../../utils/sql';
-import { EXPORTS_DIR_NAME, SETTINGS_ANIM } from '../../utils/constants';
+import { EXPORTS_DIR_NAME, SETTINGS_SAVE_LOCATION, SETTINGS_ANIM } from '../../utils/constants';
 
 import SettingsItem from './SettingsItem';
 import SettingsTopBar from './SettingsTopBar';
@@ -29,11 +30,6 @@ function SettingsView(props) {
   const [deleteAllDataDiaOpen, setDeleteAllDataDiaOpen] = useState(false);  // Dia: Dialog
 
   const animation = useSpring(SETTINGS_ANIM);
-
-
-  const onPlaceholderClick = (checked) => {
-    console.log(checked);
-  }
 
 
   const onImportClick = () => {
@@ -61,13 +57,13 @@ function SettingsView(props) {
       <SettingsTopBar />
 
       <Animate animation={animation}>
-        <TextDivider text="Placeholder" />
-        <SettingsItem text={"Placeholder"} icon={<SaveIcon />} onClick={onPlaceholderClick} switch />
+        <TextDivider text="Location" />
+        <SettingsItem text="Save Section and Note location" icon={<LocationOnIcon />} saveKey={SETTINGS_SAVE_LOCATION} switch />
 
         <TextDivider text="Data" />
-        <SettingsItem text={"Export"} icon={<SaveIcon />} onClick={onExportClick} />
-        <SettingsItem text={"Import"} icon={<DownloadIcon />} onClick={onImportClick} />
-        <SettingsItem text={"Delete all data"} icon={<FolderDeleteIcon />} onClick={() => setDeleteAllDataDiaOpen(true)} />
+        <SettingsItem text="Export" icon={<SaveIcon />} onClick={onExportClick} />
+        <SettingsItem text="Import" icon={<DownloadIcon />} onClick={onImportClick} />
+        <SettingsItem text="Delete all data" icon={<FolderDeleteIcon />} onClick={() => setDeleteAllDataDiaOpen(true)} />
 
         <ConfirmDialog
           dialogOpen={deleteAllDataDiaOpen}

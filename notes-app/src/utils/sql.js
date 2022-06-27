@@ -1,11 +1,13 @@
 import { Capacitor } from '@capacitor/core';
 import { CapacitorSQLite, SQLiteConnection } from '@capacitor-community/sqlite';
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
+import { Storage } from '@capacitor/storage';
+import { Geolocation } from '@capacitor/geolocation';
 
 import { defineCustomElements as jeepSqlite, applyPolyfills } from "jeep-sqlite/loader";
 
 import { createNotesAppTables } from "./notes-app-utils";
-import { EXPORTS_DIR_NAME } from './constants';
+import { DEFAULT_LOCATION_VAL, EXPORTS_DIR_NAME, SETTINGS_SAVE_LOCATION } from './constants';
 
 
 const DB_NAME = "notes_db";
@@ -152,7 +154,7 @@ export const attrNamesToStrList = (tableAttributes) => {
 }
 
 
-export const attrDefValsToStrList = (tableAttributes) => {
+export const attrDefValsToStrList = async (tableAttributes) => {
   var attrDefValues = [];
 
   for (var [key, attr] of Object.entries(tableAttributes)) {
@@ -160,10 +162,30 @@ export const attrDefValsToStrList = (tableAttributes) => {
       case "pk": continue;
       case "fks": continue;
       default: {
-        if (attr.defaultValue === "") {
-          attrDefValues.push("\"\"");
-        } else {
-          attrDefValues.push(attr.defaultValue);
+        switch (attr.defaultValue) {
+          case "": attrDefValues.push("\"\""); break;
+          case DEFAULT_LOCATION_VAL: {
+            const { value } = await Storage.get({ key: SETTINGS_SAVE_LOCATION });
+
+            // If location settings is not set or turned off in the user settings.
+            if (value === null || value === "false") {
+              attrDefValues.push(DEFAULT_LOCATION_VAL);
+              break;
+            }
+
+            const position = await Geolocation.getCurrentPosition();
+
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+
+            const locationString = `"${latitude} ${longitude}"`
+            attrDefValues.push(locationString);
+
+            break;
+          }
+          default: {
+            attrDefValues.push(attr.defaultValue);
+          }
         }
       }
     }

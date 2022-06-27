@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Storage } from '@capacitor/storage';
+
 import { ListItem, ListItemIcon, ListItemText, Switch } from '@mui/material';
 
 import { SETTING_ITEM_HEIGHT } from '../../utils/constants';
@@ -8,12 +10,36 @@ function SettingsItem(props) {
   const [toggle, setToggle] = useState(false);
 
 
-  const onItemClick = () => {
-    const newToggle = !toggle;
+  const onItemClick = async () => {
+    // If it does not have an onClick prop then its a toggle settings item.
+    if (props.onClick) {
+      props.onClick();
+    } else {
+      const newToggle = !toggle;
+      setToggle(newToggle);
 
-    setToggle(newToggle);
-    props.onClick(newToggle);
+      if (props.saveKey) {
+        await Storage.set({ key: props.saveKey, value: JSON.stringify(newToggle) })
+      }
+    }
   }
+
+
+  useEffect(() => {
+    // If its a setting item that stores a value, e.g. a toggle, load the saved value.
+    if (props.saveKey) {
+      const loadSavedValue = async () => {
+        const { value } = await Storage.get({ key: props.saveKey });
+
+        if (value !== null) {
+          const valueBool = JSON.parse(value);
+          setToggle(valueBool);
+        }
+      }
+
+      loadSavedValue();
+    }
+  }, [props.saveKey])
 
 
   return (

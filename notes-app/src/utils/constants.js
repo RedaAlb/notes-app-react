@@ -46,4 +46,14 @@ export const SETTINGS_ANIM = {
 }
 
 
+// Database constants
+export const DEFAULT_DATE_VAL = "CURRENT_TIMESTAMP";
+export const DEFAULT_LOCATION_VAL = "\"0 0\"";
+
+
+// Settings
+export const SETTINGS_SAVE_LOCATION = "SETTINGS_SAVE_LOCATION";
+
+
+// Misc
 export const EXPORTS_DIR_NAME = "notes_app_exports";
