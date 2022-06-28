@@ -278,8 +278,8 @@ export const importDataFromFile = (setImportSnackbar) => {
 
 export const importTables = async (json) => {
   // Deleting all triggers to prevent conflicts when inserting imported data.
-  // All triggers are re-created after page re-fresh.
-  await deleteAllTriggers();
+  // All triggers are re-created at the end of the import.
+  const allTriggers = await deleteAllTriggers();
 
   // Going through all the tables and inserting each row into the sql database.
   for (const table of json) {
@@ -296,6 +296,8 @@ export const importTables = async (json) => {
 
     await runSql(tableInsertDataQuery);
   }
+
+  await createTriggers(allTriggers);
 }
 
 
@@ -328,6 +330,23 @@ export const deleteAllTriggers = async () => {
 
   for (const trigger of allTriggersResult.values) {
     await runSql(`DROP TRIGGER IF EXISTS ${trigger.name}`);
+  }
+
+
+  // Returning sql statements of all deleted triggers.
+  const allTriggers = [];
+
+  for (const trigger of allTriggersResult.values) {
+    allTriggers.push(trigger.sql);
+  }
+
+  return allTriggers;
+}
+
+
+export const createTriggers = async (triggers) => {
+  for (const trigger of triggers) {
+    await runSql(trigger);
   }
 }
 

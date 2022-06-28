@@ -60,8 +60,7 @@ export const createNotesAppTables = async () => {
   await sql.createTable(SECTIONS_TB_NAME, SECTION_TB_ATTRS);
   await sql.createTable(NOTES_TB_NAME, NOTE_TB_ATTRS);
 
-  await sql.runSql(NOTE_INSERT_TRIGGER);
-  await sql.runSql(NOTE_DELETE_TRIGGER);
+  await sql.createTriggers([NOTE_INSERT_TRIGGER, NOTE_DELETE_TRIGGER])
 }
 
 
