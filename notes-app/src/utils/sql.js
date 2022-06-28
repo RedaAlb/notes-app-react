@@ -88,14 +88,16 @@ export const query = async (queryString) => {
 }
 
 
-export const createTable = async (tableName, tableAttributes) => {
-  const createTableQuery = `
-      CREATE TABLE IF NOT EXISTS ${tableName} (
-      ${attrsToCreateTbSqlString(tableAttributes)}
-    );
+export const createTables = async (tables) => {
+  for (const table of tables) {
+    const createTableQuery = `
+      CREATE TABLE IF NOT EXISTS ${table.tableName} (
+        ${attrsToCreateTbSqlString(table.tableAttributes)}
+      );
     `
 
-  await runSql(createTableQuery);
+    await runSql(createTableQuery);
+  }
 }
 
 

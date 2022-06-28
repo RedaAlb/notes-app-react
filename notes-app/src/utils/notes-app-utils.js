@@ -57,8 +57,10 @@ const NOTES_ORDER = `
 
 
 export const createNotesAppTables = async () => {
-  await sql.createTable(SECTIONS_TB_NAME, SECTION_TB_ATTRS);
-  await sql.createTable(NOTES_TB_NAME, NOTE_TB_ATTRS);
+  await sql.createTables([
+    { tableName: SECTIONS_TB_NAME, tableAttributes: SECTION_TB_ATTRS },
+    { tableName: NOTES_TB_NAME, tableAttributes: NOTE_TB_ATTRS },
+  ])
 
   await sql.createTriggers([NOTE_INSERT_TRIGGER, NOTE_DELETE_TRIGGER])
 }
