@@ -25,31 +25,21 @@ const NOTE_TB_ATTRS = {
   }
 }
 
-
-const NOTE_INSERT_TRIGGER = `
-  CREATE TRIGGER IF NOT EXISTS incrementSectionCount
-  AFTER INSERT ON ${NOTES_TB_NAME}
-  BEGIN
-    UPDATE ${SECTIONS_TB_NAME}
-    SET ${SECTION_TB_ATTRS.sectionCount.name} = ${SECTION_TB_ATTRS.sectionCount.name} + 1
-    WHERE ${SECTION_TB_ATTRS.pk.name} = NEW.${NOTE_TB_ATTRS.fks.sectionKey.name};
-  END
-`
-const NOTE_DELETE_TRIGGER = `
-  CREATE TRIGGER IF NOT EXISTS decrementSectionCount
-  AFTER DELETE ON ${NOTES_TB_NAME}
-  BEGIN
-    UPDATE ${SECTIONS_TB_NAME}
-    SET ${SECTION_TB_ATTRS.sectionCount.name} = ${SECTION_TB_ATTRS.sectionCount.name} - 1
-    WHERE ${SECTION_TB_ATTRS.pk.name} = OLD.${NOTE_TB_ATTRS.fks.sectionKey.name};
-  END
-`
+// Trigger to automatically increment and decrement section count on note insert/delete.
+const countTrigger = [
+  {
+    triggerTbName: NOTES_TB_NAME,
+    targetTbName: SECTIONS_TB_NAME,
+    attributeName: SECTION_TB_ATTRS.sectionCount.name,
+    pkName: SECTION_TB_ATTRS.pk.name,
+    fkName: NOTE_TB_ATTRS.fks.sectionKey.name
+  }
+]
 
 
 const SECTIONS_ORDER = `
   ORDER BY ${SECTION_TB_ATTRS.sectionOrder.name}
 `
-
 
 const NOTES_ORDER = `
   ORDER BY ${NOTE_TB_ATTRS.notePrio.name}, ${NOTE_TB_ATTRS.noteCreateDate.name} DESC
@@ -62,7 +52,8 @@ export const createNotesAppTables = async () => {
     { tableName: NOTES_TB_NAME, tableAttributes: NOTE_TB_ATTRS },
   ])
 
-  await sql.createTriggers([NOTE_INSERT_TRIGGER, NOTE_DELETE_TRIGGER])
+  const triggers = sql.getCountTriggers(countTrigger);
+  await sql.createTriggers(triggers);
 }
 
 

@@ -197,6 +197,38 @@ export const attrDefValsToStrList = async (tableAttributes) => {
 }
 
 
+export const getCountTriggers = (triggers) => {
+  const triggerSqlStatements = [];
+
+  for (const trigger of triggers) {
+    const INCREMENT_TRIGGER = `
+      CREATE TRIGGER IF NOT EXISTS increment_${trigger.attributeName}
+      AFTER INSERT ON ${trigger.triggerTbName}
+      BEGIN
+        UPDATE ${trigger.targetTbName}
+        SET ${trigger.attributeName} = ${trigger.attributeName} + 1
+        WHERE ${trigger.pkName} = NEW.${trigger.fkName};
+      END
+    `
+    triggerSqlStatements.push(INCREMENT_TRIGGER);
+
+
+    const DECREMENT_TRIGGER = `
+      CREATE TRIGGER IF NOT EXISTS decrement_${trigger.attributeName}
+      AFTER DELETE ON ${trigger.triggerTbName}
+      BEGIN
+        UPDATE ${trigger.targetTbName}
+        SET ${trigger.attributeName} = ${trigger.attributeName} - 1
+        WHERE ${trigger.pkName} = OLD.${trigger.fkName};
+      END
+    `
+    triggerSqlStatements.push(DECREMENT_TRIGGER);
+  }
+
+  return triggerSqlStatements;
+}
+
+
 export const exportTables = async (fileNamePrefix, tableNames) => {
   const tablesJsonArray = [];
 
