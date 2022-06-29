@@ -4,6 +4,7 @@ import { config } from 'react-spring'
 // Top bar bg colours
 export const SECTIONS_TOPBAR_BG = "#5600ff";
 export const NOTES_TOPBAR_BG = "#5600ff";
+export const GYMWEIGHTS_TOPBAR_BG = "#0043ff";
 export const SETTINGS_TOPBAR_BG = "#2c2c2c";
 
 
