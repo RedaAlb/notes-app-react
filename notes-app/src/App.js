@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 
 import SectionsView from "./views/sections_view/SectionsView";
 import NotesView from "./views/notes_view/NotesView";
-import GymWeightsView from "./views/gymweights-view/GymWeightsView";
+import GymWeightsView from "./views/gymweights_view/GymWeightsView";
 import SettingsView from "./views/settings_view/SettingsView";
 
 

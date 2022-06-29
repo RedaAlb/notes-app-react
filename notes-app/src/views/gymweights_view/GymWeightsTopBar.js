@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 
 import { Typography } from '@mui/material';
 
@@ -38,4 +38,4 @@ function GymWeightsTopBar(props) {
   )
 }
 
-export default GymWeightsTopBar;
+export default memo(GymWeightsTopBar);

@@ -10,6 +10,8 @@ import WarningIcon from '@mui/icons-material/Warning';
 import OptionsMenu from '../../components/OptionsMenu';
 import ConfirmDialog from '../../components/ConfirmDialog';
 
+import { delAllGymWeightsTbs } from '../../utils/gym-weights-utils';
+
 
 function GymWeightsViewMenu(props) {
   const [menuAnchor, setMenuAnchor] = useState(null);
@@ -17,8 +19,7 @@ function GymWeightsViewMenu(props) {
 
 
   const onDelGymWeightsConfirmed = () => {
-    console.log("Delete gym weights confirmed.");
-    // delAllSectionsNotesTbs();
+    delAllGymWeightsTbs();
   }
 
 

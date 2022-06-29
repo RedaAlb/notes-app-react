@@ -10,6 +10,7 @@ export const SETTINGS_TOPBAR_BG = "#2c2c2c";
 
 // Item heights
 export const SECTION_ITEM_HEIGHT = "64px";
+export const BODYPART_ITEM_HEIGHT = "64px";
 export const SETTING_ITEM_HEIGHT = "64px";
 
 
@@ -34,6 +35,12 @@ export const SECTIONS_ANIM = {
 }
 
 export const NOTES_ANIM = {
+  from: { x: 100, opacity: 0 },
+  to: { x: 0, opacity: 1 },
+  config: config.stiff
+}
+
+export const GYM_WEIGHTS_ANIM = {
   from: { x: 100, opacity: 0 },
   to: { x: 0, opacity: 1 },
   config: config.stiff
