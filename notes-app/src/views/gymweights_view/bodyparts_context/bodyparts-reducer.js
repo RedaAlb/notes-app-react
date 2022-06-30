@@ -37,7 +37,7 @@ const bodypartsReducer = (state, action) => {
 
 
     default:
-      throw new Error(`No case for action type ${action.type} in gym weights reducer.`);
+      throw new Error(`No case for action type ${action.type} in bodyparts reducer.`);
   }
 }
 

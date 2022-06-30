@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 
 import Stack from '@mui/material/Stack';
 import IconButton from '@mui/material/IconButton';
@@ -14,9 +14,9 @@ function Accordion(props) {
 
   return (
     <div className="accordion">
-      <AccordionContext.Provider value={{ showSecondary: showSecondary, setshowSecondary: setShowSecondary }}>
+      <AccordionContext.Provider value={{ showSecondary: showSecondary, setshowSecondary: setShowSecondary, forceOpen: props.forceOpen }}>
         {props.children[0]}                           {/* This is Primary */}
-        {showSecondary ? (props.children[1]) : null}  {/* This is Secondary */}
+        {showSecondary || props.forceOpen ? (props.children[1]) : null}  {/* This is Secondary */}
       </AccordionContext.Provider>
     </div>
   )
@@ -25,7 +25,7 @@ function Accordion(props) {
 
 function Primary(props) {
   return (
-    <div className="accordion-primary" style={{ background: `${props.background}` }}>
+    <div className="accordion-primary" style={{ background: `${props.background}`, borderBottom: `${props.borderBottom}` }}>
       {props.children}
     </div>
   )
@@ -61,6 +61,16 @@ function Toggle(props) {
 
 
 function Secondary(props) {
+  const { setshowSecondary, forceOpen } = useContext(AccordionContext);
+
+
+  useEffect(() => {
+    if (forceOpen) {
+      setshowSecondary(true);
+    }
+  }, [forceOpen, setshowSecondary])
+
+
   return (
     <>
       {props.children}

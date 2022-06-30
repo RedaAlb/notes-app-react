@@ -1,0 +1,4 @@
+export const LOAD_EXERCISES = "LOAD_EXERCISES";
+export const ADD_EXERCISE = "ADD_EXERCISE";
+export const DELETE_EXERCISE = "DELETE_EXERCISE";
+export const SET_EXERCISES = "SET_EXERCISES";

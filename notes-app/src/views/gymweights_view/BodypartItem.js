@@ -4,16 +4,17 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 
 import bodypartsContext from './bodyparts_context/bodyparts-context';
+import { DELETE_BODYPART } from './bodyparts_context/bodyparts-actions';
 
 import { BODYPART_ITEM_HEIGHT } from '../../utils/constants';
-import { changeBodypartName } from '../../utils/gym-weights-utils';
+import { addExercise, changeBodypartName } from '../../utils/gym-weights-utils';
 
 import Accordion from '../../components/Accordion';
 import AutoWidthTb from '../../components/AutoWidthTb';
 import DragHandle from '../../components/DragHandle';
 import ListItem from '../../components/ListItem';
 import ConfirmDialog from '../../components/ConfirmDialog';
-import { DELETE_BODYPART } from './bodyparts_context/bodyparts-actions';
+import ExerciseList from './ExerciseList';
 
 
 function BodypartItem(props) {
@@ -22,6 +23,11 @@ function BodypartItem(props) {
   const { dispatch } = useContext(bodypartsContext);
 
   const [delBodypartDiaOpen, setDelBodypartDiaOpen] = useState(false);
+  const [forceOpenExercises, setForceOpenExercises] = useState(false);
+  const [insertedExercise, setInsertedExercise] = useState({});
+
+  // Needed for re-rendering the bodypart count on exercise insert/delete without re-fetching bodyparts.
+  const [bodypartCount, setBodypartCount] = useState(props.bodypart.bodypartCount);
 
 
   const onBodypartNameChange = (textboxValue) => {
@@ -35,8 +41,18 @@ function BodypartItem(props) {
   }
 
 
+  const onAddExerciseClick = () => {
+    addExercise(bodypartRef.current).then(newExercise => {
+      setInsertedExercise(newExercise);
+    })
+
+    setForceOpenExercises(true);
+    setBodypartCount(bodypartCount + 1);
+  }
+
+
   return (
-    <Accordion>
+    <Accordion forceOpen={forceOpenExercises}>
       <Accordion.Primary>
         <ListItem height={BODYPART_ITEM_HEIGHT}>
           <ListItem.LeftSide>
@@ -54,14 +70,14 @@ function BodypartItem(props) {
           </ListItem.LeftSide>
 
           <Accordion.Primary.Toggle>
-            <ListItem.Middle>
-              <div style={{ color: "gray", marginRight: "8px" }}>{props.bodypart.bodypartCount}</div>
+            <ListItem.Middle onClick={() => setForceOpenExercises(false)}>
+              <div style={{ color: "gray", marginRight: "8px" }}>{bodypartCount}</div>
             </ListItem.Middle>
           </Accordion.Primary.Toggle>
 
           <ListItem.RightSide>
             <Stack direction="row" spacing={0}>
-              <IconButton>
+              <IconButton onClick={onAddExerciseClick}>
                 <AddCircleIcon fontSize="large" style={{ color: "green" }} />
               </IconButton>
 
@@ -76,13 +92,17 @@ function BodypartItem(props) {
                 diaText="All exercise logs will be deleted."
                 onConfirmed={onDelBodypartConfirmed}
               />
-
             </Stack>
           </ListItem.RightSide>
         </ListItem>
       </Accordion.Primary>
       <Accordion.Secondary>
-        Exercises
+        <ExerciseList
+          bodypart={bodypartRef.current}
+          newExercise={insertedExercise}
+          showDragHandle={props.showDragHandle}
+          bodypartCountState={[setBodypartCount, bodypartCount]}
+        />
       </Accordion.Secondary>
     </Accordion>
   )

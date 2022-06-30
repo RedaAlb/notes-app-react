@@ -16,6 +16,7 @@ const EXERCISE_TB_NAME = "exercise";
 const EXERCISE_TB_ATTRS = {
   pk: { name: "exerciseKey", sqlType: "INTEGER PRIMARY KEY AUTOINCREMENT" },
   exerciseName: { name: "exerciseName", sqlType: "TEXT", defaultValue: "" },
+  exerciseOrder: { name: "exerciseOrder", sqlType: "INTEGER", defaultValue: 0 },
   exerciseCount: { name: "exerciseCount", sqlType: "INTEGER", defaultValue: 0 },
   exerciseLocation: { name: "exerciseLocation", sqlType: "TEXT", defaultValue: DEFAULT_LOCATION_VAL },
   exerciseCreateDate: { name: "exerciseCreateDate", sqlType: "TEXT", defaultValue: DEFAULT_DATE_VAL },
@@ -58,9 +59,9 @@ const BODYPARTS_ORDER = `
   ORDER BY ${BODYPART_TB_ATTRS.bodypartOrder.name}
 `
 
-// const EXERCISE_ORDER = `
-//   ORDER BY ${EXERCISE_TB_ATTRS.exerciseCreateDate.name} DESC
-// `
+const EXERCISE_ORDER = `
+  ORDER BY ${EXERCISE_TB_ATTRS.exerciseOrder.name} DESC
+`
 
 // const EXERLOG_ORDER = `
 //   ORDER BY ${EXERLOG_TB_ATTRS.exerlogCreateDate.name} DESC
@@ -81,8 +82,8 @@ export const createGymWeightsTables = async () => {
 
 export const delAllGymWeightsTbs = async () => {
   await sql.deleteTable(BODYPARTS_TB_NAME);
-  await sql.deleteTable(BODYPARTS_TB_NAME);
-  await sql.deleteTable(BODYPARTS_TB_NAME);
+  await sql.deleteTable(EXERCISE_TB_NAME);
+  await sql.deleteTable(EXERLOG_TB_NAME);
 
   window.location.reload();
 }
@@ -97,6 +98,20 @@ export const loadBodyparts = async () => {
   const result = await sql.query(loadBodypartsQuery);
 
   console.log("Loaded bodyparts");
+
+  return result.values;
+}
+
+
+export const loadExercises = async (bodypart) => {
+  const loadExercisesQuery = `
+    SELECT * FROM ${EXERCISE_TB_NAME}
+    WHERE ${EXERCISE_TB_ATTRS.fks.bodypartKey.name} = ${bodypart.bodypartKey}
+    ${EXERCISE_ORDER}
+  `
+  const result = await sql.query(loadExercisesQuery);
+
+  console.log("Loaded exercises");
 
   return result.values;
 }
@@ -127,6 +142,31 @@ export const addBodypart = async () => {
 }
 
 
+export const addExercise = async (bodypart) => {
+  const attrNamesStrList = sql.attrNamesToStrList(EXERCISE_TB_ATTRS);
+  const attrDefValsStrList = await sql.attrDefValsToStrList(EXERCISE_TB_ATTRS);
+
+  const addExerciseQuery = `
+    INSERT INTO ${EXERCISE_TB_NAME} (${attrNamesStrList})
+    VALUES(${attrDefValsStrList}, ${bodypart.bodypartKey});
+  `
+
+  const result = await sql.runSql(addExerciseQuery);
+  const exerciseKey = result.changes.lastId;
+
+  // Set exercise order equal to exercise key to use for ordering.
+  await changeExerciseOrder(exerciseKey, exerciseKey);
+
+
+  // Get and return added bodypart which will be added locally in state.
+  const newExerciseObj = await getExercise(exerciseKey);
+
+  console.log("Exercise added");
+
+  return newExerciseObj;
+}
+
+
 export const changeBodypartOrder = async (bodypartKey, newBodypartOrder) => {
   const changeBodypartOrderQuery = `
     UPDATE ${BODYPARTS_TB_NAME}
@@ -135,6 +175,17 @@ export const changeBodypartOrder = async (bodypartKey, newBodypartOrder) => {
   `
 
   await sql.runSql(changeBodypartOrderQuery);
+}
+
+
+export const changeExerciseOrder = async (exerciseKey, newExerciseOrder) => {
+  const changeExerciseOrderQuery = `
+    UPDATE ${EXERCISE_TB_NAME}
+    SET ${EXERCISE_TB_ATTRS.exerciseOrder.name} = "${newExerciseOrder}"
+    WHERE ${EXERCISE_TB_ATTRS.pk.name} = ${exerciseKey}
+  `
+
+  await sql.runSql(changeExerciseOrderQuery);
 }
 
 
@@ -150,6 +201,18 @@ export const getBodypart = async (bodypartKey) => {
 }
 
 
+export const getExercise = async (exerciseKey) => {
+  const getExerciseQuery = `
+    SELECT * FROM ${EXERCISE_TB_NAME}
+    WHERE ${EXERCISE_TB_ATTRS.pk.name} = ${exerciseKey}
+  `
+
+  const result = await sql.query(getExerciseQuery);
+
+  return result.values[0];
+}
+
+
 export const changeBodypartName = async (bodypart, newBodypartName) => {
   const newBodypartNameCleaned = sql.cleanStringForSql(newBodypartName);
 
@@ -160,6 +223,19 @@ export const changeBodypartName = async (bodypart, newBodypartName) => {
   `
 
   await sql.runSql(changeBodypartNameQuery);
+}
+
+
+export const changeExerciseName = async (exercise, newExerciseName) => {
+  const newExerciseNameCleaned = sql.cleanStringForSql(newExerciseName);
+
+  const changeExerciseNameQuery = `
+    UPDATE ${EXERCISE_TB_NAME}
+    SET ${EXERCISE_TB_ATTRS.exerciseName.name} = "${newExerciseNameCleaned}"
+    WHERE ${EXERCISE_TB_ATTRS.pk.name} = ${exercise.exerciseKey}
+  `
+
+  await sql.runSql(changeExerciseNameQuery);
 }
 
 
@@ -196,6 +272,39 @@ export const swapBodypartsOrder = async (bodyparts, dragHistory, finalSourceInde
 }
 
 
+export const swapExercisesOrder = async (exercises, dragHistory, finalSourceIndex, finalDestIndex) => {
+  const newExercises = [...exercises];
+
+  for (const drag of dragHistory) {
+    const sourceIndex = drag.source.index;
+    const destIndex = drag.dest.index;
+
+    const sourceExercise = newExercises[sourceIndex];
+    const destExercise = newExercises[destIndex];
+
+    // // Swapping db values.
+    await changeExerciseOrder(sourceExercise.exerciseKey, destExercise.exerciseOrder);
+    await changeExerciseOrder(destExercise.exerciseKey, sourceExercise.exerciseOrder);
+
+
+    // // Swapping local values.
+    const tempExercise = newExercises[sourceIndex];
+
+    const newExercise = { ...newExercises[sourceIndex] };
+    newExercise.exerciseOrder = destExercise.exerciseOrder;
+    newExercises[sourceIndex] = newExercise;
+
+    const newExercise2 = { ...newExercises[destIndex] };
+    newExercise2.exerciseOrder = tempExercise.exerciseOrder;
+    newExercises[destIndex] = newExercise2;
+  }
+
+  newExercises.splice(finalDestIndex, 0, newExercises.splice(finalSourceIndex, 1)[0]);
+
+  return newExercises;
+}
+
+
 export const deleteBodypart = async (bodypart) => {
   const deleteBodypartQuery = `
     DELETE FROM ${BODYPARTS_TB_NAME}
@@ -209,4 +318,20 @@ export const deleteBodypart = async (bodypart) => {
     WHERE ${EXERCISE_TB_ATTRS.fks.bodypartKey.name} = ${bodypart.bodypartKey}
   `
   await sql.runSql(deleteExercisesQuery);
+}
+
+
+export const deleteExercise = async (exercise) => {
+  const deleteExerciseQuery = `
+    DELETE FROM ${EXERCISE_TB_NAME}
+    WHERE ${EXERCISE_TB_ATTRS.pk.name} = ${exercise.exerciseKey}
+  `
+  await sql.runSql(deleteExerciseQuery);
+
+
+  const deleteExerclogsQuery = `
+    DELETE FROM ${EXERLOG_TB_NAME}
+    WHERE ${EXERLOG_TB_ATTRS.fks.exerciseKey.name} = ${exercise.exerciseKey}
+  `
+  await sql.runSql(deleteExerclogsQuery);
 }

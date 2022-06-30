@@ -11,7 +11,11 @@ export const SETTINGS_TOPBAR_BG = "#2c2c2c";
 // Item heights
 export const SECTION_ITEM_HEIGHT = "64px";
 export const BODYPART_ITEM_HEIGHT = "64px";
+export const EXERCISE_ITEM_HEIGHT = "50px";
 export const SETTING_ITEM_HEIGHT = "64px";
+
+// Item padding
+export const EXERCISE_ITEM_PADDING_L = "8px";
 
 
 // Note priority background colours.
