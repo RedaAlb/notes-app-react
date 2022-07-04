@@ -63,9 +63,9 @@ const EXERCISE_ORDER = `
   ORDER BY ${EXERCISE_TB_ATTRS.exerciseOrder.name} DESC
 `
 
-// const EXERLOG_ORDER = `
-//   ORDER BY ${EXERLOG_TB_ATTRS.exerlogCreateDate.name} DESC
-// `
+const EXERLOG_ORDER = `
+  ORDER BY ${EXERLOG_TB_ATTRS.exerlogCreateDate.name} DESC
+`
 
 
 export const createGymWeightsTables = async () => {
@@ -117,6 +117,20 @@ export const loadExercises = async (bodypart) => {
 }
 
 
+export const loadExerlogs = async (exercise) => {
+  const loadExerlogsQuery = `
+    SELECT * FROM ${EXERLOG_TB_NAME}
+    WHERE ${EXERLOG_TB_ATTRS.fks.exerciseKey.name} = ${exercise.exerciseKey}
+    ${EXERLOG_ORDER}
+  `
+  const result = await sql.query(loadExerlogsQuery);
+
+  console.log("Loaded exerlogs");
+
+  return result.values;
+}
+
+
 export const addBodypart = async () => {
   const attrNamesStrList = sql.attrNamesToStrList(BODYPART_TB_ATTRS);
   const attrDefValsStrList = await sql.attrDefValsToStrList(BODYPART_TB_ATTRS);
@@ -158,12 +172,34 @@ export const addExercise = async (bodypart) => {
   await changeExerciseOrder(exerciseKey, exerciseKey);
 
 
-  // Get and return added bodypart which will be added locally in state.
+  // Get and return added exercise which will be added locally in state.
   const newExerciseObj = await getExercise(exerciseKey);
 
   console.log("Exercise added");
 
   return newExerciseObj;
+}
+
+
+export const addExerlog = async (exercise) => {
+  const attrNamesStrList = sql.attrNamesToStrList(EXERLOG_TB_ATTRS);
+  const attrDefValsStrList = await sql.attrDefValsToStrList(EXERLOG_TB_ATTRS);
+
+  const addExerlogQuery = `
+    INSERT INTO ${EXERLOG_TB_NAME} (${attrNamesStrList})
+    VALUES(${attrDefValsStrList}, ${exercise.exerciseKey});
+  `
+
+  const result = await sql.runSql(addExerlogQuery);
+  const exerlogKey = result.changes.lastId;
+
+
+  // Get and return added exerlog which will be added locally in state.
+  const newExerlogObj = await getExerlog(exerlogKey);
+
+  console.log("Exerlog added");
+
+  return newExerlogObj;
 }
 
 
@@ -213,6 +249,18 @@ export const getExercise = async (exerciseKey) => {
 }
 
 
+export const getExerlog = async (exerlogKey) => {
+  const getExerlogQuery = `
+    SELECT * FROM ${EXERLOG_TB_NAME}
+    WHERE ${EXERLOG_TB_ATTRS.pk.name} = ${exerlogKey}
+  `
+
+  const result = await sql.query(getExerlogQuery);
+
+  return result.values[0];
+}
+
+
 export const changeBodypartName = async (bodypart, newBodypartName) => {
   const newBodypartNameCleaned = sql.cleanStringForSql(newBodypartName);
 
@@ -236,6 +284,28 @@ export const changeExerciseName = async (exercise, newExerciseName) => {
   `
 
   await sql.runSql(changeExerciseNameQuery);
+}
+
+
+export const changeExerlogWeight = async (exerlog, newExerlogWeight) => {
+  const changeExerlogWeightQuery = `
+    UPDATE ${EXERLOG_TB_NAME}
+    SET ${EXERLOG_TB_ATTRS.exerlogWeight.name} = ${newExerlogWeight}
+    WHERE ${EXERLOG_TB_ATTRS.pk.name} = ${exerlog.exerlogKey}
+  `
+
+  await sql.runSql(changeExerlogWeightQuery);
+}
+
+
+export const changeExerlogDate = async (exerlog, newExerlogDate) => {
+  const changeExerlogDateQuery = `
+    UPDATE ${EXERLOG_TB_NAME}
+    SET ${EXERLOG_TB_ATTRS.exerlogCreateDate.name} = "${newExerlogDate}"
+    WHERE ${EXERLOG_TB_ATTRS.pk.name} = ${exerlog.exerlogKey}
+  `
+
+  await sql.runSql(changeExerlogDateQuery);
 }
 
 
@@ -334,4 +404,13 @@ export const deleteExercise = async (exercise) => {
     WHERE ${EXERLOG_TB_ATTRS.fks.exerciseKey.name} = ${exercise.exerciseKey}
   `
   await sql.runSql(deleteExerclogsQuery);
+}
+
+
+export const deleteExerlog = async (exerlog) => {
+  const deleteExerlogQuery = `
+    DELETE FROM ${EXERLOG_TB_NAME}
+    WHERE ${EXERLOG_TB_ATTRS.pk.name} = ${exerlog.exerlogKey}
+  `
+  await sql.runSql(deleteExerlogQuery);
 }

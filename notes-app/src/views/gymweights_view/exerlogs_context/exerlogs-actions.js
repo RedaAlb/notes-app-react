@@ -1,0 +1,4 @@
+export const LOAD_EXERLOGS = "LOAD_EXERLOGS";
+export const ADD_EXERLOG = "ADD_EXERLOG";
+export const DELETE_EXERLOG = "DELETE_EXERLOG";
+export const SET_EXERLOGS = "SET_EXERLOGS";

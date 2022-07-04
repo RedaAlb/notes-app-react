@@ -320,6 +320,8 @@ export const importTables = async (json) => {
 
   // Going through all the tables and inserting each row into the sql database.
   for (const table of json) {
+    if (table.data.length === 0) continue;  // Skip table if empty.
+
     // Using the first row to get the attribute names.
     const tableAttributes = Object.keys(table.data[0]).join(",");
 

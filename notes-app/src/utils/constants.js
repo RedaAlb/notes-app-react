@@ -8,14 +8,21 @@ export const GYMWEIGHTS_TOPBAR_BG = "#0043ff";
 export const SETTINGS_TOPBAR_BG = "#2c2c2c";
 
 
+// Item background colours
+export const EXERCISE_ITEM_BG = "#f8f8f8";
+export const EXERLOG_ITEM_BG = "#f8f8f8";
+
+
 // Item heights
 export const SECTION_ITEM_HEIGHT = "64px";
 export const BODYPART_ITEM_HEIGHT = "64px";
 export const EXERCISE_ITEM_HEIGHT = "50px";
+export const EXERLOG_ITEM_HEIGHT = "42px";
 export const SETTING_ITEM_HEIGHT = "64px";
 
 // Item padding
 export const EXERCISE_ITEM_PADDING_L = "8px";
+export const EXERLOG_ITEM_PADDING_L = "20px";
 
 
 // Note priority background colours.
@@ -59,7 +66,7 @@ export const SETTINGS_ANIM = {
 
 
 // Database constants
-export const DEFAULT_DATE_VAL = "CURRENT_TIMESTAMP";
+export const DEFAULT_DATE_VAL = "(datetime('now', 'localtime'))";
 export const DEFAULT_LOCATION_VAL = "\"0 0\"";
 
 

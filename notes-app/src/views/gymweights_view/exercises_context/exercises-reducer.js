@@ -1,5 +1,5 @@
-import { deleteExercise } from "../../../utils/gym-weights-utils";
 import * as actions from "./exercises-actions";
+import { deleteExercise } from "../../../utils/gym-weights-utils";
 
 
 const exercisesReducer = (state, action) => {
