@@ -6,8 +6,10 @@ import { Geolocation } from '@capacitor/geolocation';
 
 import { defineCustomElements as jeepSqlite, applyPolyfills } from "jeep-sqlite/loader";
 
-import { createNotesAppTables } from "./notes-app-utils";
 import { DEFAULT_LOCATION_VAL, EXPORTS_DIR_NAME, SETTINGS_SAVE_LOCATION } from './constants';
+
+import { createNotesAppTables } from "./notes-app-utils";
+import { createGymWeightsTables } from './gym-weights-utils';
 
 
 const DB_NAME = "notes_db";
@@ -51,6 +53,7 @@ export const initSqlDb = async () => {
   await runSql("PRAGMA foreign_keys = ON;");
 
   await createNotesAppTables();
+  await createGymWeightsTables();
 
   console.log("SQL DB initialised");
 }
@@ -317,6 +320,8 @@ export const importTables = async (json) => {
 
   // Going through all the tables and inserting each row into the sql database.
   for (const table of json) {
+    if (table.data.length === 0) continue;  // Skip table if empty.
+
     // Using the first row to get the attribute names.
     const tableAttributes = Object.keys(table.data[0]).join(",");
 

@@ -4,7 +4,7 @@ import React from "react";
 
 function ListItem(props) {
   return (
-    <div className="list-item" style={{ height: props.height }}>
+    <div className="list-item" style={{ height: props.height, paddingLeft: props.paddingLeft }}>
       {props.children[0]}
       {props.children[1]}
       {props.children[2]}

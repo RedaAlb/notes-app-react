@@ -1,0 +1,4 @@
+export const LOAD_BODYPARTS = "LOAD_BODYPARTS";
+export const ADD_BODYPART = "ADD_BODYPART";
+export const DELETE_BODYPART = "DELETE_BODYPART";
+export const SET_BODYPARTS = "SET_BODYPARTS";

@@ -24,6 +24,7 @@ function AutoWidthTb(props) {
       extraWidth={2}
       className="auto-width-tb"
       wrapperClassName="auto-width-tb-wrapper"
+      style={{ fontSize: `${props.fontSize}` }}
     />
   )
 }

@@ -16,7 +16,8 @@ body {
   -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
 }
 
-textarea {
+textarea,
+input {
   font-family: var(--main-font);
 }
 

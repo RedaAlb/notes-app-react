@@ -24,8 +24,8 @@ function DrawerComp(props) {
   }
 
 
-  const onPlaceholderClick = () => {
-    console.log("Place holder pressed.")
+  const onGymWeightsClick = () => {
+    navigate("/gymweights");
   }
 
 
@@ -55,9 +55,9 @@ function DrawerComp(props) {
             <Typography variant="h6" noWrap component="div">Extensions</Typography>
           </ListItem>
 
-          <ListItem button onClick={onPlaceholderClick}>
+          <ListItem button onClick={onGymWeightsClick}>
             <ListItemIcon> <FitnessCenterIcon /> </ListItemIcon>
-            <ListItemText primary={"Placeholder"} />
+            <ListItemText primary={"Gym weights"} />
           </ListItem>
         </List>
 
