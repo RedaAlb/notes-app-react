@@ -61,7 +61,7 @@ export const initSqlDb = async () => {
 
 export const deleteSqlDb = async () => {
   await CapacitorSQLite.deleteDatabase({ database: DB_NAME });
-  window.location.reload();
+  window.location = "/notes-app-react";
 }
 
 
