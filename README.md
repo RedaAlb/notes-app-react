@@ -2,7 +2,7 @@
 
 Personal notes app using React web with Capacitor for native mobile platforms.
 
-There was no app that did exactly what I wanted to organise my personal notes, so I made this app.
+There was no app that did exactly what I wanted to organise my personal notes, so I learned React and made this app.
 
 # Demo
 [Demo](https://redaalb.github.io/notes-app-react/)
